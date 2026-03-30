@@ -42,11 +42,11 @@ public class Usuario {
 
     /** Rol que determina el nivel de acceso a las rutas del API. */
     @Convert(converter = ConversorRol.class)
-    @Column(name = "id_role", nullable = false)
+    @Column(name = "id_rol", nullable = false)
     private Rol rol;
 
     @Column(name = "id_sucursal_asignada")
-    private Long assignedBranchId;
+    private Long sucursalAsignadaId;
 }
 
 

@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "unit_of_measures")
+@Table(name = "unidades_medida")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -33,6 +33,3 @@ public class UnidadMedida {
     @Builder.Default
     private java.math.BigDecimal conversionFactor = java.math.BigDecimal.ONE;
 }
-
-
-

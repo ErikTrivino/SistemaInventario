@@ -19,14 +19,14 @@ public class Venta {
     private Long id;
 
     @Column(name = "id_sucursal", nullable = false)
-    private Long branchId;
+    private Long sucursalId;
 
     @Column(name = "id_usuario_vendedor")
-    private Long sellerUserId;
+    private Long vendedorId;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "fecha_venta", nullable = false)
-    private java.util.Date createdAt;
+    private java.util.Date fechaVenta;
 
     @Column(name = "total_venta", precision = 15, scale = 2)
     private BigDecimal total;

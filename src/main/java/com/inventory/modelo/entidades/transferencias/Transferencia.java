@@ -19,40 +19,40 @@ public class Transferencia {
     private Long id;
 
     @Column(name = "id_sucursal_origen", nullable = false)
-    private Long originBranchId;
+    private Long sucursalOrigenId;
 
     @Column(name = "id_sucursal_destino", nullable = false)
-    private Long destinationBranchId;
+    private Long sucursalDestinoId;
 
     @Column(name = "id_producto", nullable = false)
-    private Long productId;
+    private Long productoId;
 
     @Column(name = "cantidad", nullable = false, precision = 12, scale = 2)
-    private java.math.BigDecimal quantity;
+    private java.math.BigDecimal cantidad;
 
     @Column(name = "id_usuario_solicita")
-    private Long requestUserId;
+    private Long usuarioSolicitaId;
 
     @Column(name = "id_gerente_aprueba")
-    private Long approvedByManagerId;
+    private Long gerenteApruebaId;
 
     @Column(name = "estado", nullable = false, length = 30)
-    private String status; // PENDING, APPROVED, SENT, RECEIVED
+    private String estado; // PENDING, APPROVED, SENT, RECEIVED
 
     @Column(name = "fecha_solicitud", nullable = false)
-    private LocalDateTime requestDate;
+    private LocalDateTime fechaSolicitud;
 
     @Column(name = "fecha_envio_estimada")
-    private LocalDateTime estimatedDate;
+    private LocalDateTime fechaEnvioEstimada;
 
     @Column(name = "fecha_recepcion_real")
-    private LocalDateTime receivedDate;
+    private LocalDateTime fechaRecepcionReal;
 
     @Column(name = "cantidad_confirmada", precision = 12, scale = 2)
-    private java.math.BigDecimal confirmedQuantity;
+    private java.math.BigDecimal cantidadConfirmada;
 
     @Column(name = "cantidad_recibida", precision = 12, scale = 2)
-    private java.math.BigDecimal receivedQuantity;
+    private java.math.BigDecimal cantidadRecibida;
 }
 
 

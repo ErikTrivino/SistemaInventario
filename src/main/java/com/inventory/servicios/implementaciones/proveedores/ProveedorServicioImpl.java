@@ -25,9 +25,9 @@ public class ProveedorServicioImpl implements ProveedorServicio {
             throw new RuntimeException("Ya existe un proveedor con el NIT/RUT: " + dto.nitRut());
         }
         Proveedor supplier = Proveedor.builder()
-                .taxId(dto.nitRut())
-                .name(dto.razonSocial())
-                .contact(dto.contacto())
+                .nitRut(dto.nitRut())
+                .razonSocial(dto.razonSocial())
+                .contacto(dto.contacto())
                 .email(dto.email())
                 .activo(true)
                 .build();
@@ -40,8 +40,8 @@ public class ProveedorServicioImpl implements ProveedorServicio {
     public ProveedorInformacionDTO updateSupplier(Long id, ProveedorEditarDTO dto) {
         Proveedor supplier = supplierRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Proveedor no encontrado: " + id));
-        supplier.setName(dto.razonSocial());
-        supplier.setContact(dto.contacto());
+        supplier.setRazonSocial(dto.razonSocial());
+        supplier.setContacto(dto.contacto());
         return toInfo(supplierRepository.save(supplier));
     }
 
@@ -83,8 +83,8 @@ public class ProveedorServicioImpl implements ProveedorServicio {
         }
 
         ProductoProveedor pp = ProductoProveedor.builder()
-                .supplierId(dto.idProveedor())
-                .productId(dto.idProducto())
+                .proveedorId(dto.idProveedor())
+                .productoId(dto.idProducto())
                 .precioCompra(dto.precioCompra())
                 .descuentoProveedor(dto.descuentoProveedor() != null ? dto.descuentoProveedor() : java.math.BigDecimal.ZERO)
                 .leadTimeDias(dto.leadTimeDias())
@@ -124,12 +124,12 @@ public class ProveedorServicioImpl implements ProveedorServicio {
 
     private ProveedorInformacionDTO toInfo(Proveedor s) {
         return new ProveedorInformacionDTO(
-                s.getId(), s.getTaxId(), s.getName(), s.getContact(), s.getEmail(), s.isActivo());
+                s.getId(), s.getNitRut(), s.getRazonSocial(), s.getContacto(), s.getEmail(), s.isActivo());
     }
 
     private ProductoProveedorInformacionDTO toPPInfo(ProductoProveedor pp) {
         return new ProductoProveedorInformacionDTO(
-                pp.getId(), pp.getSupplierId(), pp.getProductId(),
+                pp.getId(), pp.getProveedorId(), pp.getProductoId(),
                 pp.getPrecioCompra(), pp.getDescuentoProveedor(),
                 pp.getLeadTimeDias(), pp.getFechaVigenciaDesde());
     }

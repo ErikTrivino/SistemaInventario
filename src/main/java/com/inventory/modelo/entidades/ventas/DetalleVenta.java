@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "sale_details")
+@Table(name = "detalles_venta")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -20,7 +20,7 @@ public class DetalleVenta {
     private Long ventaId;
 
     @Column(name = "id_producto", nullable = false)
-    private Long productId;
+    private Long productoId;
 
     @Column(name = "cantidad", nullable = false, precision = 12, scale = 2)
     private java.math.BigDecimal cantidad;
@@ -35,6 +35,3 @@ public class DetalleVenta {
     @Column(name = "lista_precio_usada", length = 50)
     private String listaPrecioUsada;
 }
-
-
-

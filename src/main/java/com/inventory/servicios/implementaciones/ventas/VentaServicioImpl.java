@@ -71,9 +71,9 @@ public class VentaServicioImpl implements VentaServicio {
         }
 
         Venta sale = Venta.builder()
-                .branchId(dto.idSucursal())
-                .sellerUserId(userId)
-                .createdAt(new Date())
+                .sucursalId(dto.idSucursal())
+                .vendedorId(userId)
+                .fechaVenta(new Date())
                 .total(totalVenta)
                 .comprobanteOriginal(UUID.randomUUID().toString()) // Generador Dummy
                 .build();
@@ -90,7 +90,7 @@ public class VentaServicioImpl implements VentaServicio {
 
             DetalleVenta d = DetalleVenta.builder()
                 .ventaId(saved.getId())
-                .productId(item.idProducto())
+                .productoId(item.idProducto())
                 .cantidad(item.cantidad())
                 .precioUnitario(item.precioUnitario())
                 .descuentoAplicado(item.descuentoPorcentaje() != null ? item.descuentoPorcentaje() : BigDecimal.ZERO)
@@ -118,9 +118,9 @@ public class VentaServicioImpl implements VentaServicio {
     private VentaInformacionDTO toInfo(Venta sale) {
         return new VentaInformacionDTO(
                 sale.getId(),
-                sale.getBranchId(),
-                sale.getSellerUserId(),
-                sale.getCreatedAt(),
+                sale.getSucursalId(),
+                sale.getVendedorId(),
+                sale.getFechaVenta(),
                 sale.getTotal(),
                 sale.getComprobanteOriginal()
         );

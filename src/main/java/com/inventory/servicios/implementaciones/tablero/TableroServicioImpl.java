@@ -70,14 +70,14 @@ public class TableroServicioImpl implements TableroServicio {
 
     private List<AlertaStockDTO> getListaAlertasStock() {
         return inventarioRepositorio.findAll().stream()
-                .filter(inv -> inv.getStock().compareTo(inv.getMinStock()) <= 0)
+                .filter(inv -> inv.getStock().compareTo(inv.getStockMinimo()) <= 0)
                 .map(inv -> new AlertaStockDTO(
-                        inv.getProductId(),
-                        "Producto #" + inv.getProductId(), // nombre lookup simplificado
-                        inv.getBranchId(),
+                        inv.getProductoId(),
+                        "Producto #" + inv.getProductoId(), // nombre lookup simplificado
+                        inv.getSucursalId(),
                         inv.getStock(),
-                        inv.getMinStock(),
-                        inv.getMinStock().subtract(inv.getStock())
+                        inv.getStockMinimo(),
+                        inv.getStockMinimo().subtract(inv.getStock())
                 ))
                 .collect(Collectors.toList());
     }

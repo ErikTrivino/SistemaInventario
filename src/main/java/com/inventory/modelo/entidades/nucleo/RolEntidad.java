@@ -22,11 +22,11 @@ import lombok.Setter;
 public class RolEntidad {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_role")
+    @Column(name = "id_rol")
     private Long id;
 
     @Column(name = "nombre_rol", nullable = false, length = 50)
-    private String roleName;
+    private String nombreRol;
 }
 
 

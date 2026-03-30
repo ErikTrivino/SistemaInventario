@@ -47,22 +47,22 @@ public class ReporteServicioImpl implements ReporteServicio {
     @Override
     public ReporteInventarioDTO generarReporteInventario(Long idSucursal) {
         var items = inventarioRepositorio.findAll().stream()
-                .filter(inv -> idSucursal == null || inv.getBranchId().equals(idSucursal))
+                .filter(inv -> idSucursal == null || inv.getSucursalId().equals(idSucursal))
                 .collect(Collectors.toList());
 
         long total = items.size();
-        long bajoMinimo = items.stream().filter(i -> i.getStock().compareTo(i.getMinStock()) < 0 && i.getStock().compareTo(BigDecimal.ZERO) > 0).count();
+        long bajoMinimo = items.stream().filter(i -> i.getStock().compareTo(i.getStockMinimo()) < 0 && i.getStock().compareTo(BigDecimal.ZERO) > 0).count();
         long agotados = items.stream().filter(i -> i.getStock().compareTo(BigDecimal.ZERO) == 0).count();
         BigDecimal valorTotal = items.stream().map(i -> i.getStock()).reduce(BigDecimal.ZERO, BigDecimal::add);
 
         List<ItemInventarioDTO> detalle = items.stream().map(inv -> {
             String estado = inv.getStock().compareTo(BigDecimal.ZERO) == 0 ? "AGOTADO"
-                    : inv.getStock().compareTo(inv.getMinStock()) < 0 ? "BAJO" : "NORMAL";
+                    : inv.getStock().compareTo(inv.getStockMinimo()) < 0 ? "BAJO" : "NORMAL";
             return new ItemInventarioDTO(
-                    inv.getProductId(),
-                    "Producto #" + inv.getProductId(),
-                    "SKU-" + inv.getProductId(),
-                    inv.getStock(), inv.getMinStock(), estado);
+                    inv.getProductoId(),
+                    "Producto #" + inv.getProductoId(),
+                    "SKU-" + inv.getProductoId(),
+                    inv.getStock(), inv.getStockMinimo(), estado);
         }).collect(Collectors.toList());
 
         return new ReporteInventarioDTO(new Date(), idSucursal, total, bajoMinimo, agotados, valorTotal, detalle);
@@ -75,14 +75,14 @@ public class ReporteServicioImpl implements ReporteServicio {
                 inicio != null ? inicio.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDateTime() : null,
                 fin != null ? fin.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDateTime() : null);
 
-        long completadas = todas.stream().filter(t -> "RECIBIDO".equals(t.getStatus())).count();
-        long discrepancias = todas.stream().filter(t -> "FALTANTES".equals(t.getStatus())).count();
-        long pendientes = todas.stream().filter(t -> "SOLICITADO".equals(t.getStatus()) || "PREPARADO".equals(t.getStatus())).count();
+        long completadas = todas.stream().filter(t -> "RECIBIDO".equals(t.getEstado())).count();
+        long discrepancias = todas.stream().filter(t -> "FALTANTES".equals(t.getEstado())).count();
+        long pendientes = todas.stream().filter(t -> "SOLICITADO".equals(t.getEstado()) || "PREPARADO".equals(t.getEstado())).count();
 
         List<ItemTransferenciaDTO> detalle = todas.stream().map(t -> new ItemTransferenciaDTO(
-                t.getId(), t.getOriginBranchId(), t.getDestinationBranchId(), t.getProductId(),
-                t.getQuantity(), t.getReceivedQuantity(), t.getStatus(),
-                t.getRequestDate(), t.getReceivedDate()
+                t.getId(), t.getSucursalOrigenId(), t.getSucursalDestinoId(), t.getProductoId(),
+                t.getCantidad(), t.getCantidadRecibida(), t.getEstado(),
+                t.getFechaSolicitud(), t.getFechaRecepcionReal()
         )).collect(Collectors.toList());
 
         return new ReporteTransferenciasDTO(inicio, fin, todas.size(), completadas, discrepancias, pendientes, detalle);

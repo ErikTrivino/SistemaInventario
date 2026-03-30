@@ -19,22 +19,22 @@ public class OrdenCompra {
     private Long id;
 
     @Column(name = "id_sucursal_destino")
-    private Long branchId;
+    private Long sucursalDestinoId;
 
     @Column(name = "id_proveedor", nullable = false)
-    private Long supplierId;
+    private Long proveedorId;
 
     @Column(name = "id_usuario_responsable")
-    private Long responsibleUserId;
+    private Long usuarioResponsableId;
 
     @Column(name = "fecha_compra", nullable = false)
-    private java.time.LocalDateTime purchaseDate;
+    private java.time.LocalDateTime fechaCompra;
 
     @Column(name = "total", precision = 15, scale = 2)
     private BigDecimal total;
 
     @Column(name = "estado", nullable = false, length = 20)
-    private String status;
+    private String estado;
 
     @Column(name = "plazo_pago_dias")
     private Integer plazoPagoDias;

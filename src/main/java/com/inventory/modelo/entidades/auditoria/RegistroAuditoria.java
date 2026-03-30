@@ -6,7 +6,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "audit_logs")
+@Table(name = "registros_auditoria")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -18,19 +18,19 @@ public class RegistroAuditoria {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(name = "username", nullable = false)
+    @Column(name = "nombre_usuario", nullable = false)
     private String user;
     
-    @Column(nullable = false)
+    @Column(name = "accion", nullable = false)
     private String action; // CREATE, UPDATE, DELETE
     
-    @Column(nullable = false)
+    @Column(name = "entidad", nullable = false)
     private String entity;
     
-    @Column(nullable = false)
+    @Column(name = "fecha_hora", nullable = false)
     private LocalDateTime timestamp;
     
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "detalles", columnDefinition = "TEXT")
     private String details;
 }
 

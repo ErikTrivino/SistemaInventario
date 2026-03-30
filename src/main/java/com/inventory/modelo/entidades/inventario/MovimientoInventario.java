@@ -22,28 +22,28 @@ public class MovimientoInventario {
     // IN or OUT
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo_movimiento", nullable = false)
-    private TipoMovimiento type;
+    private TipoMovimiento tipo;
 
     @Column(name = "cantidad", nullable = false, precision = 12, scale = 2)
-    private java.math.BigDecimal quantity;
+    private java.math.BigDecimal cantidad;
 
     @Column(name = "fecha_movimiento", nullable = false)
-    private LocalDateTime createdAt;
+    private LocalDateTime fechaMovimiento;
 
     @Column(name = "id_usuario_responsable")
-    private Long userId;
+    private Long usuarioId;
 
     @Column(name = "id_sucursal", nullable = false)
-    private Long branchId;
+    private Long sucursalId;
 
     @Column(name = "id_producto", nullable = false)
-    private Long productId;
+    private Long productoId;
 
     @Column(name = "referencia_id")
-    private Long referenceId;
+    private Long referenciaId;
 
     @Column(name = "motivo", columnDefinition = "TEXT")
-    private String reason;
+    private String motivo;
 }
 
 

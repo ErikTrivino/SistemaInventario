@@ -48,12 +48,12 @@ public class CompraServicioImpl implements CompraServicio {
         }
 
         OrdenCompra order = new OrdenCompra();
-        order.setBranchId(dto.idSucursalDestino());
-        order.setSupplierId(dto.idProveedor());
-        order.setResponsibleUserId(userId);
-        order.setPurchaseDate(LocalDateTime.now());
+        order.setSucursalDestinoId(dto.idSucursalDestino());
+        order.setProveedorId(dto.idProveedor());
+        order.setUsuarioResponsableId(userId);
+        order.setFechaCompra(LocalDateTime.now());
         order.setTotal(total);
-        order.setStatus("Pendiente");
+        order.setEstado("Pendiente");
         order.setPlazoPagoDias(dto.plazoPagoDias());
         OrdenCompra saved = purchaseOrderRepository.save(order);
 
@@ -78,7 +78,7 @@ public class CompraServicioImpl implements CompraServicio {
         OrdenCompra order = purchaseOrderRepository.findById(dto.idOrdenCompra())
                 .orElseThrow(() -> new RuntimeException("PO not found"));
 
-        if ("Recibido".equals(order.getStatus())) {
+        if ("Recibido".equals(order.getEstado())) {
             throw new RuntimeException("La orden ya se encuentra recibida completamente.");
         }
 
@@ -104,7 +104,7 @@ public class CompraServicioImpl implements CompraServicio {
             }
         }
 
-        order.setStatus("Recibido");
+        order.setEstado("Recibido");
         purchaseOrderRepository.save(order);
         auditService.logAction(1L, "RECEIVE", "OrdenCompra", order.getId(), "Received PO details and updated stock atomically.");
     }
@@ -117,11 +117,11 @@ public class CompraServicioImpl implements CompraServicio {
     private CompraInformacionDTO toInfo(OrdenCompra purchaseOrder) {
         return new CompraInformacionDTO(
                 purchaseOrder.getId(),
-                purchaseOrder.getBranchId(),
-                purchaseOrder.getSupplierId(),
-                purchaseOrder.getResponsibleUserId(),
-                purchaseOrder.getPurchaseDate(),
-                purchaseOrder.getStatus(),
+                purchaseOrder.getSucursalDestinoId(),
+                purchaseOrder.getProveedorId(),
+                purchaseOrder.getUsuarioResponsableId(),
+                purchaseOrder.getFechaCompra(),
+                purchaseOrder.getEstado(),
                 purchaseOrder.getTotal()
         );
     }

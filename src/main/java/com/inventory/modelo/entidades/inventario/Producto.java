@@ -18,24 +18,24 @@ public class Producto {
     private Long id;
     
     @Column(name = "nombre", nullable = false, length = 150)
-    private String name;
+    private String nombre;
 
     @Column(name = "descripcion", columnDefinition = "TEXT")
-    private String description;
+    private String descripcion;
     
     @Column(name = "sku", unique = true, length = 50)
     private String sku;
     
     @Column(name = "unidad_medida_base", nullable = false, length = 20)
-    private String unitType;
+    private String unidadMedidaBase;
 
     @Builder.Default
     @Column(name = "precio_costo_promedio", nullable = false, precision = 12, scale = 2)
-    private java.math.BigDecimal averageCost = java.math.BigDecimal.ZERO;
+    private java.math.BigDecimal precioCostoPromedio = java.math.BigDecimal.ZERO;
 
     @Builder.Default
     @Column(name = "activo", nullable = false)
-    private Boolean active = true;
+    private Boolean activo = true;
 }
 
 

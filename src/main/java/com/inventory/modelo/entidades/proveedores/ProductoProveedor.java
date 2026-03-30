@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "supplier_products")
+@Table(name = "productos_proveedor")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -18,11 +18,11 @@ public class ProductoProveedor {
 
     /** ID del proveedor. */
     @Column(name = "id_proveedor", nullable = false)
-    private Long supplierId;
+    private Long proveedorId;
 
     /** ID del producto que provee. */
     @Column(name = "id_producto", nullable = false)
-    private Long productId;
+    private Long productoId;
 
     /** RF-39: Precio de compra pactado con el proveedor. */
     @Column(name = "precio_compra", nullable = false, precision = 15, scale = 2)

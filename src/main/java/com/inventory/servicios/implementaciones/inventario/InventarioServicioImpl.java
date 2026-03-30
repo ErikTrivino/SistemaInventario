@@ -34,30 +34,30 @@
         @Transactional
         public ProductoDetalleDTO createProduct(ProductoCrearDTO dto) {
             Producto product = Producto.builder()
-                    .name(dto.nombre())
-                    .description(dto.descripcion())
+                    .nombre(dto.nombre())
+                    .descripcion(dto.descripcion())
                     .sku(dto.sku())
-                    .unitType(dto.unidadMedidaBase())
-                    .averageCost(dto.precioCostoPromedio() == null ? java.math.BigDecimal.ZERO : dto.precioCostoPromedio())
+                    .unidadMedidaBase(dto.unidadMedidaBase())
+                    .precioCostoPromedio(dto.precioCostoPromedio() == null ? java.math.BigDecimal.ZERO : dto.precioCostoPromedio())
                     .build();
             Producto saved = productRepository.save(product);
             
             if (dto.cantidadInicial() != null && dto.cantidadInicial().compareTo(java.math.BigDecimal.ZERO) > 0 && dto.idSucursal() != null) {
                 Inventario inventario = Inventario.builder()
-                        .productId(saved.getId())
-                        .branchId(dto.idSucursal())
+                        .productoId(saved.getId())
+                        .sucursalId(dto.idSucursal())
                         .stock(dto.cantidadInicial())
-                        .minStock(java.math.BigDecimal.ZERO)
+                        .stockMinimo(java.math.BigDecimal.ZERO)
                         .build();
                 inventoryRepository.save(inventario);
 
                 MovimientoInventario movement = MovimientoInventario.builder()
-                        .type(TipoMovimiento.ENTRADA_COMPRA)
-                        .quantity(dto.cantidadInicial())
-                        .createdAt(LocalDateTime.now())
-                        .branchId(dto.idSucursal())
-                        .productId(saved.getId())
-                        .reason("Inventario inicial")
+                        .tipo(TipoMovimiento.ENTRADA_COMPRA)
+                        .cantidad(dto.cantidadInicial())
+                        .fechaMovimiento(LocalDateTime.now())
+                        .sucursalId(dto.idSucursal())
+                        .productoId(saved.getId())
+                        .motivo("Inventario inicial")
                         .build();
                 movementRepository.save(movement);
             }
@@ -71,11 +71,11 @@
             Producto product = productRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
 
-            product.setName(dto.nombre());
-            product.setDescription(dto.descripcion());
+            product.setNombre(dto.nombre());
+            product.setDescripcion(dto.descripcion());
             product.setSku(dto.sku());
-            product.setUnitType(dto.unidadMedidaBase());
-            product.setAverageCost(dto.precioCostoPromedio() == null ? java.math.BigDecimal.ZERO : dto.precioCostoPromedio());
+            product.setUnidadMedidaBase(dto.unidadMedidaBase());
+            product.setPrecioCostoPromedio(dto.precioCostoPromedio() == null ? java.math.BigDecimal.ZERO : dto.precioCostoPromedio());
 
             Producto saved = productRepository.save(product);
             return toDetalleDTO(saved);
@@ -115,20 +115,20 @@
             inventoryRepository.save(inv);
 
             MovimientoInventario movement = MovimientoInventario.builder()
-                    .type(type.equals("IN") ? TipoMovimiento.ENTRADA_COMPRA : TipoMovimiento.SALIDA_VENTA)
-                    .quantity(amount)
-                    .createdAt(LocalDateTime.now())
-                    .branchId(branchId)
-                    .productId(productId)
-                    .reason(reason != null ? reason : "Actualización de stock")
+                    .tipo(type.equals("IN") ? TipoMovimiento.ENTRADA_COMPRA : TipoMovimiento.SALIDA_VENTA)
+                    .cantidad(amount)
+                    .fechaMovimiento(LocalDateTime.now())
+                    .sucursalId(branchId)
+                    .productoId(productId)
+                    .motivo(reason != null ? reason : "Actualización de stock")
                     .build();
             movementRepository.save(movement);
 
-            if (inv.getStock().compareTo(inv.getMinStock()) < 0) {
+            if (inv.getStock().compareTo(inv.getStockMinimo()) < 0) {
                 eventPublisher.publishStockUpdate(inv);
             }
 
-            auditService.logAction(1L, "UPDATE_STOCK", "Inventario", inv.getProductId(), "Stock updated: " + quantity);
+            auditService.logAction(1L, "UPDATE_STOCK", "Inventario", inv.getProductoId(), "Stock updated: " + quantity);
         }
 
         @Override
@@ -144,30 +144,30 @@
         private ProductoInformacionDTO toInformacionDTO(Producto product) {
             return new ProductoInformacionDTO(
                     product.getId(),
-                    product.getName(),
+                    product.getNombre(),
                     product.getSku(),
-                    product.getUnitType(),
-                    product.getAverageCost()
+                    product.getUnidadMedidaBase(),
+                    product.getPrecioCostoPromedio()
             );
         }
 
         private ProductoDetalleDTO toDetalleDTO(Producto product) {
             return new ProductoDetalleDTO(
                     product.getId(),
-                    product.getName(),
-                    product.getDescription(),
+                    product.getNombre(),
+                    product.getDescripcion(),
                     product.getSku(),
-                    product.getUnitType(),
-                    product.getAverageCost()
+                    product.getUnidadMedidaBase(),
+                    product.getPrecioCostoPromedio()
             );
         }
 
         private InventarioInformacionDTO toInventarioInformacion(Inventario inventory) {
             return new InventarioInformacionDTO(
-                    inventory.getBranchId(),
-                    inventory.getProductId(),
+                    inventory.getSucursalId(),
+                    inventory.getProductoId(),
                     inventory.getStock(),
-                    inventory.getMinStock()
+                    inventory.getStockMinimo()
             );
         }
     }

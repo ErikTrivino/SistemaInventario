@@ -15,11 +15,11 @@ public class Inventario {
 
     @Id
     @Column(name = "id_producto", nullable = false)
-    private Long productId;
+    private Long productoId;
 
     @Id
     @Column(name = "id_sucursal", nullable = false)
-    private Long branchId;
+    private Long sucursalId;
 
     @Builder.Default
     @Column(name = "stock_actual", nullable = false, precision = 12, scale = 2)
@@ -27,7 +27,7 @@ public class Inventario {
 
     @Builder.Default
     @Column(name = "stock_minimo", nullable = false, precision = 12, scale = 2)
-    private java.math.BigDecimal minStock = java.math.BigDecimal.ZERO;
+    private java.math.BigDecimal stockMinimo = java.math.BigDecimal.ZERO;
 }
 
 

@@ -26,17 +26,17 @@ public class Sucursal {
     private Long id;
 
     @Column(name = "nombre", nullable = false, length = 100)
-    private String name;
+    private String nombre;
 
     @Column(name = "direccion", length = 255)
-    private String address;
+    private String direccion;
 
     @Column(name = "ciudad", length = 100)
-    private String city;
+    private String ciudad;
 
     @Builder.Default
     @Column(name = "estado_activo", nullable = false)
-    private Boolean active = Boolean.TRUE;
+    private Boolean activo = Boolean.TRUE;
 }
 
 

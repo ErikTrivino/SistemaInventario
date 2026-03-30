@@ -18,13 +18,13 @@ public class Proveedor {
     private Long id;
 
     @Column(name = "nit_rut", nullable = false, unique = true, length = 20)
-    private String taxId;
+    private String nitRut;
 
     @Column(name = "razon_social", nullable = false, length = 150)
-    private String name;
+    private String razonSocial;
 
     @Column(name = "contacto", length = 100)
-    private String contact;
+    private String contacto;
 
     /** RF-38: Correo del proveedor para comunicaciones. */
     @Column(name = "email", length = 120)
