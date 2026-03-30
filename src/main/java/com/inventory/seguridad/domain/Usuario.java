@@ -28,9 +28,13 @@ public class Usuario {
     @Column(name = "id_usuario")
     private Long id;
 
-    /** Nombre completo del usuario. */
+    /** Nombre del usuario. */
     @Column(name = "nombre", nullable = false)
     private String nombre;
+
+    /** Apellido del usuario. */
+    @Column(name = "apellido", nullable = false)
+    private String apellido;
 
     /** Correo electrónico — identificador único para login y subject del JWT. */
     @Column(name = "email", unique = true, nullable = false)
@@ -47,6 +51,15 @@ public class Usuario {
 
     @Column(name = "id_sucursal_asignada")
     private Long sucursalAsignadaId;
+
+    /** Estado lógico: activo o inactivo (RF-56). */
+    @Builder.Default
+    @Column(name = "activo", nullable = false)
+    private Boolean activo = true;
+
+    /** Motivo del cambio de estado a inactivo (RF-56). */
+    @Column(name = "motivo_inactivacion", columnDefinition = "TEXT")
+    private String motivoInactivacion;
 }
 
 
