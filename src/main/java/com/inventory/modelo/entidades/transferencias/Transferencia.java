@@ -1,9 +1,16 @@
 package com.inventory.modelo.entidades.transferencias;
 
+import com.inventory.modelo.entidades.logistica.Envio;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * Entidad que gestiona el movimiento de mercancía entre sucursales.
+ * Ahora desacoplada para soportar múltiples productos y seguimiento logístico.
+ */
 @Entity
 @Table(name = "transferencias")
 @Getter
@@ -24,12 +31,6 @@ public class Transferencia {
     @Column(name = "id_sucursal_destino", nullable = false)
     private Long sucursalDestinoId;
 
-    @Column(name = "id_producto", nullable = false)
-    private Long productoId;
-
-    @Column(name = "cantidad", nullable = false, precision = 12, scale = 2)
-    private java.math.BigDecimal cantidad;
-
     @Column(name = "id_usuario_solicita")
     private Long usuarioSolicitaId;
 
@@ -42,19 +43,12 @@ public class Transferencia {
     @Column(name = "fecha_solicitud", nullable = false)
     private LocalDateTime fechaSolicitud;
 
-    @Column(name = "fecha_envio_estimada")
-    private LocalDateTime fechaEnvioEstimada;
+    /** Lista de productos incluidos en esta transferencia. */
+    @Builder.Default
+    @OneToMany(mappedBy = "transferencia", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DetalleTransferencia> detalles = new ArrayList<>();
 
-    @Column(name = "fecha_recepcion_real")
-    private LocalDateTime fechaRecepcionReal;
-
-    @Column(name = "cantidad_confirmada", precision = 12, scale = 2)
-    private java.math.BigDecimal cantidadConfirmada;
-
-    @Column(name = "cantidad_recibida", precision = 12, scale = 2)
-    private java.math.BigDecimal cantidadRecibida;
+    /** Información logística asociada al envío de esta transferencia. */
+    @OneToOne(mappedBy = "transferencia", cascade = CascadeType.ALL)
+    private Envio envio;
 }
-
-
-
-
