@@ -4,13 +4,29 @@ services:
   mysql:
     image: mysql:8.0
     container_name: inventory_db
+    restart: always
     environment:
-      MYSQL_DATABASE: inventory_db
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: optiplant_db
+      MYSQL_ROOT_PASSWORD: 12345
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+
+  backend:
+    build: .
+    container_name: inventory_backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+      - kafka
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/optiplant_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=12345
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.4.0
@@ -31,7 +47,9 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT_INTERNAL
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
 volumes:
