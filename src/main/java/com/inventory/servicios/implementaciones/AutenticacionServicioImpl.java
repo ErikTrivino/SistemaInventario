@@ -43,7 +43,7 @@ public class AutenticacionServicioImpl implements AutenticacionServicio {
         Usuario user = obtenerPorEmail(loginDTO.correo());
 
         // Verificar contraseña con BCrypt
-        if (!passwordEncoder.matches(loginDTO.password(), user.getPassword())) {
+        if (!passwordEncoder.matches(loginDTO.password(), user.getContrasena())) {
             throw new Exception("La contraseña es incorrecta");
         }
 
@@ -51,7 +51,7 @@ public class AutenticacionServicioImpl implements AutenticacionServicio {
         Map<String, Object> claims = construirClaims(user);
 
         // Generar y retornar el token JWT
-        return new TokenDTO(jwtUtils.generarToken(user.getEmail(), claims));
+        return new TokenDTO(jwtUtils.generarToken(user.getCorreo(), claims));
     }
 
     /**
@@ -61,15 +61,15 @@ public class AutenticacionServicioImpl implements AutenticacionServicio {
     @Override
     public String registrarUsuario(RegistroUsuarioDTO dto) throws Exception {
         // Verificar que el correo no esté ya registrado
-        if (userRepository.findByEmail(dto.correo()).isPresent()) {
+        if (userRepository.findByCorreo(dto.correo()).isPresent()) {
             throw new Exception("Ya existe un usuario registrado con el correo " + dto.correo());
         }
 
         // Crear el nuevo usuario
         Usuario nuevoUsuario = Usuario.builder()
                 .nombre(dto.nombre())
-                .email(dto.correo())
-                .password(passwordEncoder.encode(dto.password()))
+                .correo(dto.correo())
+                .contrasena(passwordEncoder.encode(dto.password()))
                 .rol(dto.rol())
                 .build();
 
@@ -97,7 +97,7 @@ public class AutenticacionServicioImpl implements AutenticacionServicio {
      * Obtiene un usuario por su correo, lanzando excepción si no existe.
      */
     private Usuario obtenerPorEmail(String email) throws Exception {
-        Optional<Usuario> userOptional = userRepository.findByEmail(email);
+        Optional<Usuario> userOptional = userRepository.findByCorreo(email);
 
         if (userOptional.isEmpty()) {
             throw new Exception("No existe un usuario registrado con el correo " + email);

@@ -25,15 +25,15 @@ public class UsuarioService {
 
     @Transactional
     public UsuarioResponseDTO crearUsuario(UsuarioRequestDTO request) {
-        if (usuarioRepositorio.findByEmail(request.getEmail()).isPresent()) {
+        if (usuarioRepositorio.findByCorreo(request.getEmail()).isPresent()) {
             throw new RuntimeException("El correo electrónico ya está registrado.");
         }
 
         Usuario usuario = Usuario.builder()
                 .nombre(request.getNombre())
                 .apellido(request.getApellido())
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
+                .correo(request.getEmail())
+                .contrasena(passwordEncoder.encode(request.getPassword()))
                 .rol(request.getRol())
                 .sucursalAsignadaId(request.getSucursalAsignadaId())
                 .activo(true)
@@ -49,7 +49,7 @@ public class UsuarioService {
     }
 
     public UsuarioResponseDTO consultarPorEmail(String email) {
-        Usuario usuario = usuarioRepositorio.findByEmail(email)
+        Usuario usuario = usuarioRepositorio.findByCorreo(email)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado."));
         return mapToDTO(usuario);
     }
@@ -109,7 +109,7 @@ public class UsuarioService {
                 .id(usuario.getId())
                 .nombre(usuario.getNombre())
                 .apellido(usuario.getApellido())
-                .email(usuario.getEmail())
+                .email(usuario.getCorreo())
                 .rol(usuario.getRol())
                 .sucursalAsignadaId(usuario.getSucursalAsignadaId())
                 .activo(usuario.getActivo())

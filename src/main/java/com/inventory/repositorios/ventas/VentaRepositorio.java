@@ -11,28 +11,28 @@ import java.util.List;
 
 @Repository
 public interface VentaRepositorio extends JpaRepository<Venta, Long> {
-    List<Venta> findByBranchId(Long branchId);
-    List<Venta> findByCreatedAtBetween(Date start, Date end);
+    List<Venta> findBySucursalId(Long sucursalId);
+    List<Venta> findByFechaVentaBetween(Date start, Date end);
 
     /** RF-24: Cuenta ventas del día actual. */
-    @Query("SELECT COUNT(v) FROM Venta v WHERE DATE(v.createdAt) = CURRENT_DATE")
+    @Query("SELECT COUNT(v) FROM Venta v WHERE DATE(v.fechaVenta) = CURRENT_DATE")
     long countVentasHoy();
 
     /** RF-24: Suma total de ingresos del día actual. */
-    @Query("SELECT COALESCE(SUM(v.total), 0) FROM Venta v WHERE DATE(v.createdAt) = CURRENT_DATE")
+    @Query("SELECT COALESCE(SUM(v.total), 0) FROM Venta v WHERE DATE(v.fechaVenta) = CURRENT_DATE")
     BigDecimal sumIngresoHoy();
 
     /** RF-29: Total de ventas por período. */
-    @Query("SELECT COUNT(v) FROM Venta v WHERE v.createdAt BETWEEN :start AND :end")
+    @Query("SELECT COUNT(v) FROM Venta v WHERE v.fechaVenta BETWEEN :start AND :end")
     long countByPeriodo(@Param("start") Date start, @Param("end") Date end);
 
     /** RF-29: Suma de ingresos por período. */
-    @Query("SELECT COALESCE(SUM(v.total), 0) FROM Venta v WHERE v.createdAt BETWEEN :start AND :end")
+    @Query("SELECT COALESCE(SUM(v.total), 0) FROM Venta v WHERE v.fechaVenta BETWEEN :start AND :end")
     BigDecimal sumIngresoPeriodo(@Param("start") Date start, @Param("end") Date end);
 
     /** RF-29: Ventas agrupadas por sucursal en un período. */
-    @Query("SELECT v.branchId, COUNT(v), COALESCE(SUM(v.total), 0) " +
-           "FROM Venta v WHERE v.createdAt BETWEEN :start AND :end GROUP BY v.branchId")
+    @Query("SELECT v.sucursalId, COUNT(v), COALESCE(SUM(v.total), 0) " +
+           "FROM Venta v WHERE v.fechaVenta BETWEEN :start AND :end GROUP BY v.sucursalId")
     List<Object[]> findVentasPorSucursalYPeriodo(@Param("start") Date start, @Param("end") Date end);
 
     /** RF-31: Ventas agrupadas por mes y año para comparativas. */
@@ -41,6 +41,3 @@ public interface VentaRepositorio extends JpaRepository<Venta, Long> {
            nativeQuery = true)
     List<Object[]> findVentasMensualesPorAnio(@Param("anio") int anio);
 }
-
-
-

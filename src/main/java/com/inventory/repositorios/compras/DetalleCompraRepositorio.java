@@ -9,20 +9,20 @@
         List<DetalleCompra> findByOrdenCompraId(Long ordenCompraId);
         
         @org.springframework.data.jpa.repository.Query("SELECT new com.inventory.modelo.dto.compras.CompraHistoricoRespuestaDTO(" +
-               "o.id, p.id, p.name, prov.id, prov.name, d.cantidadSolicitada, d.cantidadRecibida, d.precioUnitario, o.purchaseDate" +
+               "o.id, p.id, p.nombre, prov.id, prov.razonSocial, d.cantidadSolicitada, d.cantidadRecibida, d.precioUnitario, o.fechaCompra" +
                ") FROM DetalleCompra d " +
                "JOIN OrdenCompra o ON d.ordenCompraId = o.id " +
-               "JOIN Producto p ON d.productId = p.id " +
-               "JOIN Proveedor prov ON o.supplierId = prov.id " +
-               "WHERE (:supplierId IS NULL OR prov.id = :supplierId) " +
-               "AND (:productId IS NULL OR p.id = :productId) " +
-               "AND (:startDate IS NULL OR o.purchaseDate >= :startDate) " +
-               "AND (:endDate IS NULL OR o.purchaseDate <= :endDate)")
+               "JOIN Producto p ON d.productoId = p.id " +
+               "JOIN Proveedor prov ON o.proveedorId = prov.id " +
+               "WHERE (:proveedorId IS NULL OR prov.id = :proveedorId) " +
+               "AND (:productoId IS NULL OR p.id = :productoId) " +
+               "AND (:fechaInicio IS NULL OR o.fechaCompra >= :fechaInicio) " +
+               "AND (:fechaFin IS NULL OR o.fechaCompra <= :fechaFin)")
         List<com.inventory.modelo.dto.compras.CompraHistoricoRespuestaDTO> findHistoricalPurchases(
-            @org.springframework.data.repository.query.Param("supplierId") Long supplierId,
-            @org.springframework.data.repository.query.Param("productId") Long productId,
-            @org.springframework.data.repository.query.Param("startDate") java.time.LocalDateTime startDate,
-            @org.springframework.data.repository.query.Param("endDate") java.time.LocalDateTime endDate
+            @org.springframework.data.repository.query.Param("proveedorId") Long proveedorId,
+            @org.springframework.data.repository.query.Param("productoId") Long productoId,
+            @org.springframework.data.repository.query.Param("fechaInicio") java.time.LocalDateTime fechaInicio,
+            @org.springframework.data.repository.query.Param("fechaFin") java.time.LocalDateTime fechaFin
         );
     }
 

@@ -6,20 +6,20 @@
 
     @Repository
     public interface TransferenciaRepositorio extends JpaRepository<Transferencia, Long> {
-        List<Transferencia> findByOriginBranchId(Long branchId);
-        List<Transferencia> findByDestinationBranchId(Long branchId);
-        List<Transferencia> findByStatus(String status);
+        List<Transferencia> findBySucursalOrigenId(Long sucursalId);
+        List<Transferencia> findBySucursalDestinoId(Long sucursalId);
+        List<Transferencia> findByEstado(String estado);
         
         @org.springframework.data.jpa.repository.Query("SELECT t FROM Transferencia t " +
-               "WHERE (:branchId IS NULL OR t.originBranchId = :branchId OR t.destinationBranchId = :branchId) " +
-               "AND (:status IS NULL OR t.status = :status) " +
-               "AND (:startDate IS NULL OR t.requestDate >= :startDate) " +
-               "AND (:endDate IS NULL OR t.requestDate <= :endDate)")
+               "WHERE (:sucursalId IS NULL OR t.sucursalOrigenId = :sucursalId OR t.sucursalDestinoId = :sucursalId) " +
+               "AND (:estado IS NULL OR t.estado = :estado) " +
+               "AND (:fechaInicio IS NULL OR t.fechaSolicitud >= :fechaInicio) " +
+               "AND (:fechaFin IS NULL OR t.fechaSolicitud <= :fechaFin)")
         List<Transferencia> findHistoricalTransfers(
-            @org.springframework.data.repository.query.Param("branchId") Long branchId,
-            @org.springframework.data.repository.query.Param("status") String status,
-            @org.springframework.data.repository.query.Param("startDate") java.time.LocalDateTime startDate,
-            @org.springframework.data.repository.query.Param("endDate") java.time.LocalDateTime endDate
+            @org.springframework.data.repository.query.Param("sucursalId") Long sucursalId,
+            @org.springframework.data.repository.query.Param("estado") String estado,
+            @org.springframework.data.repository.query.Param("fechaInicio") java.time.LocalDateTime fechaInicio,
+            @org.springframework.data.repository.query.Param("fechaFin") java.time.LocalDateTime fechaFin
         );
     }
 

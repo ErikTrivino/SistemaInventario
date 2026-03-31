@@ -1,12 +1,14 @@
 package com.inventory.modelo.dto.transferencias;
 
-import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import java.math.BigDecimal;
+import java.util.List;
 
+/**
+ * DTO para la creación de una transferencia que incluye múltiples productos.
+ */
 public record TransferenciaCrearDTO(
         @NotNull Long idSucursalOrigen,
         @NotNull Long idSucursalDestino,
-        @NotNull Long idProducto,
-        @NotNull @DecimalMin("1.00") BigDecimal cantidadSolicitada
+        @NotEmpty List<ItemTransferenciaDTO> items
 ) {}

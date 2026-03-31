@@ -20,7 +20,7 @@ public class DetalleCompra {
     private Long ordenCompraId;
 
     @Column(name = "id_producto", nullable = false)
-    private Long productId;
+    private Long productoId;
 
     @Column(name = "cantidad_solicitada", nullable = false, precision = 12, scale = 2)
     private java.math.BigDecimal cantidadSolicitada;

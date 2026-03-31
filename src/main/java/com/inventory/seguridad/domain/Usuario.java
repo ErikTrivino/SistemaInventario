@@ -7,7 +7,7 @@ import lombok.*;
 /**
  * Entidad que representa un usuario del sistema de inventario.
  *
- * El campo {@code email} es el identificador principal para autenticación
+ * El campo {@code correo} es el identificador principal para autenticación
  * (subject del JWT), siguiendo el patrón de Back-EventosClick.
  * El campo {@code rol} determina qué prefijos de ruta puede acceder:
  * - ADMIN → /api/admin/**
@@ -38,11 +38,11 @@ public class Usuario {
 
     /** Correo electrónico — identificador único para login y subject del JWT. */
     @Column(name = "email", unique = true, nullable = false)
-    private String email;
+    private String correo;
 
     /** Contraseña hasheada con BCrypt. */
     @Column(name = "password_hash", nullable = false)
-    private String password;
+    private String contrasena;
 
     /** Rol que determina el nivel de acceso a las rutas del API. */
     @Convert(converter = ConversorRol.class)

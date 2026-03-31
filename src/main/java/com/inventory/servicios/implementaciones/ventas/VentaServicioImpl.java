@@ -31,7 +31,7 @@ public class VentaServicioImpl implements VentaServicio {
 
     @Override
     public ValidacionStockDTO validateStock(Long productId, Long branchId, BigDecimal quantity) {
-        Inventario inv = inventoryRepository.findByProductIdAndBranchId(productId, branchId).orElse(null);
+        Inventario inv = inventoryRepository.findByProductoIdAndSucursalId(productId, branchId).orElse(null);
         BigDecimal stock = inv != null ? inv.getStock() : BigDecimal.ZERO;
         
         return new ValidacionStockDTO(
@@ -100,19 +100,19 @@ public class VentaServicioImpl implements VentaServicio {
         }
 
         eventPublisher.publishSale(saved);
-        auditService.logAction(userId, "CREATE", "Venta", saved.getId(), "Comercialización procesada");
+        auditService.registrarAccion(userId.toString(), "CREATE", "Venta", saved.getId(), "Comercialización procesada");
         
         return toInfo(saved);
     }
 
     @Override
     public List<VentaInformacionDTO> getSalesByBranch(Long branchId) {
-        return saleRepository.findByBranchId(branchId).stream().map(this::toInfo).toList();
+        return saleRepository.findBySucursalId(branchId).stream().map(this::toInfo).toList();
     }
 
     @Override
     public List<VentaInformacionDTO> getSalesByDateRange(Date start, Date end) {
-        return saleRepository.findByCreatedAtBetween(start, end).stream().map(this::toInfo).toList();
+        return saleRepository.findByFechaVentaBetween(start, end).stream().map(this::toInfo).toList();
     }
 
     private VentaInformacionDTO toInfo(Venta sale) {

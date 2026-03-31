@@ -6,12 +6,14 @@ import com.inventory.repositorios.ventas.VentaRepositorio;
 import com.inventory.repositorios.ventas.DetalleVentaRepositorio;
 import com.inventory.repositorios.inventario.InventarioRepositorio;
 import com.inventory.repositorios.transferencias.TransferenciaRepositorio;
+import com.inventory.modelo.entidades.transferencias.DetalleTransferencia;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Month;
 import java.time.format.TextStyle;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -71,21 +73,35 @@ public class ReporteServicioImpl implements ReporteServicio {
     /** RF-29/RF-30: Reporte de transferencias por período. */
     @Override
     public ReporteTransferenciasDTO generarReporteTransferencias(Date inicio, Date fin) {
-        var todas = transferenciaRepositorio.findHistoricalTransfers(null, null,
-                inicio != null ? inicio.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDateTime() : null,
-                fin != null ? fin.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDateTime() : null);
+        LocalDateTime start = inicio != null ? inicio.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDateTime() : null;
+        LocalDateTime end = fin != null ? fin.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDateTime() : null;
+        
+        var todas = transferenciaRepositorio.findHistoricalTransfers(null, null, start, end);
 
         long completadas = todas.stream().filter(t -> "RECIBIDO".equals(t.getEstado())).count();
         long discrepancias = todas.stream().filter(t -> "FALTANTES".equals(t.getEstado())).count();
         long pendientes = todas.stream().filter(t -> "SOLICITADO".equals(t.getEstado()) || "PREPARADO".equals(t.getEstado())).count();
 
-        List<ItemTransferenciaDTO> detalle = todas.stream().map(t -> new ItemTransferenciaDTO(
-                t.getId(), t.getSucursalOrigenId(), t.getSucursalDestinoId(), t.getProductoId(),
-                t.getCantidad(), t.getCantidadRecibida(), t.getEstado(),
-                t.getFechaSolicitud(), t.getFechaRecepcionReal()
-        )).collect(Collectors.toList());
+        // Mapeo detallado: una transferencia puede tener múltiples productos
+        List<ItemTransferenciaDTO> detalleFormatted = new ArrayList<>();
+        
+        todas.forEach(t -> {
+            for (DetalleTransferencia det : t.getDetalles()) {
+                detalleFormatted.add(new ItemTransferenciaDTO(
+                    t.getId(), 
+                    t.getSucursalOrigenId(), 
+                    t.getSucursalDestinoId(), 
+                    det.getProductoId(),
+                    det.getCantidadSolicitada(), 
+                    det.getCantidadRecibida() != null ? det.getCantidadRecibida() : BigDecimal.ZERO, 
+                    t.getEstado(),
+                    t.getFechaSolicitud(), 
+                    t.getEnvio() != null ? t.getEnvio().getFechaRecepcionReal() : null
+                ));
+            }
+        });
 
-        return new ReporteTransferenciasDTO(inicio, fin, todas.size(), completadas, discrepancias, pendientes, detalle);
+        return new ReporteTransferenciasDTO(inicio, fin, todas.size(), completadas, discrepancias, pendientes, detalleFormatted);
     }
 
     /** RF-31: Comparativo mensual de ventas por año. */
@@ -148,6 +164,3 @@ public class ReporteServicioImpl implements ReporteServicio {
         return new ReporteRotacionDTO(anio, mes, items);
     }
 }
-
-
-

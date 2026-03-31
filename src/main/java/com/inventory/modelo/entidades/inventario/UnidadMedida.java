@@ -17,19 +17,19 @@ public class UnidadMedida {
     private Long id;
 
     @Column(name = "nombre", nullable = false, length = 100)
-    private String name;
+    private String nombre;
 
     @Column(name = "abreviatura", nullable = false, length = 20)
-    private String abbreviation;
+    private String abreviatura;
 
     @Column(name = "id_producto")
-    private Long productId;
+    private Long productoId;
 
     @Column(name = "es_unidad_base", nullable = false)
     @Builder.Default
-    private Boolean isBaseUnit = false;
+    private Boolean esUnidadBase = false;
 
     @Column(name = "factor_conversion", nullable = false, precision = 10, scale = 4)
     @Builder.Default
-    private java.math.BigDecimal conversionFactor = java.math.BigDecimal.ONE;
+    private java.math.BigDecimal factorConversion = java.math.BigDecimal.ONE;
 }

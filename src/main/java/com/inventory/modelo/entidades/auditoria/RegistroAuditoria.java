@@ -19,21 +19,17 @@ public class RegistroAuditoria {
     private Long id;
     
     @Column(name = "nombre_usuario", nullable = false)
-    private String user;
+    private String usuario;
     
     @Column(name = "accion", nullable = false)
-    private String action; // CREATE, UPDATE, DELETE
+    private String accion; // CREATE, UPDATE, DELETE
     
     @Column(name = "entidad", nullable = false)
-    private String entity;
+    private String entidad;
     
     @Column(name = "fecha_hora", nullable = false)
-    private LocalDateTime timestamp;
+    private LocalDateTime fechaHora;
     
     @Column(name = "detalles", columnDefinition = "TEXT")
-    private String details;
+    private String detalles;
 }
-
-
-
-

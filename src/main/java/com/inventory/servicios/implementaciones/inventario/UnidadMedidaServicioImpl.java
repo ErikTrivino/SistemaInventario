@@ -16,17 +16,17 @@ public class UnidadMedidaServicioImpl implements UnidadMedidaServicio {
     @Override
     public UnidadMedida create(UnidadMedidaCrearDTO dto) {
         UnidadMedida um = new UnidadMedida();
-        um.setName(dto.nombre());
-        um.setAbbreviation(dto.abreviatura());
-        um.setProductId(dto.idProducto());
-        um.setIsBaseUnit(dto.esUnidadBase() != null ? dto.esUnidadBase() : false);
-        um.setConversionFactor(dto.factorConversion());
+        um.setNombre(dto.nombre());
+        um.setAbreviatura(dto.abreviatura());
+        um.setProductoId(dto.idProducto());
+        um.setEsUnidadBase(dto.esUnidadBase() != null ? dto.esUnidadBase() : false);
+        um.setFactorConversion(dto.factorConversion());
         return repository.save(um);
     }
     
     @Override
     public List<UnidadMedida> getByProductId(Long productId) {
-        return repository.findByProductId(productId);
+        return repository.findByProductoId(productId);
     }
 
     @Override

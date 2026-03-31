@@ -12,7 +12,7 @@ public interface UsuarioRepositorio extends JpaRepository<Usuario, Long> {
     /**
      * Busca un usuario por su correo electrónico.
      */
-    Optional<Usuario> findByEmail(String email);
+    Optional<Usuario> findByCorreo(String correo);
 
     /**
      * Filtra usuarios por sucursal persistida (RF-58).

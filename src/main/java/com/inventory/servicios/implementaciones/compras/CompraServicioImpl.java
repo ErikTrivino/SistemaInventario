@@ -60,7 +60,7 @@ public class CompraServicioImpl implements CompraServicio {
         for (DetalleCompraCrearDTO item : dto.detalles()) {
             DetalleCompra d = new DetalleCompra();
             d.setOrdenCompraId(saved.getId());
-            d.setProductId(item.idProducto());
+            d.setProductoId(item.idProducto());
             d.setCantidadSolicitada(item.cantidad());
             d.setCantidadRecibida(BigDecimal.ZERO);
             d.setPrecioUnitario(item.precioUnitario());
@@ -68,7 +68,7 @@ public class CompraServicioImpl implements CompraServicio {
             purchaseDetailRepository.save(d);
         }
 
-        auditService.logAction(userId, "CREATE", "OrdenCompra", saved.getId(), "Created PO");
+        auditService.registrarAccion(userId.toString(), "CREATE", "OrdenCompra", saved.getId(), "Created PO");
         return toInfo(saved);
     }
 
@@ -95,7 +95,7 @@ public class CompraServicioImpl implements CompraServicio {
 
             if (recDto.cantidadRecibida().compareTo(BigDecimal.ZERO) > 0) {
                 inventoryService.updateStock(
-                    detalle.getProductId(),
+                    detalle.getProductoId(),
                     dto.idSucursalDestino(),
                     recDto.cantidadRecibida().doubleValue(),
                     "IN",
@@ -106,7 +106,7 @@ public class CompraServicioImpl implements CompraServicio {
 
         order.setEstado("Recibido");
         purchaseOrderRepository.save(order);
-        auditService.logAction(1L, "RECEIVE", "OrdenCompra", order.getId(), "Received PO details and updated stock atomically.");
+        auditService.registrarAccion("1", "RECEIVE", "OrdenCompra", order.getId(), "Received PO details and updated stock atomically.");
     }
 
     @Override

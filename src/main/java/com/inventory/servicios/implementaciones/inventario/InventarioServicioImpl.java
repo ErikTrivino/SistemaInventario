@@ -43,9 +43,11 @@
             Producto saved = productRepository.save(product);
             
             if (dto.cantidadInicial() != null && dto.cantidadInicial().compareTo(java.math.BigDecimal.ZERO) > 0 && dto.idSucursal() != null) {
+                com.inventory.modelo.entidades.nucleo.Sucursal sucursal = com.inventory.modelo.entidades.nucleo.Sucursal.builder().id(dto.idSucursal()).build();
+                
                 Inventario inventario = Inventario.builder()
-                        .productoId(saved.getId())
-                        .sucursalId(dto.idSucursal())
+                        .producto(saved)
+                        .sucursal(sucursal)
                         .stock(dto.cantidadInicial())
                         .stockMinimo(java.math.BigDecimal.ZERO)
                         .build();
@@ -62,7 +64,7 @@
                 movementRepository.save(movement);
             }
 
-            auditService.logAction(1L, "CREATE", "Producto", saved.getId(), "Created product");
+            auditService.registrarAccion("1", "CREATE", "Producto", saved.getId(), "Created product");
             return toDetalleDTO(saved);
         }
 
@@ -91,13 +93,13 @@
 
         @Override
         public List<InventarioInformacionDTO> getInventoryByBranch(Long branchId) {
-            return inventoryRepository.findByBranchId(branchId).stream().map(this::toInventarioInformacion).toList();
+            return inventoryRepository.findBySucursalId(branchId).stream().map(this::toInventarioInformacion).toList();
         }
 
         @Override
         @Transactional
         public void updateStock(Long productId, Long branchId, Double quantity, String type, String reason) {
-            Inventario inv = inventoryRepository.findByProductIdAndBranchId(productId, branchId)
+            Inventario inv = inventoryRepository.findByProductoIdAndSucursalId(productId, branchId)
                     .orElseThrow(() -> new RuntimeException("Inventario not found"));
 
             java.math.BigDecimal amount = java.math.BigDecimal.valueOf(quantity);
@@ -128,7 +130,7 @@
                 eventPublisher.publishStockUpdate(inv);
             }
 
-            auditService.logAction(1L, "UPDATE_STOCK", "Inventario", inv.getProductoId(), "Stock updated: " + quantity);
+            auditService.registrarAccion("1", "UPDATE_STOCK", "Inventario", inv.getProductoId(), "Stock updated: " + quantity);
         }
 
         @Override

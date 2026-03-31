@@ -21,7 +21,7 @@ public class ProveedorServicioImpl implements ProveedorServicio {
     @Override
     @Transactional
     public ProveedorInformacionDTO createSupplier(ProveedorCrearDTO dto) {
-        if (supplierRepository.findByTaxId(dto.nitRut()).isPresent()) {
+        if (supplierRepository.findByNitRut(dto.nitRut()).isPresent()) {
             throw new RuntimeException("Ya existe un proveedor con el NIT/RUT: " + dto.nitRut());
         }
         Proveedor supplier = Proveedor.builder()
@@ -97,14 +97,14 @@ public class ProveedorServicioImpl implements ProveedorServicio {
     /** RF-39 / RF-43: Historial de precios pactados con un proveedor (fluctuación de precios). */
     @Override
     public List<ProductoProveedorInformacionDTO> getListaPreciosPorProveedor(Long supplierId) {
-        return supplierProductRepository.findBySupplierId(supplierId).stream()
+        return supplierProductRepository.findByProveedorId(supplierId).stream()
                 .map(this::toPPInfo).toList();
     }
 
     /** RF-39: Lista de precios disponibles para un producto (todos sus proveedores). */
     @Override
     public List<ProductoProveedorInformacionDTO> getListaPreciosPorProducto(Long productId) {
-        return supplierProductRepository.findByProductId(productId).stream()
+        return supplierProductRepository.findByProductoId(productId).stream()
                 .map(this::toPPInfo).toList();
     }
 

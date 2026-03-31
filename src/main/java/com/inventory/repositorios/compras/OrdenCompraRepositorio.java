@@ -6,9 +6,9 @@
 
     @Repository
     public interface OrdenCompraRepositorio extends JpaRepository<OrdenCompra, Long> {
-        List<OrdenCompra> findBySupplierId(Long supplierId);
-        List<OrdenCompra> findByBranchId(Long branchId);
-        List<OrdenCompra> findByStatus(String status);
+        List<OrdenCompra> findByProveedorId(Long proveedorId);
+        List<OrdenCompra> findBySucursalDestinoId(Long sucursalDestinoId);
+        List<OrdenCompra> findByEstado(String estado);
     }
 
 
