@@ -76,7 +76,8 @@ public class ReporteServicioImpl implements ReporteServicio {
         LocalDateTime start = inicio != null ? inicio.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDateTime() : null;
         LocalDateTime end = fin != null ? fin.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDateTime() : null;
         
-        var todas = transferenciaRepositorio.findHistoricalTransfers(null, null, start, end);
+        org.springframework.data.domain.Pageable unpaged = org.springframework.data.domain.Pageable.unpaged();
+        var todas = transferenciaRepositorio.findHistoricalTransfers(null, null, start, end, unpaged).getContent();
 
         long completadas = todas.stream().filter(t -> "RECIBIDO".equals(t.getEstado())).count();
         long discrepancias = todas.stream().filter(t -> "FALTANTES".equals(t.getEstado())).count();

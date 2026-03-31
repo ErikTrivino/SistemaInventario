@@ -3,6 +3,8 @@
     import org.springframework.data.jpa.repository.JpaRepository;
     import org.springframework.stereotype.Repository;
     import java.util.List;
+    import org.springframework.data.domain.Page;
+    import org.springframework.data.domain.Pageable;
 
     @Repository
     public interface TransferenciaRepositorio extends JpaRepository<Transferencia, Long> {
@@ -15,11 +17,12 @@
                "AND (:estado IS NULL OR t.estado = :estado) " +
                "AND (:fechaInicio IS NULL OR t.fechaSolicitud >= :fechaInicio) " +
                "AND (:fechaFin IS NULL OR t.fechaSolicitud <= :fechaFin)")
-        List<Transferencia> findHistoricalTransfers(
+        Page<Transferencia> findHistoricalTransfers(
             @org.springframework.data.repository.query.Param("sucursalId") Long sucursalId,
             @org.springframework.data.repository.query.Param("estado") String estado,
             @org.springframework.data.repository.query.Param("fechaInicio") java.time.LocalDateTime fechaInicio,
-            @org.springframework.data.repository.query.Param("fechaFin") java.time.LocalDateTime fechaFin
+            @org.springframework.data.repository.query.Param("fechaFin") java.time.LocalDateTime fechaFin,
+            Pageable pageable
         );
     }
 

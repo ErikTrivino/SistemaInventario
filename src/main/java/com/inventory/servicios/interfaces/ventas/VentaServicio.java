@@ -3,14 +3,14 @@
     import com.inventory.modelo.dto.ventas.VentaInformacionDTO;
     import com.inventory.modelo.dto.ventas.ValidacionStockDTO;
     import java.util.Date;
-    import java.util.List;
     import java.math.BigDecimal;
+    import org.springframework.data.domain.Page;
 
     public interface VentaServicio {
         ValidacionStockDTO validateStock(Long productId, Long branchId, BigDecimal quantity);
         VentaInformacionDTO createSale(VentaCrearDTO dto, Long userId);
-        List<VentaInformacionDTO> getSalesByBranch(Long branchId);
-        List<VentaInformacionDTO> getSalesByDateRange(Date start, Date end);
+        Page<VentaInformacionDTO> getSalesByBranch(Long branchId, Integer pagina, Integer porPagina);
+        Page<VentaInformacionDTO> getSalesByDateRange(Date start, Date end, Integer pagina, Integer porPagina);
     }
 
 

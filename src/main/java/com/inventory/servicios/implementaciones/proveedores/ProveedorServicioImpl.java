@@ -9,8 +9,9 @@ import com.inventory.repositorios.proveedores.ProductoProveedorRepositorio;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 @Service
 @RequiredArgsConstructor
 public class ProveedorServicioImpl implements ProveedorServicio {
@@ -57,14 +58,18 @@ public class ProveedorServicioImpl implements ProveedorServicio {
 
     /** RF-38: Listar solo proveedores activos. */
     @Override
-    public List<ProveedorInformacionDTO> getSuppliers() {
-        return supplierRepository.findByActivoTrue().stream().map(this::toInfo).toList();
+    public Page<ProveedorInformacionDTO> getSuppliers(Integer pagina, Integer porPagina) {
+        int page = (pagina != null) ? pagina : 0;
+        int size = (porPagina != null && porPagina > 0) ? porPagina : 10;
+        return supplierRepository.findByActivoTrue(PageRequest.of(page, size)).map(this::toInfo);
     }
 
     /** RF-38: Listar todos los proveedores (activos e inactivos). */
     @Override
-    public List<ProveedorInformacionDTO> getAllSuppliers() {
-        return supplierRepository.findAll().stream().map(this::toInfo).toList();
+    public Page<ProveedorInformacionDTO> getAllSuppliers(Integer pagina, Integer porPagina) {
+        int page = (pagina != null) ? pagina : 0;
+        int size = (porPagina != null && porPagina > 0) ? porPagina : 10;
+        return supplierRepository.findAll(PageRequest.of(page, size)).map(this::toInfo);
     }
 
     /** RF-39: Registrar condiciones de precio y lead-time para un producto-proveedor. */
@@ -96,16 +101,20 @@ public class ProveedorServicioImpl implements ProveedorServicio {
 
     /** RF-39 / RF-43: Historial de precios pactados con un proveedor (fluctuación de precios). */
     @Override
-    public List<ProductoProveedorInformacionDTO> getListaPreciosPorProveedor(Long supplierId) {
-        return supplierProductRepository.findByProveedorId(supplierId).stream()
-                .map(this::toPPInfo).toList();
+    public Page<ProductoProveedorInformacionDTO> getListaPreciosPorProveedor(Long supplierId, Integer pagina, Integer porPagina) {
+        int page = (pagina != null) ? pagina : 0;
+        int size = (porPagina != null && porPagina > 0) ? porPagina : 10;
+        return supplierProductRepository.findByProveedorId(supplierId, PageRequest.of(page, size))
+                .map(this::toPPInfo);
     }
 
     /** RF-39: Lista de precios disponibles para un producto (todos sus proveedores). */
     @Override
-    public List<ProductoProveedorInformacionDTO> getListaPreciosPorProducto(Long productId) {
-        return supplierProductRepository.findByProductoId(productId).stream()
-                .map(this::toPPInfo).toList();
+    public Page<ProductoProveedorInformacionDTO> getListaPreciosPorProducto(Long productId, Integer pagina, Integer porPagina) {
+        int page = (pagina != null) ? pagina : 0;
+        int size = (porPagina != null && porPagina > 0) ? porPagina : 10;
+        return supplierProductRepository.findByProductoId(productId, PageRequest.of(page, size))
+                .map(this::toPPInfo);
     }
 
     /** RF-41/RF-42: Calcular KPI de cumplimiento (recepciones a tiempo vs. total). */

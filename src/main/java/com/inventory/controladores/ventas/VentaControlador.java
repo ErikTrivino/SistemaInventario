@@ -32,13 +32,20 @@
         }
 
         @GetMapping({"/sucursal/{id}", "/branch/{id}"})
-        public ResponseEntity<MensajeDTO<Object>> getSalesByBranch(@PathVariable Long id) { 
-            return ResponseEntity.ok(new MensajeDTO<>(false, saleService.getSalesByBranch(id))); 
+        public ResponseEntity<MensajeDTO<Object>> getSalesByBranch(
+                @PathVariable Long id,
+                @RequestParam(required = false, defaultValue = "10") Integer porPagina,
+                @RequestParam(required = false) Integer pagina) { 
+            return ResponseEntity.ok(new MensajeDTO<>(false, saleService.getSalesByBranch(id, pagina, porPagina))); 
         }
 
         @GetMapping({"/rango-fechas", "/date-range"})
-        public ResponseEntity<MensajeDTO<Object>> getSalesByDateRange(@RequestParam @DateTimeFormat(pattern="yyyy-MM-dd") Date start, @RequestParam @DateTimeFormat(pattern="yyyy-MM-dd") Date end) {
-            return ResponseEntity.ok(new MensajeDTO<>(false, saleService.getSalesByDateRange(start, end)));
+        public ResponseEntity<MensajeDTO<Object>> getSalesByDateRange(
+                @RequestParam @DateTimeFormat(pattern="yyyy-MM-dd") Date start, 
+                @RequestParam @DateTimeFormat(pattern="yyyy-MM-dd") Date end,
+                @RequestParam(required = false, defaultValue = "10") Integer porPagina,
+                @RequestParam(required = false) Integer pagina) {
+            return ResponseEntity.ok(new MensajeDTO<>(false, saleService.getSalesByDateRange(start, end, pagina, porPagina)));
         }
     }
 

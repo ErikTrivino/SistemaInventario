@@ -1,20 +1,20 @@
 package com.inventory.servicios.interfaces.proveedores;
 
 import com.inventory.modelo.dto.proveedores.*;
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 public interface ProveedorServicio {
     /** RF-38 */
     ProveedorInformacionDTO createSupplier(ProveedorCrearDTO dto);
     ProveedorInformacionDTO updateSupplier(Long id, ProveedorEditarDTO dto);
     ProveedorInformacionDTO toggleActivo(Long id);
-    List<ProveedorInformacionDTO> getSuppliers();
-    List<ProveedorInformacionDTO> getAllSuppliers();
+    Page<ProveedorInformacionDTO> getSuppliers(Integer pagina, Integer porPagina);
+    Page<ProveedorInformacionDTO> getAllSuppliers(Integer pagina, Integer porPagina);
 
     /** RF-39 */
     ProductoProveedorInformacionDTO registrarListaPrecio(ProductoProveedorDTO dto);
-    List<ProductoProveedorInformacionDTO> getListaPreciosPorProveedor(Long supplierId);
-    List<ProductoProveedorInformacionDTO> getListaPreciosPorProducto(Long productId);
+    Page<ProductoProveedorInformacionDTO> getListaPreciosPorProveedor(Long supplierId, Integer pagina, Integer porPagina);
+    Page<ProductoProveedorInformacionDTO> getListaPreciosPorProducto(Long productId, Integer pagina, Integer porPagina);
 
     /** RF-41/RF-42 */
     CumplimientoProveedorDTO calcularCumplimiento(Long supplierId);

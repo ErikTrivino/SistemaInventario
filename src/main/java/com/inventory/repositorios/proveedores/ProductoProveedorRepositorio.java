@@ -8,10 +8,13 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 @Repository
 public interface ProductoProveedorRepositorio extends JpaRepository<ProductoProveedor, Long> {
-    List<ProductoProveedor> findByProveedorId(Long proveedorId);
-    List<ProductoProveedor> findByProductoId(Long productoId);
+    Page<ProductoProveedor> findByProveedorId(Long proveedorId, Pageable pageable);
+    Page<ProductoProveedor> findByProductoId(Long productoId, Pageable pageable);
 
     /**
      * RF-41/RF-42: KPI de cumplimiento de proveedor.

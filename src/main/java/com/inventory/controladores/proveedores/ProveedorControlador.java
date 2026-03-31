@@ -18,15 +18,19 @@ public class ProveedorControlador {
     /** RF-38: Listar proveedores activos. */
     @GetMapping
     @PreAuthorize("hasAnyRole('OPERADOR', 'GERENTE', 'ADMIN')")
-    public ResponseEntity<MensajeDTO<Object>> listar() {
-        return ResponseEntity.ok(new MensajeDTO<>(false, proveedorServicio.getSuppliers()));
+    public ResponseEntity<MensajeDTO<Object>> listar(
+            @RequestParam(required = false, defaultValue = "10") Integer porPagina,
+            @RequestParam(required = false) Integer pagina) {
+        return ResponseEntity.ok(new MensajeDTO<>(false, proveedorServicio.getSuppliers(pagina, porPagina)));
     }
 
     /** RF-38: Listar todos (incluyendo inactivos). Solo ADMIN. */
     @GetMapping("/todos")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<MensajeDTO<Object>> listarTodos() {
-        return ResponseEntity.ok(new MensajeDTO<>(false, proveedorServicio.getAllSuppliers()));
+    public ResponseEntity<MensajeDTO<Object>> listarTodos(
+            @RequestParam(required = false, defaultValue = "10") Integer porPagina,
+            @RequestParam(required = false) Integer pagina) {
+        return ResponseEntity.ok(new MensajeDTO<>(false, proveedorServicio.getAllSuppliers(pagina, porPagina)));
     }
 
     /** RF-38: Crear proveedor con NIT único y estado activo. */
@@ -60,15 +64,21 @@ public class ProveedorControlador {
     /** RF-39/RF-43: Historial de precios de un proveedor (fluctuación). */
     @GetMapping("/{id}/lista-precios")
     @PreAuthorize("hasAnyRole('OPERADOR', 'GERENTE', 'ADMIN')")
-    public ResponseEntity<MensajeDTO<Object>> preciosPorProveedor(@PathVariable Long id) {
-        return ResponseEntity.ok(new MensajeDTO<>(false, proveedorServicio.getListaPreciosPorProveedor(id)));
+    public ResponseEntity<MensajeDTO<Object>> preciosPorProveedor(
+            @PathVariable Long id,
+            @RequestParam(required = false, defaultValue = "10") Integer porPagina,
+            @RequestParam(required = false) Integer pagina) {
+        return ResponseEntity.ok(new MensajeDTO<>(false, proveedorServicio.getListaPreciosPorProveedor(id, pagina, porPagina)));
     }
 
     /** RF-39: Precios disponibles de un producto por todos sus proveedores. */
     @GetMapping("/producto/{idProducto}/precios")
     @PreAuthorize("hasAnyRole('OPERADOR', 'GERENTE', 'ADMIN')")
-    public ResponseEntity<MensajeDTO<Object>> preciosPorProducto(@PathVariable Long idProducto) {
-        return ResponseEntity.ok(new MensajeDTO<>(false, proveedorServicio.getListaPreciosPorProducto(idProducto)));
+    public ResponseEntity<MensajeDTO<Object>> preciosPorProducto(
+            @PathVariable Long idProducto,
+            @RequestParam(required = false, defaultValue = "10") Integer porPagina,
+            @RequestParam(required = false) Integer pagina) {
+        return ResponseEntity.ok(new MensajeDTO<>(false, proveedorServicio.getListaPreciosPorProducto(idProducto, pagina, porPagina)));
     }
 
     /** RF-41/RF-42: KPI de cumplimiento de entregas del proveedor. */

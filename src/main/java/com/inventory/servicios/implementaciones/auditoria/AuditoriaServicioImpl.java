@@ -7,7 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +30,18 @@ public class AuditoriaServicioImpl implements AuditoriaServicio {
     }
 
     @Override
-    public List<RegistroAuditoria> obtenerLogs() {
-        return repository.findAll();
+    public Page<RegistroAuditoria> obtenerLogs(Integer pagina, Integer porPagina) {
+        int pageNumber = (pagina != null) ? pagina : 0;
+        int pageSize = (porPagina != null && porPagina > 0) ? porPagina : 10;
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        return repository.findAll(pageable);
+    }
+
+    @Override
+    public Page<RegistroAuditoria> obtenerLogsPorUsuario(String usuarioId, Integer pagina, Integer porPagina) {
+        int pageNumber = (pagina != null) ? pagina : 0;
+        int pageSize = (porPagina != null && porPagina > 0) ? porPagina : 10;
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        return repository.findByUsuario(usuarioId, pageable);
     }
 }

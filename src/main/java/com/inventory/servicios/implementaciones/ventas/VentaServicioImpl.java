@@ -15,9 +15,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 import java.math.BigDecimal;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 @Service
 @RequiredArgsConstructor
@@ -106,13 +108,19 @@ public class VentaServicioImpl implements VentaServicio {
     }
 
     @Override
-    public List<VentaInformacionDTO> getSalesByBranch(Long branchId) {
-        return saleRepository.findBySucursalId(branchId).stream().map(this::toInfo).toList();
+    public Page<VentaInformacionDTO> getSalesByBranch(Long branchId, Integer pagina, Integer porPagina) {
+        int pageNumber = (pagina != null) ? pagina : 0;
+        int pageSize = (porPagina != null && porPagina > 0) ? porPagina : 10;
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        return saleRepository.findBySucursalId(branchId, pageable).map(this::toInfo);
     }
 
     @Override
-    public List<VentaInformacionDTO> getSalesByDateRange(Date start, Date end) {
-        return saleRepository.findByFechaVentaBetween(start, end).stream().map(this::toInfo).toList();
+    public Page<VentaInformacionDTO> getSalesByDateRange(Date start, Date end, Integer pagina, Integer porPagina) {
+        int pageNumber = (pagina != null) ? pagina : 0;
+        int pageSize = (porPagina != null && porPagina > 0) ? porPagina : 10;
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        return saleRepository.findByFechaVentaBetween(start, end, pageable).map(this::toInfo);
     }
 
     private VentaInformacionDTO toInfo(Venta sale) {

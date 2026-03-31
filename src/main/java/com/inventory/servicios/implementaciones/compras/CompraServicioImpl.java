@@ -14,6 +14,9 @@ import lombok.RequiredArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 @Service
 @RequiredArgsConstructor
@@ -110,8 +113,11 @@ public class CompraServicioImpl implements CompraServicio {
     }
 
     @Override
-    public List<CompraHistoricoRespuestaDTO> getPurchaseHistory(Long supplierId, Long productId, LocalDateTime start, LocalDateTime end) {
-        return purchaseDetailRepository.findHistoricalPurchases(supplierId, productId, start, end);
+    public Page<CompraHistoricoRespuestaDTO> getPurchaseHistory(Long supplierId, Long productId, LocalDateTime start, LocalDateTime end, Integer pagina, Integer porPagina) {
+        int pageNumber = (pagina != null) ? pagina : 0;
+        int pageSize = (porPagina != null && porPagina > 0) ? porPagina : 10;
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        return purchaseDetailRepository.findHistoricalPurchases(supplierId, productId, start, end, pageable);
     }
 
     private CompraInformacionDTO toInfo(OrdenCompra purchaseOrder) {

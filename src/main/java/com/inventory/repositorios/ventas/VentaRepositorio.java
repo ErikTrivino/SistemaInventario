@@ -8,11 +8,13 @@ import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Repository
 public interface VentaRepositorio extends JpaRepository<Venta, Long> {
-    List<Venta> findBySucursalId(Long sucursalId);
-    List<Venta> findByFechaVentaBetween(Date start, Date end);
+    Page<Venta> findBySucursalId(Long sucursalId, Pageable pageable);
+    Page<Venta> findByFechaVentaBetween(Date start, Date end, Pageable pageable);
 
     /** RF-24: Cuenta ventas del día actual. */
     @Query("SELECT COUNT(v) FROM Venta v WHERE DATE(v.fechaVenta) = CURRENT_DATE")

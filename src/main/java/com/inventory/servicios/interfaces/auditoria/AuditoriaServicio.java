@@ -1,7 +1,7 @@
 package com.inventory.servicios.interfaces.auditoria;
 
 import com.inventory.modelo.entidades.auditoria.RegistroAuditoria;
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 /**
  * Servicio para el registro de auditoría de acciones en el sistema.
@@ -18,7 +18,12 @@ public interface AuditoriaServicio {
     void registrarAccion(String usuario, String accion, String entidad, Long entidadId, String detalles);
     
     /**
-     * Obtiene todos los logs de auditoría.
+     * Obtiene todos los logs de auditoría paginados.
      */
-    List<RegistroAuditoria> obtenerLogs();
+    Page<RegistroAuditoria> obtenerLogs(Integer pagina, Integer porPagina);
+
+    /**
+     * Obtiene todos los logs de auditoría por usuario paginados.
+     */
+    Page<RegistroAuditoria> obtenerLogsPorUsuario(String usuarioId, Integer pagina, Integer porPagina);
 }

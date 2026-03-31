@@ -47,9 +47,11 @@ public class TransferenciaControlador {
             @RequestParam Long branchId,
             @RequestParam(required = false) String estado,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime desde,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime hasta
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime hasta,
+            @RequestParam(required = false, defaultValue = "10") Integer porPagina,
+            @RequestParam(required = false) Integer pagina
     ) {
-        return ResponseEntity.ok(new MensajeDTO<>(false, transferService.getTransfers(branchId, estado, desde, hasta)));
+        return ResponseEntity.ok(new MensajeDTO<>(false, transferService.getTransfers(branchId, estado, desde, hasta, pagina, porPagina)));
     }
 }
 

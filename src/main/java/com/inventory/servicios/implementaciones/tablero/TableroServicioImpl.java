@@ -34,8 +34,9 @@ public class TableroServicioImpl implements TableroServicio {
         long agotados = alertas.stream().filter(a -> a.stockActual().compareTo(BigDecimal.ZERO) == 0).count();
 
         // Transferencias activas
-        long pendientes = transferenciaRepositorio.findHistoricalTransfers(null, "SOLICITADO", null, null).size();
-        long enTransito = transferenciaRepositorio.findHistoricalTransfers(null, "EN_TRANSITO", null, null).size();
+        org.springframework.data.domain.Pageable unpaged = org.springframework.data.domain.Pageable.unpaged();
+        long pendientes = transferenciaRepositorio.findHistoricalTransfers(null, "SOLICITADO", null, null, unpaged).getContent().size();
+        long enTransito = transferenciaRepositorio.findHistoricalTransfers(null, "EN_TRANSITO", null, null, unpaged).getContent().size();
 
         return new TableroResumenDTO(
                 ventasHoy, ingresoHoy,
@@ -57,8 +58,9 @@ public class TableroServicioImpl implements TableroServicio {
     /** RF-24: Métricas de transferencias activas (SOLICITADO + EN_TRANSITO). */
     @Override
     public Object getMetricasTransferencias() {
-        var pendientes = transferenciaRepositorio.findHistoricalTransfers(null, "SOLICITADO", null, null);
-        var enTransito = transferenciaRepositorio.findHistoricalTransfers(null, "EN_TRANSITO", null, null);
+        org.springframework.data.domain.Pageable unpaged = org.springframework.data.domain.Pageable.unpaged();
+        var pendientes = transferenciaRepositorio.findHistoricalTransfers(null, "SOLICITADO", null, null, unpaged).getContent();
+        var enTransito = transferenciaRepositorio.findHistoricalTransfers(null, "EN_TRANSITO", null, null, unpaged).getContent();
         return java.util.Map.of(
                 "pendientes", pendientes.size(),
                 "enTransito", enTransito.size(),

@@ -4,12 +4,12 @@
     import com.inventory.modelo.dto.compras.CompraHistoricoRespuestaDTO;
     import com.inventory.modelo.dto.compras.CompraInformacionDTO;
     import java.time.LocalDateTime;
-    import java.util.List;
+    import org.springframework.data.domain.Page;
 
     public interface CompraServicio {
         CompraInformacionDTO createPurchase(OrdenCompraCrearDTO dto, Long userId);
         void receivePurchase(OrdenCompraRecepcionDTO dto);
-        List<CompraHistoricoRespuestaDTO> getPurchaseHistory(Long supplierId, Long productId, LocalDateTime start, LocalDateTime end);
+        Page<CompraHistoricoRespuestaDTO> getPurchaseHistory(Long supplierId, Long productId, LocalDateTime start, LocalDateTime end, Integer pagina, Integer porPagina);
     }
 
 

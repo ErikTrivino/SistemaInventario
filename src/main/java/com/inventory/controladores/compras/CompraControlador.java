@@ -33,9 +33,11 @@
             @RequestParam(required = false) Long supplierId,
             @RequestParam(required = false) Long productId,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) java.time.LocalDateTime startDate,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) java.time.LocalDateTime endDate
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) java.time.LocalDateTime endDate,
+            @RequestParam(required = false, defaultValue = "10") Integer porPagina,
+            @RequestParam(required = false) Integer pagina
         ) { 
-            return ResponseEntity.ok(new MensajeDTO<>(false, purchaseService.getPurchaseHistory(supplierId, productId, startDate, endDate))); 
+            return ResponseEntity.ok(new MensajeDTO<>(false, purchaseService.getPurchaseHistory(supplierId, productId, startDate, endDate, pagina, porPagina))); 
         }
     }
 

@@ -12,10 +12,20 @@ import com.inventory.modelo.dto.comun.MensajeDTO;
         private final AuditoriaServicio auditService;
 
         @GetMapping
-        public ResponseEntity<MensajeDTO<Object>> getAuditLogs() { return ResponseEntity.ok(new MensajeDTO<>(false, auditService.obtenerLogs())); }
+        public ResponseEntity<MensajeDTO<Object>> getAuditLogs(
+            @RequestParam(required = false, defaultValue = "10") Integer porPagina,
+            @RequestParam(required = false) Integer pagina
+        ) { 
+            return ResponseEntity.ok(new MensajeDTO<>(false, auditService.obtenerLogs(pagina, porPagina))); 
+        }
 
         @GetMapping("/user/{id}")
-        public ResponseEntity<MensajeDTO<Object>> getAuditLogsByUser(@PathVariable Long id) { return ResponseEntity.ok(new MensajeDTO<>(false, auditService.obtenerLogs())); // Need to add filter later
+        public ResponseEntity<MensajeDTO<Object>> getAuditLogsByUser(
+            @PathVariable Long id,
+            @RequestParam(required = false, defaultValue = "10") Integer porPagina,
+            @RequestParam(required = false) Integer pagina
+        ) { 
+            return ResponseEntity.ok(new MensajeDTO<>(false, auditService.obtenerLogsPorUsuario(id.toString(), pagina, porPagina)));
         }
     }
 

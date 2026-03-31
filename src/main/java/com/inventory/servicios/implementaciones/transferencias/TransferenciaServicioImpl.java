@@ -15,6 +15,9 @@ import lombok.RequiredArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Implementación refactorizada que soporta transferencias multiproducto y seguimiento logístico.
@@ -132,10 +135,12 @@ public class TransferenciaServicioImpl implements TransferenciaServicio {
     }
 
     @Override
-    public List<TransferenciaInformacionDTO> getTransfers(Long branchId, String status, LocalDateTime startDate, LocalDateTime endDate) {
-        return transferRepository.findHistoricalTransfers(branchId, status, startDate, endDate).stream()
-                .map(this::toInfo)
-                .toList();
+    public Page<TransferenciaInformacionDTO> getTransfers(Long branchId, String status, LocalDateTime startDate, LocalDateTime endDate, Integer pagina, Integer porPagina) {
+        int pageNumber = (pagina != null) ? pagina : 0;
+        int pageSize = (porPagina != null && porPagina > 0) ? porPagina : 10;
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        return transferRepository.findHistoricalTransfers(branchId, status, startDate, endDate, pageable)
+                .map(this::toInfo);
     }
 
     private TransferenciaInformacionDTO toInfo(Transferencia t) {
