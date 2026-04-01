@@ -1,0 +1,13 @@
+<div class="min-h-screen bg-gray-50/50">
+    <!-- El Sidebar SIEMPRE está presente -->
+    <app-sidebar></app-sidebar> 
+    
+    <div class="p-4 xl:ml-80"> <!-- El margen ml-80 deja espacio para el sidebar -->
+      <app-header></app-header>
+      <div class="mt-12">
+        <!-- AQUÍ es donde se "inyecta" el Dashboard y demás vistas dinámicamente -->
+        <router-outlet></router-outlet> 
+      </div>
+      <app-footer></app-footer>
+    </div>
+</div>

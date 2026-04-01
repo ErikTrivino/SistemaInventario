@@ -14,11 +14,11 @@
 
         <button
           type="button"
-          class="btn btn-danger"
-          (click)="confirmarEliminar()"
+          class="btn btn-warning"
+          (click)="confirmarInactivar()"
           [disabled]="seleccionados.length === 0"
         >
-          <i class="fa-solid fa-trash me-1"></i> Eliminar {{ textoBtnEliminar }}
+          <i class="fa-solid fa-user-slash me-1"></i> Inactivar {{ textoBtnEliminar }}
         </button>
       </div>
 

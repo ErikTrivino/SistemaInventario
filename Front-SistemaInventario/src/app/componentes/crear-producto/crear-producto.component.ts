@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { ProductoService } from '../../servicios/producto.service';
+import { InventarioService } from '../../servicios/inventario.service';
 import { ProveedorService } from '../../servicios/proveedor.service';
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
-import { UsuarioService } from '../../servicios/usuario.service';
-import { CrearProducto } from '../../modelo/crearObjetos';
+import { MensajeDTO } from '../../modelo/mensaje-dto';
 
 @Component({
   selector: 'app-crear-producto',
@@ -19,7 +18,7 @@ export class CrearProductoComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private productoService: ProductoService,
+    private inventarioService: InventarioService,
     private proveedorService: ProveedorService
   ) {
     this.form = this.fb.group({
@@ -27,53 +26,42 @@ export class CrearProductoComponent implements OnInit {
       descripcion: ['', Validators.required],
       precio: [0, [Validators.required, Validators.min(0)]],
       stock: [0, [Validators.required, Validators.min(0)]],
-      idProveedor: ['']
+      idProveedor: ['', Validators.required]
     });
   }
 
   ngOnInit(): void {
-    this.proveedorService.getProveedores().subscribe({
-      next: (data) => {
+    this.cargarProveedores();
+  }
+
+  cargarProveedores() {
+    this.proveedorService.listar().subscribe({
+      next: (data: MensajeDTO) => {
         this.proveedores = data.respuesta.map((prov: any) => ({
           id: prov.idProveedor,
           label: `${prov.nombre} - ${prov.identificacion}`
         }));
       },
-      error: () => Swal.fire('Error', 'No se pudo cargar la lista de proveedores', 'error')
+      error: (err: any) => {
+        console.error(err);
+        Swal.fire('Error', 'No se pudo cargar la lista de proveedores', 'error');
+      }
     });
   }
 
-  buscarProveedorPorId() {
-    const id = this.form.get('idProveedor')?.value;
-    if (!id) return;
-
-    this.proveedorService.getProveedor(id).subscribe({
-      next: (data) => {
-        const prov = data.respuesta;
-        Swal.fire('Proveedor encontrado', `${prov.nombre} - ${prov.identificacion}`, 'info');
-        this.form.patchValue({ idProveedor: prov.idProveedor });
-      },
-      error: () => Swal.fire('No encontrado', 'Proveedor no encontrado', 'error')
-    });
-  }
-
-    crear(): void {
+  crear(): void {
     if (this.form.valid) {
-      console.log();
-      const nuevoProducto: CrearProducto = {
-        nombre: this.form.value.nombre,
-        descripcion: this.form.value.descripcion,
-        singlePrice: this.form.value.precio,
-        available: this.form.value.stock,
-        idProveedor: this.form.value.idProveedor
-      };
-
-      this.productoService.crearProducto(nuevoProducto).subscribe({
-        next: () => {
-          Swal.fire('Éxito', 'Producto creado', 'success');
+      // Map form to backend expected DTO structure if needed
+      // Current implementation assumes service handles the structure or DTO matches
+      this.inventarioService.createProduct(this.form.value).subscribe({
+        next: (data: MensajeDTO) => {
+          Swal.fire('Éxito', data.respuesta || 'Producto creado correctamente', 'success');
           this.form.reset();
         },
-        error: () => Swal.fire('Error', 'No se pudo crear el producto', 'error')
+        error: (err: any) => {
+          console.error(err);
+          Swal.fire('Error', 'No se pudo crear el producto', 'error');
+        }
       });
     } else {
       Swal.fire('Error', 'Revisa los campos obligatorios', 'error');

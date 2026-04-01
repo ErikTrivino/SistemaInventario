@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ClienteService } from '../../servicios/cliente.service';
-import { ProductoService } from '../../servicios/producto.service';
-import { FacturaService } from '../../servicios/factura.service';
-import { PedidoService } from '../../servicios/pedido.service';
+import { TableroService } from '../../servicios/tablero.service';
+import { MensajeDTO } from '../../modelo/mensaje-dto';
 
 @Component({
   selector: 'app-dashboard',
@@ -13,34 +11,29 @@ import { PedidoService } from '../../servicios/pedido.service';
   styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent implements OnInit {
-  totalClientes: number = 0;
-  totalProductos: number = 0;
-  totalFacturas: number = 0;
-  totalPedidos: number = 0;
+  resumen: any = {
+    totalProductos: 0,
+    bajoStock: 0,
+    transferenciasPendientes: 0,
+    ventasHoy: 0
+  };
 
-  constructor(
-    private clienteService: ClienteService,
-    private productoService: ProductoService,
-    private facturaService: FacturaService,
-    private pedidoService: PedidoService
-  ) { }
+  constructor(private tableroService: TableroService) { }
 
   ngOnInit(): void {
-    //this.cargarMetricas();
+    this.cargarResumen();
   }
 
-  cargarMetricas(): void {
-    this.clienteService.getClientes().subscribe(data => {
-      this.totalClientes = data.respuesta ? data.respuesta.length : 0;
-    });
-    this.productoService.getProductos().subscribe(data => {
-      this.totalProductos = data.respuesta ? data.respuesta.length : 0;
-    });
-    this.facturaService.getFacturas().subscribe(data => {
-      this.totalFacturas = data.respuesta ? data.respuesta.length : 0;
-    });
-    this.pedidoService.getPedidos().subscribe(data => {
-      this.totalPedidos = data.respuesta ? data.respuesta.length : 0;
+  cargarResumen(): void {
+    this.tableroService.getResumenDiario().subscribe({
+      next: (data: MensajeDTO) => {
+        if (data.respuesta) {
+          this.resumen = data.respuesta;
+        }
+      },
+      error: (err: any) => {
+        console.error('Error al cargar resumen del tablero:', err);
+      }
     });
   }
 }

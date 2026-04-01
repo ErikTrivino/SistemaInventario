@@ -23,6 +23,10 @@ export class InventarioService {
     return this.http.get<MensajeDTO>(`${this.apiUrl}/productos`, { params });
   }
 
+  consultarPorId(id: number): Observable<MensajeDTO> {
+    return this.http.get<MensajeDTO>(`${this.apiUrl}/productos/${id}`);
+  }
+
   updateProduct(id: number, dto: any): Observable<MensajeDTO> {
     return this.http.put<MensajeDTO>(`${this.apiUrl}/productos/${id}`, dto);
   }

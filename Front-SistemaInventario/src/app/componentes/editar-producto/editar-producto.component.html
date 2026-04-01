@@ -11,12 +11,12 @@
 
   <div class="mb-3">
     <label>Precio</label>
-    <input type="number" formControlName="singlePrice" class="form-control" />
+    <input type="number" formControlName="precio" class="form-control" />
   </div>
 
   <div class="mb-3">
     <label>Stock</label>
-    <input type="number" formControlName="available" class="form-control" />
+    <input type="number" formControlName="stock" class="form-control" />
   </div>
 
   <!-- Selector de proveedor -->
@@ -26,12 +26,6 @@
       <option value="">Seleccione un proveedor</option>
       <option *ngFor="let p of proveedores" [value]="p.id">{{ p.label }}</option>
     </select>
-  </div>
-
-  <!-- Búsqueda manual -->
-  <div class="mb-3 input-group">
-    <input type="number" formControlName="idProveedor" placeholder="ID del proveedor" class="form-control" />
-    <button type="button" class="btn btn-outline-secondary" (click)="buscarProveedorPorId()">Buscar proveedor</button>
   </div>
 
   <div class="text-center">

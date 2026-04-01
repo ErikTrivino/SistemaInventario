@@ -1,96 +1,86 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
-import { ProductoService } from '../../servicios/producto.service';
+import { ActivatedRoute, RouterModule } from '@angular/router';
+import { InventarioService } from '../../servicios/inventario.service';
 import { ProveedorService } from '../../servicios/proveedor.service';
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
-import { UsuarioService } from '../../servicios/usuario.service';
+import { MensajeDTO } from '../../modelo/mensaje-dto';
 
 @Component({
   selector: 'app-editar-producto',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, RouterModule, CommonModule],
   templateUrl: './editar-producto.component.html'
 })
 export class EditarProductoComponent implements OnInit {
   form!: FormGroup;
+  id!: number;
   proveedores: any[] = [];
-  idProducto!: number;
 
   constructor(
     private fb: FormBuilder,
-    private route: ActivatedRoute,
-    private productoService: ProductoService,
-    private proveedorService: ProveedorService
+    private inventarioService: InventarioService,
+    private proveedorService: ProveedorService,
+    private route: ActivatedRoute
   ) {
     this.form = this.fb.group({
-      
       nombre: ['', Validators.required],
       descripcion: ['', Validators.required],
-      singlePrice: [0, [Validators.required, Validators.min(0)]],
-      available: [0, [Validators.required, Validators.min(0)]],
+      precio: [0, [Validators.required, Validators.min(0)]],
+      stock: [0, [Validators.required, Validators.min(0)]],
       idProveedor: ['', Validators.required]
     });
   }
 
-  ngOnInit(): void {
-    // Cargar ID del producto desde la ruta
-    this.idProducto = +(this.route.snapshot.paramMap.get('id') || 0);
-    if (this.idProducto) {
-      this.productoService.getProducto(this.idProducto).subscribe({
-        next: (data) => {
-          this.form.patchValue(data.respuesta);
-        },
-        error: () => Swal.fire('Error', 'No se pudo cargar el producto', 'error')
-      });
-    }
+  ngOnInit() {
+    this.cargarProveedores();
+    this.route.paramMap.subscribe(params => {
+      const val = params.get('id');
+      if (val) {
+        this.id = +val;
+        this.cargarProducto();
+      }
+    });
+  }
 
-    // Cargar lista de proveedores
-    this.proveedorService.getProveedores().subscribe({
-      next: (data) => {
+  cargarProveedores() {
+    this.proveedorService.listar().subscribe({
+      next: (data: MensajeDTO) => {
         this.proveedores = data.respuesta.map((prov: any) => ({
           id: prov.idProveedor,
           label: `${prov.nombre} - ${prov.identificacion}`
         }));
       },
-      error: () => Swal.fire('Error', 'No se pudo cargar la lista de proveedores', 'error')
+      error: (err: any) => {
+        console.error(err);
+      }
     });
   }
 
-  buscarProveedorPorId() {
-    const id = this.form.get('idProveedor')?.value;
-    if (!id) return;
-
-    this.proveedorService.getProveedor(id).subscribe({
-      next: (data) => {
-        const prov = data.respuesta;
-        Swal.fire('Proveedor encontrado', `${prov.nombre} - ${prov.identificacion}`, 'info');
-        this.form.patchValue({ idProveedor: prov.idProveedor });
+  cargarProducto() {
+    this.inventarioService.consultarPorId(this.id).subscribe({
+      next: (data: MensajeDTO) => {
+        this.form.patchValue(data.respuesta);
       },
-      error: () => Swal.fire('No encontrado', 'Proveedor no encontrado', 'error')
+      error: (err: any) => {
+        console.error(err);
+        Swal.fire('Error', 'No se cargó el producto', 'error');
+      }
     });
   }
 
-editar(): void {
-  if (this.form.invalid) {
-    Swal.fire('Error', 'Revisa los campos obligatorios', 'error');
-    return;
+  editar() {
+    if (this.form.valid) {
+      this.inventarioService.updateProduct(this.id, this.form.value).subscribe({
+        next: (data: MensajeDTO) => Swal.fire('Actualizado', data.respuesta || 'Producto actualizado', 'success'),
+        error: (err: any) => {
+          console.error(err);
+          Swal.fire('Error', 'No se pudo actualizar el producto', 'error');
+        }
+      });
+    } else {
+      Swal.fire('Error', 'Revisa los campos obligatorios', 'error');
+    }
   }
-
-  const productoEditado = {
-    idProducto: this.idProducto, // ← asegúrate de tenerlo definido en la clase
-    nombre: this.form.value.nombre,
-    descripcion: this.form.value.descripcion,
-    singlePrice: this.form.value.singlePrice,
-    available: this.form.value.available,
-    idProveedor: this.form.value.idProveedor
-  };
-
-  this.productoService.editarProducto(productoEditado).subscribe({
-    next: () => Swal.fire('Éxito', 'Producto actualizado', 'success'),
-    error: () => Swal.fire('Error', 'No se pudo actualizar el producto', 'error')
-  });
-}
-
 }

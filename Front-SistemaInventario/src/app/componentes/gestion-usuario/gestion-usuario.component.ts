@@ -4,7 +4,7 @@ import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { InformacionUsuario } from '../../modelo/informacionObjeto';
-import { AdministradorService } from '../../servicios/administrador.service';
+import { MensajeDTO } from '../../modelo/mensaje-dto';
 
 @Component({
   selector: 'app-gestion-usuario',
@@ -25,39 +25,59 @@ export class GestionUsuarioComponent implements OnInit {
 
   cargar() {
     this.svc.getUsuarios().subscribe({
-      next: data => this.usuarios = data.respuesta,
-      error: e => console.error(e)
+      next: (data: MensajeDTO) => this.usuarios = data.respuesta,
+      error: (e: any) => console.error(e)
     });
   }
 
   seleccionar(u: InformacionUsuario, sel: boolean) {
-    sel ? this.seleccionados.push(u) : this.seleccionados.splice(this.seleccionados.indexOf(u), 1);
+    if (sel) {
+      if (!this.seleccionados.includes(u)) {
+        this.seleccionados.push(u);
+      }
+    } else {
+      const index = this.seleccionados.indexOf(u);
+      if (index !== -1) {
+        this.seleccionados.splice(index, 1);
+      }
+    }
     this.textoBtnEliminar = `${this.seleccionados.length} usuario${this.seleccionados.length === 1 ? '' : 's'}`;
   }
 
-  confirmarEliminar() {
+  confirmarInactivar() {
     Swal.fire({
-      title: '¿Eliminar?',
-      text: `Se eliminarán ${this.seleccionados.length} usuario(s).`,
+      title: '¿Inactivar usuarios?',
+      text: `Se inactivarán ${this.seleccionados.length} usuario(s).`,
       icon: 'warning',
+      input: 'text',
+      inputPlaceholder: 'Motivo de inactivación (opcional)',
       showCancelButton: true,
-      confirmButtonText: 'Sí, eliminar',
+      confirmButtonText: 'Sí, inactivar',
+      cancelButtonText: 'Cancelar'
     }).then(r => {
-      if (r.isConfirmed) this.eliminar();
+      if (r.isConfirmed) {
+        const motivo = r.value || 'Manual inactivation via management interface';
+        this.inactivar(motivo);
+      }
     });
   }
 
-  eliminar() {
-    Promise.all(this.seleccionados.map(u =>
-      this.svc.eliminarUsuario(u.idUsuario!).toPromise()
-    ))
+  inactivar(motivo: string) {
+    const promises = this.seleccionados.map(u =>
+      this.svc.inactivarUsuario(u.idUsuario!, motivo).toPromise()
+    );
+
+    Promise.all(promises)
       .then(() => {
-        Swal.fire('Eliminado', 'Usuarios eliminados', 'success');
+        Swal.fire('Procesado', 'Los usuarios seleccionados han sido inactivados', 'success');
         this.cargar();
         this.seleccionados = [];
         this.textoBtnEliminar = '';
       })
-      .catch(() => Swal.fire('Error', 'No se pudieron eliminar', 'error'));
+      .catch((err: any) => {
+        console.error(err);
+        Swal.fire('Error', 'No se pudieron inactivar algunos usuarios', 'error');
+      });
   }
 
   trackById(_i: number, u: InformacionUsuario) {

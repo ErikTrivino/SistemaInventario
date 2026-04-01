@@ -3,13 +3,14 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { UsuarioService } from '../../servicios/usuario.service';
 import Swal from 'sweetalert2';
-import { AdministradorService } from '../../servicios/administrador.service';
 import { EditarUsuario } from '../../modelo/editarObjeto';
+import { MensajeDTO } from '../../modelo/mensaje-dto';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-editar-usuario',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterModule],
+  imports: [ReactiveFormsModule, RouterModule, CommonModule],
   templateUrl: './editar-usuario.component.html'
 })
 export class EditarUsuarioComponent implements OnInit {
@@ -40,41 +41,31 @@ export class EditarUsuarioComponent implements OnInit {
       const val = params.get('id');
       if (val) {
         this.idUsuario = +val;
-        this.svc.getUsuario(this.idUsuario).subscribe({
-          next: data => {
+        this.svc.consultarPorId(this.idUsuario).subscribe({
+          next: (data: MensajeDTO) => {
             this.form.patchValue(data.respuesta);
-            this.form.patchValue({ password: '' }); // ← sobrescribe solo el campo password
+            this.form.patchValue({ password: '' });
           },
-          error: () => Swal.fire('Error', 'No se cargó el usuario', 'error')
+          error: (err: any) => {
+            console.error(err);
+            Swal.fire('Error', 'No se cargó el usuario', 'error');
+          }
         });
-
       }
     });
-
   }
 
-editar() {
-  if (this.form.valid) {
-    const usuarioEditado:EditarUsuario = {
-      idUsuario: this.idUsuario,
-      nombre: this.form.value.nombre,
-      apellido: this.form.value.apellido,
-      identificacion: this.form.value.identificacion,
-      numerophone: this.form.value.numerophone,
-      edad: this.form.value.edad,
-      correo: this.form.value.correo,
-      password: this.form.value.password,
-      estado: this.form.value.estado,
-      rol: this.form.value.rol
-    };
-
-    this.svc.editarUsuario(usuarioEditado).subscribe({
-      next: () => Swal.fire('Actualizado', 'Usuario actualizado', 'success'),
-      error: () => Swal.fire('Error', 'No se pudo actualizar', 'error')
-    });
-  } else {
-    Swal.fire('Error', 'Revisa los campos obligatorios', 'error');
+  editar() {
+    if (this.form.valid) {
+      this.svc.actualizarUsuario(this.idUsuario, this.form.value).subscribe({
+        next: (data: MensajeDTO) => Swal.fire('Actualizado', data.respuesta || 'Usuario actualizado', 'success'),
+        error: (err: any) => {
+          console.error(err);
+          Swal.fire('Error', 'No se pudo actualizar', 'error');
+        }
+      });
+    } else {
+      Swal.fire('Error', 'Revisa los campos obligatorios', 'error');
+    }
   }
-}
-
 }

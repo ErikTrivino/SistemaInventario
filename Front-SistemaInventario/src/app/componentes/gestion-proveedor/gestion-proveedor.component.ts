@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ProveedorService } from '../../servicios/proveedor.service';
-
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { InformacionProveedor } from '../../modelo/informacionObjeto';
-import { UsuarioService } from '../../servicios/usuario.service';
+import { MensajeDTO } from '../../modelo/mensaje-dto';
 
 @Component({
   selector: 'app-gestion-proveedor',
@@ -16,7 +15,7 @@ import { UsuarioService } from '../../servicios/usuario.service';
 export class GestionProveedorComponent implements OnInit {
   proveedores: InformacionProveedor[] = [];
   seleccionados: InformacionProveedor[] = [];
-  textoBtnEliminar = '';
+  textoBtnAccion = '';
 
   constructor(private svc: ProveedorService) {}
 
@@ -25,38 +24,53 @@ export class GestionProveedorComponent implements OnInit {
   }
 
   cargar(): void {
-    this.svc.getProveedores().subscribe({
-      next: (data) => (this.proveedores = data.respuesta),
-      error: (e) => console.error(e),
+    this.svc.listar().subscribe({
+      next: (data: MensajeDTO) => (this.proveedores = data.respuesta),
+      error: (e: any) => console.error(e),
     });
   }
 
   seleccionar(item: InformacionProveedor, sel: boolean) {
-    sel ? this.seleccionados.push(item) : this.seleccionados.splice(this.seleccionados.indexOf(item), 1);
-    this.textoBtnEliminar = `${this.seleccionados.length} proveedor${this.seleccionados.length === 1 ? '' : 'es'}`;
+    if (sel) {
+      if (!this.seleccionados.includes(item)) {
+        this.seleccionados.push(item);
+      }
+    } else {
+      const index = this.seleccionados.indexOf(item);
+      if (index !== -1) {
+        this.seleccionados.splice(index, 1);
+      }
+    }
+    this.textoBtnAccion = `${this.seleccionados.length} proveedor${this.seleccionados.length === 1 ? '' : 'es'}`;
   }
 
-  confirmarEliminar() {
+  confirmarToggleEstado() {
     Swal.fire({
-      title: '¿Eliminar?',
-      text: `Se eliminarán ${this.seleccionados.length} proveedor(es).`,
-      icon: 'warning',
+      title: '¿Cambiar estado?',
+      text: `Se cambiará el estado de ${this.seleccionados.length} proveedor(es).`,
+      icon: 'question',
       showCancelButton: true,
-      confirmButtonText: 'Sí, eliminar',
+      confirmButtonText: 'Sí, cambiar',
+      cancelButtonText: 'Cancelar'
     }).then((r) => {
-      if (r.isConfirmed) this.eliminarSelec();
+      if (r.isConfirmed) this.toggleEstadoSelec();
     });
   }
 
-  eliminarSelec() {
-    Promise.all(this.seleccionados.map(p => this.svc.eliminarProveedor(p.idProveedor).toPromise()))
+  toggleEstadoSelec() {
+    const promises = this.seleccionados.map(p => this.svc.toggleEstado(p.idProveedor).toPromise());
+
+    Promise.all(promises)
       .then(() => {
-        Swal.fire('Eliminado', 'Proveedores eliminados exitosamente', 'success');
+        Swal.fire('Procesado', 'El estado de los proveedores ha sido actualizado', 'success');
         this.cargar();
         this.seleccionados = [];
-        this.textoBtnEliminar = '';
+        this.textoBtnAccion = '';
       })
-      .catch(err => Swal.fire('Error', 'No se pudo eliminar uno o más proveedores', 'error'));
+      .catch((err: any) => {
+        console.error(err);
+        Swal.fire('Error', 'No se pudo actualizar el estado de algunos proveedores', 'error');
+      });
   }
 
   trackById(_i: number, p: InformacionProveedor) {

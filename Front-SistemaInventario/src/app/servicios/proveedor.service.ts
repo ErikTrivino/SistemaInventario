@@ -24,6 +24,10 @@ export class ProveedorService {
     return this.http.get<MensajeDTO>(`${this.apiUrl}/todos`, { params });
   }
 
+  consultarPorId(id: number): Observable<MensajeDTO> {
+    return this.http.get<MensajeDTO>(`${this.apiUrl}/${id}`);
+  }
+
   crear(dto: any): Observable<MensajeDTO> {
     return this.http.post<MensajeDTO>(this.apiUrl, dto);
   }

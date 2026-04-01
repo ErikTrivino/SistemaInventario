@@ -2,12 +2,13 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { UsuarioService } from '../../servicios/usuario.service';
-import { AdministradorService } from '../../servicios/administrador.service';
+import { MensajeDTO } from '../../modelo/mensaje-dto';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-crear-usuario',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './crear-usuario.component.html'
 })
 export class CrearUsuarioComponent {
@@ -29,11 +30,14 @@ export class CrearUsuarioComponent {
   crear() {
     if (this.form.valid) {
       this.svc.crearUsuario(this.form.value).subscribe({
-        next: () => {
-          Swal.fire('Éxito', 'Usuario creado correctamente', 'success');
+        next: (data: MensajeDTO) => {
+          Swal.fire('Éxito', data.respuesta || 'Usuario creado correctamente', 'success');
           this.form.reset();
         },
-        error: () => Swal.fire('Error', 'No se pudo crear el usuario', 'error')
+        error: (err: any) => {
+          console.error(err);
+          Swal.fire('Error', 'No se pudo crear el usuario', 'error');
+        }
       });
     } else {
       Swal.fire('Error', 'Completa los campos requeridos', 'error');

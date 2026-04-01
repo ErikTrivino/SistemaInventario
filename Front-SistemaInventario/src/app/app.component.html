@@ -1,9 +1,1 @@
-<div class="min-h-screen bg-gray-50/50">
-  <app-sidebar *ngIf="isLogged()"></app-sidebar>
-  
-  <div [ngClass]="{'p-4 xl:ml-80': isLogged(), 'w-full': !isLogged()}">
-    <app-header *ngIf="isLogged()"></app-header>
-    <router-outlet></router-outlet>
-    <app-footer></app-footer>
-  </div>
-</div>
+<router-outlet></router-outlet>
