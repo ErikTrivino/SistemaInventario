@@ -18,7 +18,7 @@
 * **Principios:** Uso estricto de principios **SOLID** y separación de responsabilidades.
 * **Diagramas:**
     * **Diagrama de Arquitectura:**
-      ![Diagrama de arquitectura Sistema Inventario](./Diagrama de arquitectura Sistema Inventario.png)
+      ![Diagrama de arquitectura Sistema Inventario](./Diagrama%20de%20arquitectura%20Sistema%20Inventario.png)
     * **Diagrama Entidad-Relación (E-R):** Disponible en el script [modelo_er.sql](./modelo_er.sql).
 
 ## 4. Requisitos Previos e Instalación
