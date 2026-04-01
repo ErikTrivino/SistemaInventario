@@ -17,7 +17,7 @@
 * **Patrón de Diseño:** Arquitectura en Capas (Controller-Service-Repository), siguiendo principios de **Clean Architecture** para mantener el desacoplamiento.
 * **Principios:** Uso estricto de principios **SOLID** y separación de responsabilidades.
 * **Diagramas:**
-    * **Diagrama de Arquitectura:** (Ver archivo adjunto [Diagrama de arquitectura Sistema Inventario.png](./diagrama_arquitectura.png) o en la documentación de diseño).
+    * **Diagrama de Arquitectura:** (Ver archivo adjunto [Diagrama de arquitectura Sistema Inventario](./Diagrama de arquitectura Sistema Inventario.png) o en la documentación de diseño).
     * **Diagrama Entidad-Relación (E-R):** Disponible en el script [modelo_er.sql](./modelo_er.sql).
 
 ## 4. Requisitos Previos e Instalación
