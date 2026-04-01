@@ -48,11 +48,23 @@ public class TableroServicioImpl implements TableroServicio {
     }
 
     /**
-     * RF-33: Devuelve todos los productos con stock por debajo del mínimo configurado.
+     * RF-33: Devuelve los productos con stock por debajo del mínimo configurado (paginado).
      */
     @Override
-    public List<AlertaStockDTO> getAlertasStock() {
-        return getListaAlertasStock();
+    public org.springframework.data.domain.Page<AlertaStockDTO> getAlertasStock(Integer pagina, Integer porPagina) {
+        int numPagina = (pagina != null && pagina > 0) ? pagina - 1 : 0;
+        int tamanoPagina = (porPagina != null && porPagina > 0) ? porPagina : 10;
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(numPagina, tamanoPagina);
+        
+        return inventarioRepositorio.findByQuantityLessThanMinStock(pageable)
+                .map(inv -> new AlertaStockDTO(
+                        inv.getProductoId(),
+                        "Producto #" + inv.getProductoId(),
+                        inv.getSucursalId(),
+                        inv.getStock(),
+                        inv.getStockMinimo(),
+                        inv.getStockMinimo().subtract(inv.getStock())
+                ));
     }
 
     /** RF-24: Métricas de transferencias activas (SOLICITADO + EN_TRANSITO). */

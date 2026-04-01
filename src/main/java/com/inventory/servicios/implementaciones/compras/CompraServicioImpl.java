@@ -102,7 +102,10 @@ public class CompraServicioImpl implements CompraServicio {
                     dto.idSucursalDestino(),
                     recDto.cantidadRecibida().doubleValue(),
                     "IN",
-                    "Recepción de Orden Compra #" + order.getId()
+                    "Recepción de Orden Compra #" + order.getId(),
+                    order.getUsuarioResponsableId() != null
+                        ? order.getUsuarioResponsableId().toString()
+                        : "sistema"
                 );
             }
         }

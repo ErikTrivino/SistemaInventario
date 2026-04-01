@@ -2,7 +2,7 @@ package com.inventory.modelo.dto.reportes;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 /** RF-29/RF-30: Reporte de inventario con productos y niveles de stock. */
 public record ReporteInventarioDTO(
@@ -12,5 +12,5 @@ public record ReporteInventarioDTO(
         long productosEnStockMinimo,
         long productosAgotados,
         BigDecimal valorTotalInventario,
-        List<ItemInventarioDTO> detalle
+        Page<ItemInventarioDTO> detalle
 ) {}

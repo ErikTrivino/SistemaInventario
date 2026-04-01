@@ -1,7 +1,7 @@
 package com.inventory.modelo.dto.reportes;
 
 import java.util.Date;
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 /** RF-29/RF-30: Reporte de transferencias entre sucursales. */
 public record ReporteTransferenciasDTO(
@@ -11,5 +11,5 @@ public record ReporteTransferenciasDTO(
         long completadas,
         long conDiscrepancias,
         long pendientes,
-        List<ItemTransferenciaDTO> detalle
+        Page<ItemTransferenciaDTO> detalle
 ) {}

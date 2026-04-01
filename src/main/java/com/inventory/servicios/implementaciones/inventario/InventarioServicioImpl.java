@@ -18,7 +18,9 @@
     import org.springframework.stereotype.Service;
     import org.springframework.transaction.annotation.Transactional;
     import lombok.RequiredArgsConstructor;
-    import java.util.List;
+    import org.springframework.data.domain.Page;
+    import org.springframework.data.domain.PageRequest;
+    import org.springframework.data.domain.Pageable;
     import java.time.LocalDateTime;
 
     @Service
@@ -87,18 +89,24 @@
         public void deleteProduct(Long id) { }
 
         @Override
-        public List<ProductoInformacionDTO> getProducts() {
-            return productRepository.findAll().stream().map(this::toInformacionDTO).toList();
+        public Page<ProductoInformacionDTO> getProducts(Integer pagina, Integer porPagina) {
+            int numPagina = (pagina != null && pagina > 0) ? pagina - 1 : 0;
+            int tamanoPagina = (porPagina != null && porPagina > 0) ? porPagina : 10;
+            Pageable pageable = PageRequest.of(numPagina, tamanoPagina);
+            return productRepository.findAll(pageable).map(this::toInformacionDTO);
         }
 
         @Override
-        public List<InventarioInformacionDTO> getInventoryByBranch(Long branchId) {
-            return inventoryRepository.findBySucursal_Id(branchId).stream().map(this::toInventarioInformacion).toList();
+        public Page<InventarioInformacionDTO> getInventoryByBranch(Long branchId, Integer pagina, Integer porPagina) {
+            int numPagina = (pagina != null && pagina > 0) ? pagina - 1 : 0;
+            int tamanoPagina = (porPagina != null && porPagina > 0) ? porPagina : 10;
+            Pageable pageable = PageRequest.of(numPagina, tamanoPagina);
+            return inventoryRepository.findBySucursal_Id(branchId, pageable).map(this::toInventarioInformacion);
         }
 
         @Override
         @Transactional
-        public void updateStock(Long productId, Long branchId, Double quantity, String type, String reason) {
+        public void updateStock(Long productId, Long branchId, Double quantity, String type, String reason, String usuarioResponsable) {
             Inventario inv = inventoryRepository.findByProducto_IdAndSucursal_Id(productId, branchId)
                     .orElseThrow(() -> new RuntimeException("Inventario not found"));
 
@@ -127,20 +135,26 @@
             movementRepository.save(movement);
 
             if (inv.getStock().compareTo(inv.getStockMinimo()) < 0) {
-                eventPublisher.publishStockUpdate(inv);
+                eventPublisher.publicarActualizacionStock(inv, usuarioResponsable);
             }
 
             auditService.registrarAccion("1", "UPDATE_STOCK", "Inventario", inv.getProductoId(), "Stock updated: " + quantity);
         }
 
         @Override
-        public List<InventarioInformacionDTO> getLowStockProducts() {
-            return inventoryRepository.findByQuantityLessThanMinStock().stream().map(this::toInventarioInformacion).toList();
+        public Page<InventarioInformacionDTO> getLowStockProducts(Integer pagina, Integer porPagina) {
+            int numPagina = (pagina != null && pagina > 0) ? pagina - 1 : 0;
+            int tamanoPagina = (porPagina != null && porPagina > 0) ? porPagina : 10;
+            Pageable pageable = PageRequest.of(numPagina, tamanoPagina);
+            return inventoryRepository.findByQuantityLessThanMinStock(pageable).map(this::toInventarioInformacion);
         }
 
         @Override
-        public List<InventarioRespuestaDTO> getCatalogoActivo(Long branchId) {
-            return inventoryRepository.findActiveCatalogByBranch(branchId);
+        public Page<InventarioRespuestaDTO> getCatalogoActivo(Long branchId, Integer pagina, Integer porPagina) {
+            int numPagina = (pagina != null && pagina > 0) ? pagina - 1 : 0;
+            int tamanoPagina = (porPagina != null && porPagina > 0) ? porPagina : 10;
+            Pageable pageable = PageRequest.of(numPagina, tamanoPagina);
+            return inventoryRepository.findActiveCatalogByBranch(branchId, pageable);
         }
 
         private ProductoInformacionDTO toInformacionDTO(Producto product) {

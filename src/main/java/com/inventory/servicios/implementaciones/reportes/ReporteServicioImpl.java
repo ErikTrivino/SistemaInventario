@@ -14,6 +14,10 @@ import java.math.RoundingMode;
 import java.time.Month;
 import java.time.format.TextStyle;
 import java.time.LocalDateTime;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -27,7 +31,7 @@ public class ReporteServicioImpl implements ReporteServicio {
 
     /** RF-29/RF-30: Reporte de ventas por período con desglose por sucursal. */
     @Override
-    public ReporteVentasDTO generarReporteVentas(Date inicio, Date fin) {
+    public ReporteVentasDTO generarReporteVentas(Date inicio, Date fin, Integer pagina, Integer porPagina) {
         long total = ventaRepositorio.countByPeriodo(inicio, fin);
         BigDecimal ingreso = ventaRepositorio.sumIngresoPeriodo(inicio, fin);
         BigDecimal promedio = total > 0
@@ -35,29 +39,31 @@ public class ReporteServicioImpl implements ReporteServicio {
                 : BigDecimal.ZERO;
 
         List<Object[]> rawSucursal = ventaRepositorio.findVentasPorSucursalYPeriodo(inicio, fin);
-        List<ResumenVentaSucursalDTO> porSucursal = rawSucursal.stream()
+        List<ResumenVentaSucursalDTO> porSucursalList = rawSucursal.stream()
                 .map(r -> new ResumenVentaSucursalDTO(
                         ((Number) r[0]).longValue(),
                         ((Number) r[1]).longValue(),
                         (BigDecimal) r[2]))
                 .collect(Collectors.toList());
 
-        return new ReporteVentasDTO(inicio, fin, total, ingreso, promedio, porSucursal);
+        Page<ResumenVentaSucursalDTO> porSucursalPage = paginateList(porSucursalList, pagina, porPagina);
+
+        return new ReporteVentasDTO(inicio, fin, total, ingreso, promedio, porSucursalPage);
     }
 
     /** RF-29/RF-30: Reporte de inventario de una sucursal. */
     @Override
-    public ReporteInventarioDTO generarReporteInventario(Long idSucursal) {
-        var items = inventarioRepositorio.findAll().stream()
+    public ReporteInventarioDTO generarReporteInventario(Long idSucursal, Integer pagina, Integer porPagina) {
+        var itemsAll = inventarioRepositorio.findAll().stream()
                 .filter(inv -> idSucursal == null || inv.getSucursalId().equals(idSucursal))
                 .collect(Collectors.toList());
 
-        long total = items.size();
-        long bajoMinimo = items.stream().filter(i -> i.getStock().compareTo(i.getStockMinimo()) < 0 && i.getStock().compareTo(BigDecimal.ZERO) > 0).count();
-        long agotados = items.stream().filter(i -> i.getStock().compareTo(BigDecimal.ZERO) == 0).count();
-        BigDecimal valorTotal = items.stream().map(i -> i.getStock()).reduce(BigDecimal.ZERO, BigDecimal::add);
+        long total = itemsAll.size();
+        long bajoMinimo = itemsAll.stream().filter(i -> i.getStock().compareTo(i.getStockMinimo()) < 0 && i.getStock().compareTo(BigDecimal.ZERO) > 0).count();
+        long agotados = itemsAll.stream().filter(i -> i.getStock().compareTo(BigDecimal.ZERO) == 0).count();
+        BigDecimal valorTotal = itemsAll.stream().map(i -> i.getStock()).reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        List<ItemInventarioDTO> detalle = items.stream().map(inv -> {
+        List<ItemInventarioDTO> detalleList = itemsAll.stream().map(inv -> {
             String estado = inv.getStock().compareTo(BigDecimal.ZERO) == 0 ? "AGOTADO"
                     : inv.getStock().compareTo(inv.getStockMinimo()) < 0 ? "BAJO" : "NORMAL";
             return new ItemInventarioDTO(
@@ -67,16 +73,18 @@ public class ReporteServicioImpl implements ReporteServicio {
                     inv.getStock(), inv.getStockMinimo(), estado);
         }).collect(Collectors.toList());
 
-        return new ReporteInventarioDTO(new Date(), idSucursal, total, bajoMinimo, agotados, valorTotal, detalle);
+        Page<ItemInventarioDTO> detallePage = paginateList(detalleList, pagina, porPagina);
+
+        return new ReporteInventarioDTO(new Date(), idSucursal, total, bajoMinimo, agotados, valorTotal, detallePage);
     }
 
     /** RF-29/RF-30: Reporte de transferencias por período. */
     @Override
-    public ReporteTransferenciasDTO generarReporteTransferencias(Date inicio, Date fin) {
+    public ReporteTransferenciasDTO generarReporteTransferencias(Date inicio, Date fin, Integer pagina, Integer porPagina) {
         LocalDateTime start = inicio != null ? inicio.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDateTime() : null;
         LocalDateTime end = fin != null ? fin.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDateTime() : null;
         
-        org.springframework.data.domain.Pageable unpaged = org.springframework.data.domain.Pageable.unpaged();
+        Pageable unpaged = Pageable.unpaged();
         var todas = transferenciaRepositorio.findHistoricalTransfers(null, null, start, end, unpaged).getContent();
 
         long completadas = todas.stream().filter(t -> "RECIBIDO".equals(t.getEstado())).count();
@@ -84,11 +92,11 @@ public class ReporteServicioImpl implements ReporteServicio {
         long pendientes = todas.stream().filter(t -> "SOLICITADO".equals(t.getEstado()) || "PREPARADO".equals(t.getEstado())).count();
 
         // Mapeo detallado: una transferencia puede tener múltiples productos
-        List<ItemTransferenciaDTO> detalleFormatted = new ArrayList<>();
+        List<ItemTransferenciaDTO> detalleFull = new ArrayList<>();
         
         todas.forEach(t -> {
             for (DetalleTransferencia det : t.getDetalles()) {
-                detalleFormatted.add(new ItemTransferenciaDTO(
+                detalleFull.add(new ItemTransferenciaDTO(
                     t.getId(), 
                     t.getSucursalOrigenId(), 
                     t.getSucursalDestinoId(), 
@@ -102,7 +110,9 @@ public class ReporteServicioImpl implements ReporteServicio {
             }
         });
 
-        return new ReporteTransferenciasDTO(inicio, fin, todas.size(), completadas, discrepancias, pendientes, detalleFormatted);
+        Page<ItemTransferenciaDTO> detallePage = paginateList(detalleFull, pagina, porPagina);
+
+        return new ReporteTransferenciasDTO(inicio, fin, (int) todas.size(), completadas, discrepancias, pendientes, detallePage);
     }
 
     /** RF-31: Comparativo mensual de ventas por año. */
@@ -141,11 +151,11 @@ public class ReporteServicioImpl implements ReporteServicio {
 
     /** RF-32: Clasificación ABC de productos por rotación en un mes. */
     @Override
-    public ReporteRotacionDTO generarAnalisisRotacion(int mes, int anio) {
+    public ReporteRotacionDTO generarAnalisisRotacion(int mes, int anio, Integer pagina, Integer porPagina) {
         List<Object[]> raw = detalleVentaRepositorio.findRotacionProductosPorMes(mes, anio);
         long totalSalidas = raw.stream().mapToLong(r -> ((Number) r[1]).longValue()).sum();
 
-        List<ItemRotacionDTO> items = new ArrayList<>();
+        List<ItemRotacionDTO> itemsFull = new ArrayList<>();
         long acumulado = 0;
         for (Object[] row : raw) {
             long salidas = ((Number) row[1]).longValue();
@@ -154,7 +164,7 @@ public class ReporteServicioImpl implements ReporteServicio {
             double porcentaje = totalSalidas > 0 ? (double) salidas / totalSalidas * 100 : 0;
             double porcentajeAcum = totalSalidas > 0 ? (double) acumulado / totalSalidas * 100 : 0;
             String clasificacion = porcentajeAcum <= 20 ? "A" : porcentajeAcum <= 50 ? "B" : "C";
-            items.add(new ItemRotacionDTO(
+            itemsFull.add(new ItemRotacionDTO(
                     ((Number) row[0]).longValue(),
                     "Producto #" + row[0],
                     salidas, valor,
@@ -162,6 +172,20 @@ public class ReporteServicioImpl implements ReporteServicio {
                     clasificacion));
         }
 
-        return new ReporteRotacionDTO(anio, mes, items);
+        Page<ItemRotacionDTO> itemsPage = paginateList(itemsFull, pagina, porPagina);
+
+        return new ReporteRotacionDTO(anio, mes, itemsPage);
+    }
+
+    private <T> Page<T> paginateList(List<T> list, Integer pagina, Integer porPagina) {
+        int numPagina = (pagina != null && pagina > 0) ? pagina - 1 : 0;
+        int tamanoPagina = (porPagina != null && porPagina > 0) ? porPagina : 10;
+        Pageable pageable = PageRequest.of(numPagina, tamanoPagina);
+        
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), list.size());
+        
+        List<T> sublist = (start <= end && start <= list.size()) ? list.subList(start, end) : new ArrayList<>();
+        return new PageImpl<>(sublist, pageable, list.size());
     }
 }

@@ -20,11 +20,13 @@ public class TableroControlador {
         return ResponseEntity.ok(new MensajeDTO<>(false, tableroServicio.getResumenDiario()));
     }
 
-    /** RF-33: Lista de productos con stock por debajo del mínimo. */
+    /** RF-33: Lista de productos con stock por debajo del mínimo (paginado). */
     @GetMapping("/alertas-stock")
     @PreAuthorize("hasAnyRole('OPERADOR', 'GERENTE', 'ADMIN')")
-    public ResponseEntity<MensajeDTO<Object>> alertasStock() {
-        return ResponseEntity.ok(new MensajeDTO<>(false, tableroServicio.getAlertasStock()));
+    public ResponseEntity<MensajeDTO<Object>> alertasStock(
+            @RequestParam(required = false, defaultValue = "10") Integer porPagina,
+            @RequestParam(required = false) Integer pagina) {
+        return ResponseEntity.ok(new MensajeDTO<>(false, tableroServicio.getAlertasStock(pagina, porPagina)));
     }
 
     /** RF-24: Métricas de transferencias activas. */

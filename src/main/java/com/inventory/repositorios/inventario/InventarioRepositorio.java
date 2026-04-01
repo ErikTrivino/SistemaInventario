@@ -15,11 +15,11 @@ public interface InventarioRepositorio extends JpaRepository<Inventario, Inventa
 
     Optional<Inventario> findByProducto_IdAndSucursal_Id(Long productoId, Long sucursalId);
 
-    List<Inventario> findBySucursal_Id(Long sucursalId);
+    org.springframework.data.domain.Page<Inventario> findBySucursal_Id(Long sucursalId, org.springframework.data.domain.Pageable pageable);
 
     /** RF-29: Buscar productos con stock bajo el mínimo. */
     @Query("SELECT i FROM Inventario i WHERE i.stock < i.stockMinimo")
-    List<Inventario> findByQuantityLessThanMinStock();
+    org.springframework.data.domain.Page<Inventario> findByQuantityLessThanMinStock(org.springframework.data.domain.Pageable pageable);
 
     /** Búsqueda de catálogo activo por sucursal. */
     @Query("SELECT new com.inventory.modelo.dto.inventario.InventarioRespuestaDTO(" +
@@ -27,5 +27,5 @@ public interface InventarioRepositorio extends JpaRepository<Inventario, Inventa
            "i.sucursal.id, i.stock, i.stockMinimo) " +
            "FROM Inventario i " +
            "WHERE i.sucursal.id = :sucursalId AND i.producto.activo = true")
-    List<com.inventory.modelo.dto.inventario.InventarioRespuestaDTO> findActiveCatalogByBranch(@Param("sucursalId") Long sucursalId);
+    org.springframework.data.domain.Page<com.inventory.modelo.dto.inventario.InventarioRespuestaDTO> findActiveCatalogByBranch(@Param("sucursalId") Long sucursalId, org.springframework.data.domain.Pageable pageable);
 }

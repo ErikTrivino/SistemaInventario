@@ -1,6 +1,6 @@
 package com.inventory.modelo.dto.reportes;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 /**
  * RF-32: Análisis de rotación de productos (clasificación ABC).
@@ -9,5 +9,5 @@ import java.util.List;
 public record ReporteRotacionDTO(
         int anio,
         int mes,
-        List<ItemRotacionDTO> productos
+        Page<ItemRotacionDTO> productos
 ) {}

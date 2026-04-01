@@ -7,7 +7,7 @@ public interface TableroServicio {
     TableroResumenDTO getResumenDiario();
 
     /** RF-33: Lista de productos en alerta de stock mínimo. */
-    Object getAlertasStock();
+    Object getAlertasStock(Integer pagina, Integer porPagina);
 
     /** RF-24: Métricas de transferencias activas. */
     Object getMetricasTransferencias();

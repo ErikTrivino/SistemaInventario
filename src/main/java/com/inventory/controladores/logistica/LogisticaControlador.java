@@ -11,6 +11,13 @@ import com.inventory.modelo.dto.comun.MensajeDTO;
     public class LogisticaControlador {
         private final LogisticaServicio logisticsService;
 
+        @GetMapping
+        public ResponseEntity<MensajeDTO<Object>> getShipments(
+                @RequestParam(required = false, defaultValue = "10") Integer porPagina,
+                @RequestParam(required = false) Integer pagina) {
+            return ResponseEntity.ok(new MensajeDTO<>(false, logisticsService.getShipments(pagina, porPagina)));
+        }
+
         @PostMapping
         public ResponseEntity<MensajeDTO<Object>> createShipment(@RequestParam Long transferId) { return ResponseEntity.ok(new MensajeDTO<>(false, logisticsService.createShipment(transferId))); }
 

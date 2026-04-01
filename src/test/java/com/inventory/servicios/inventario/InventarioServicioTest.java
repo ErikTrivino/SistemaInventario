@@ -3,7 +3,7 @@ package com.inventory.servicios.inventario;
 import com.inventory.modelo.dto.inventario.InventarioInformacionDTO;
 import com.inventory.modelo.dto.inventario.ProductoCrearDTO;
 import com.inventory.modelo.dto.inventario.ProductoDetalleDTO;
-import com.inventory.modelo.dto.inventario.ProductoInformacionDTO;
+
 import com.inventory.modelo.entidades.inventario.Producto;
 import com.inventory.modelo.entidades.inventario.Inventario;
 import com.inventory.repositorios.inventario.InventarioRepositorio;
@@ -21,6 +21,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -86,13 +89,13 @@ public class InventarioServicioTest {
                 .thenReturn(Optional.of(mockInv));
 
         assertDoesNotThrow(() -> 
-            inventarioServicio.updateStock(productId, branchId, 10.0, "IN", "Ajuste de prueba"));
+            inventarioServicio.updateStock(productId, branchId, 10.0, "IN", "Ajuste de prueba", "test-usuario"));
     }
 
     @Test
     void testConsultarInventarioPorSucursal() throws Exception {
-        when(inventoryRepository.findBySucursal_Id(1L)).thenReturn(List.of());
-        List<InventarioInformacionDTO> inventario = inventarioServicio.getInventoryByBranch(1L);
+        when(inventoryRepository.findBySucursal_Id(any(Long.class), any(Pageable.class))).thenReturn(new PageImpl<>(List.of()));
+        Page<InventarioInformacionDTO> inventario = inventarioServicio.getInventoryByBranch(1L, 1, 10);
         assertNotNull(inventario);
     }
 }

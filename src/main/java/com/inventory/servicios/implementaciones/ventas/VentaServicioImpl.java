@@ -87,7 +87,8 @@ public class VentaServicioImpl implements VentaServicio {
                 dto.idSucursal(), 
                 item.cantidad().doubleValue(), 
                 "OUT", 
-                "Venta #" + saved.getId()
+                "Venta #" + saved.getId(),
+                userId.toString()
             );
 
             DetalleVenta d = DetalleVenta.builder()
@@ -101,7 +102,7 @@ public class VentaServicioImpl implements VentaServicio {
             detailRepository.save(d);
         }
 
-        eventPublisher.publishSale(saved);
+        eventPublisher.publicarVentaCompletada(saved, userId.toString());
         auditService.registrarAccion(userId.toString(), "CREATE", "Venta", saved.getId(), "Comercialización procesada");
         
         return toInfo(saved);
