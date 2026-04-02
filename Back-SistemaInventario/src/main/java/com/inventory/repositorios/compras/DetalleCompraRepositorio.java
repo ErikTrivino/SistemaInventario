@@ -10,7 +10,7 @@
         List<DetalleCompra> findByOrdenCompraId(Long ordenCompraId);
         
         @org.springframework.data.jpa.repository.Query("SELECT new com.inventory.modelo.dto.compras.CompraHistoricoRespuestaDTO(" +
-               "o.id, p.id, p.nombre, prov.id, prov.razonSocial, d.cantidadSolicitada, d.cantidadRecibida, d.precioUnitario, o.fechaCompra" +
+               "o.id, d.id, p.id, p.nombre, prov.id, prov.razonSocial, d.cantidadSolicitada, d.cantidadRecibida, d.precioUnitario, o.fechaCompra" +
                ") FROM DetalleCompra d " +
                "JOIN OrdenCompra o ON d.ordenCompraId = o.id " +
                "JOIN Producto p ON d.productoId = p.id " +
@@ -19,7 +19,7 @@
                "AND (:productoId IS NULL OR p.id = :productoId) " +
                "AND (:fechaInicio IS NULL OR o.fechaCompra >= :fechaInicio) " +
                "AND (:fechaFin IS NULL OR o.fechaCompra <= :fechaFin)")
-        Page<com.inventory.modelo.dto.compras.CompraHistoricoRespuestaDTO> findHistoricalPurchases(
+        Page<com.inventory.modelo.dto.compras.CompraHistoricoRespuestaDTO> obtenerHistoricoCompras(
             @org.springframework.data.repository.query.Param("proveedorId") Long proveedorId,
             @org.springframework.data.repository.query.Param("productoId") Long productoId,
             @org.springframework.data.repository.query.Param("fechaInicio") java.time.LocalDateTime fechaInicio,

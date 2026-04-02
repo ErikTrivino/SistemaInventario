@@ -1,3 +1,16 @@
+export interface CompraHistoricoRespuestaDTO {
+  idOrdenCompra: number;
+  idDetalle: number;
+  idProducto: number;
+  nombreProducto: string;
+  idProveedor: number;
+  nombreProveedor: string;
+  cantidadSolicitada: number;
+  cantidadRecibida: number;
+  precioUnitario: number;
+  fechaCompra: Date;
+}
+
 export interface InformacionCliente {
   idCliente: number;
   nombre: string;
@@ -26,10 +39,10 @@ export interface InformacionUsuario {
   nombre: string;
   apellido: string;
   correo: string;
-  contrasena: string;
   activo: boolean;
   rol: string;
   sucursalAsignadaId?: number;
+  motivoInactivacion?: string;
 }
 
 export interface InformacionFactura {
@@ -49,7 +62,8 @@ export interface InformacionProducto {
   unidadMedidaBase: string;
   precioCostoPromedio: number;
   activo: boolean;
-  stock?: number;
+  stockTotal?: number;
+  stockActual?: number;
   idProveedor?: number;
   nombreProveedor?: string;
 }
@@ -99,4 +113,30 @@ export interface InformacionDetallePedido {
   precioUnitario: number;
   idPedido: number;
   idProducto: number;
+}
+
+export interface EnvioInfoDTO {
+  idEnvio?: number;
+  fechaDespacho?: Date;
+  tiempoEstimado?: number;
+  fechaRecepcionReal?: Date;
+  estadoLogistico?: string;
+}
+
+export interface ResumenDetalleDTO {
+  idProducto: number;
+  cantidadSolicitada: number;
+  cantidadConfirmada?: number;
+  cantidadRecibida?: number;
+  motivoDiferencia?: string;
+}
+
+export interface InformacionTransferencia {
+  idTransferencia: number;
+  idSucursalOrigen: number;
+  idSucursalDestino: number;
+  estado: string;
+  fechaSolicitud: Date;
+  items: ResumenDetalleDTO[];
+  envio?: EnvioInfoDTO;
 }

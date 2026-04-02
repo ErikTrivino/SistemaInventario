@@ -67,7 +67,7 @@ public class CompraServicioTest {
             return order;
         });
 
-        CompraInformacionDTO resultado = compraServicio.createPurchase(dto, 1L);
+        CompraInformacionDTO resultado = compraServicio.crearCompra(dto, 1L);
 
         assertNotNull(resultado);
         assertEquals(1L, resultado.idCompra());
@@ -105,15 +105,15 @@ public class CompraServicioTest {
                 List.of(detalleRecibido)
         );
 
-        assertDoesNotThrow(() -> compraServicio.receivePurchase(dto));
+        assertDoesNotThrow(() -> compraServicio.recibirCompra(dto));
     }
 
     @Test
     void testConsultarHistorial() throws Exception {
         Page<CompraHistoricoRespuestaDTO> mockPage = new PageImpl<>(List.of());
-        when(purchaseDetailRepository.findHistoricalPurchases(any(), any(), any(), any(), any())).thenReturn(mockPage);
+        when(purchaseDetailRepository.obtenerHistoricoCompras(any(), any(), any(), any(), any())).thenReturn(mockPage);
 
-        Page<CompraHistoricoRespuestaDTO> historial = compraServicio.getPurchaseHistory(
+        Page<CompraHistoricoRespuestaDTO> historial = compraServicio.obtenerHistoricoCompras(
                 1L, null, LocalDateTime.now().minusDays(30), LocalDateTime.now(), 0, 10
         );
 

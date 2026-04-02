@@ -28,13 +28,12 @@ export interface CrearUsuario {
 
   nombre: string;
   apellido: string;
-  identificacion: number;
-  numerophone: number;
-  edad: number;
-  correo: string;
-  password:string;
-  estado:string;
-  rol:string;
+  email: string;
+  password?: string;
+  rol: string;
+  sucursalAsignadaId?: number;
+  activo?: boolean;
+  motivoInactivacion?: string;
 
 }
 
@@ -53,20 +52,20 @@ export interface CrearProducto {
 
   nombre: string;
   descripcion: string;
-  available: number;
-  singlePrice: number;
-  idProveedor: number;
-
+  sku: string;
+  unidadMedidaBase: string;
+  precioCostoPromedio: number;
+  cantidadInicial: number;
+  idSucursal: number;
 
 }
 
 export interface CrearProveedor {
 
-  nombre: string;
-  identificacion: number;
-  telefono: number;
-  correo: string;
-
+  nitRut: string;
+  razonSocial: string;
+  contacto: string;
+  email: string;
 
 }
 
@@ -111,4 +110,54 @@ export interface CrearDetallePedido {
   idPedido: number;
   idProducto: number;
 
+}
+
+export interface ItemTransferenciaDTO {
+  idProducto: number;
+  cantidad: number;
+}
+
+export interface TransferenciaCrearDTO {
+  idSucursalOrigen: number;
+  idSucursalDestino: number;
+  items: ItemTransferenciaDTO[];
+}
+
+export interface TransferenciaPrepararDTO {
+  idTransferencia: number;
+  cantidadConfirmada: number;
+}
+
+export interface TransferenciaConfirmarEnvioDTO {
+  idTransferencia: number;
+}
+
+export interface TransferenciaRecepcionDTO {
+  idTransferencia: number;
+  cantidadRecibida: number;
+}
+
+export interface DetalleCompraCrearDTO {
+  idProducto: number;
+  cantidad: number;
+  precioUnitario: number;
+  descuentoPorcentaje?: number;
+}
+
+export interface OrdenCompraCrearDTO {
+  idSucursalDestino: number;
+  idProveedor: number;
+  plazoPagoDias?: number;
+  detalles: DetalleCompraCrearDTO[];
+}
+
+export interface DetalleRecepcionDTO {
+  idDetalle: number;
+  cantidadRecibida: number;
+}
+
+export interface OrdenCompraRecepcionDTO {
+  idOrdenCompra: number;
+  idSucursalDestino: number;
+  detallesRecibidos: DetalleRecepcionDTO[];
 }

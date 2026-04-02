@@ -10,7 +10,7 @@ import { environment } from '../../environments/environment';
 export class ProveedorService {
   private apiUrl = `${environment.apiUrl}/api/proveedores`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   listar(pagina?: number, porPagina: number = 10): Observable<MensajeDTO> {
     let params = new HttpParams().set('porPagina', porPagina.toString());

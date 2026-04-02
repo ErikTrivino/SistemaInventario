@@ -7,6 +7,7 @@ import { InformacionProveedor } from '../../modelo/informacionObjeto';
 import { MensajeDTO } from '../../modelo/mensaje-dto';
 import { PaginadorComponent } from '../comun/paginador/paginador.component';
 import { FormsModule } from '@angular/forms';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-gestion-provider',
@@ -15,49 +16,69 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './gestion-proveedor.component.html',
 })
 export class GestionProveedorComponent implements OnInit {
+
   proveedores: InformacionProveedor[] = [];
   seleccionados: InformacionProveedor[] = [];
+
   textoBtnAccion = '';
 
-  // Estado de paginación
+  // Paginación
   paginaActual = 0;
   totalPaginas = 0;
   totalElementos = 0;
   tamanoPagina = 10;
 
-  // Filtros
+  // Filtro
   mostrarTodos = false;
 
-  constructor(private svc: ProveedorService) {}
+  loading = false;
+
+  constructor(private svc: ProveedorService) { }
 
   ngOnInit(): void {
     this.cargar();
   }
 
+  // ========================
+  // CARGA DE DATOS
+  // ========================
   cargar(): void {
-    const observer = {
+    this.loading = true;
+
+    const request = this.mostrarTodos
+      ? this.svc.listarTodos(this.paginaActual, this.tamanoPagina)
+      : this.svc.listar(this.paginaActual, this.tamanoPagina);
+
+    request.subscribe({
       next: (data: MensajeDTO) => {
-        if (data.respuesta.content) {
-          this.proveedores = data.respuesta.content;
-          this.totalElementos = data.respuesta.totalElements;
-          this.totalPaginas = data.respuesta.totalPages;
-          this.paginaActual = data.respuesta.number;
+        const respuesta = data.respuesta;
+
+        // 🔥 Manejo unificado de respuesta paginada o simple
+        if (respuesta?.content) {
+          this.proveedores = respuesta.content;
+          this.totalElementos = respuesta.totalElements;
+          this.totalPaginas = respuesta.totalPages;
+          this.paginaActual = respuesta.number;
         } else {
-          this.proveedores = data.respuesta;
+          this.proveedores = respuesta || [];
           this.totalElementos = this.proveedores.length;
           this.totalPaginas = 1;
+          this.paginaActual = 0;
         }
-      },
-      error: (e: any) => console.error(e),
-    };
 
-    if (this.mostrarTodos) {
-      this.svc.listarTodos(this.paginaActual + 1, this.tamanoPagina).subscribe(observer);
-    } else {
-      this.svc.listar(this.paginaActual + 1, this.tamanoPagina).subscribe(observer);
-    }
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error(err);
+        this.loading = false;
+        Swal.fire('Error', 'No se pudieron cargar los proveedores', 'error');
+      }
+    });
   }
 
+  // ========================
+  // PAGINACIÓN
+  // ========================
   onCambioPagina(p: number) {
     this.paginaActual = p;
     this.cargar();
@@ -75,36 +96,57 @@ export class GestionProveedorComponent implements OnInit {
     this.cargar();
   }
 
-  seleccionar(item: InformacionProveedor, sel: boolean) {
-    if (sel) {
-      if (!this.seleccionados.includes(item)) {
+  // ========================
+  // SELECCIÓN
+  // ========================
+  seleccionar(item: InformacionProveedor, checked: boolean) {
+
+    if (checked) {
+      if (!this.seleccionados.some(p => p.id === item.id)) {
         this.seleccionados.push(item);
       }
     } else {
-      const index = this.seleccionados.indexOf(item);
-      if (index !== -1) {
-        this.seleccionados.splice(index, 1);
-      }
+      this.seleccionados = this.seleccionados.filter(p => p.id !== item.id);
     }
-    this.textoBtnAccion = `${this.seleccionados.length} proveedor${this.seleccionados.length === 1 ? '' : 'es'}`;
+
+    this.actualizarTextoBoton();
   }
 
-  toggleEstadoSelec() {
-    const promises = this.seleccionados.map(p => this.svc.toggleEstado(p.id).toPromise());
+  actualizarTextoBoton() {
+    const n = this.seleccionados.length;
+    this.textoBtnAccion = n > 0
+      ? `${n} proveedor${n === 1 ? '' : 'es'}`
+      : '';
+  }
 
-    Promise.all(promises)
-      .then(() => {
-        Swal.fire('Procesado', 'El estado de los proveedores ha sido actualizado', 'success');
-        this.cargar();
+  // ========================
+  // ACCIONES
+  // ========================
+  toggleEstadoSelec() {
+
+    if (this.seleccionados.length === 0) return;
+
+    const requests = this.seleccionados.map(p =>
+      this.svc.toggleEstado(p.id)
+    );
+
+    forkJoin(requests).subscribe({
+      next: () => {
+        Swal.fire('Procesado', 'Estado actualizado correctamente', 'success');
         this.seleccionados = [];
         this.textoBtnAccion = '';
-      })
-      .catch((err: any) => {
+        this.cargar();
+      },
+      error: (err) => {
         console.error(err);
-        Swal.fire('Error', 'No se pudo actualizar el estado de algunos proveedores', 'error');
-      });
+        Swal.fire('Error', 'Falló la actualización de algunos proveedores', 'error');
+      }
+    });
   }
 
+  // ========================
+  // OPTIMIZACIÓN
+  // ========================
   trackById(_i: number, p: InformacionProveedor) {
     return p.id;
   }

@@ -28,7 +28,7 @@ public class CompraServicioImpl implements CompraServicio {
 
     @Override
     @Transactional
-    public CompraInformacionDTO createPurchase(OrdenCompraCrearDTO dto, Long userId) {
+    public CompraInformacionDTO crearCompra(OrdenCompraCrearDTO dto, Long userId) {
         if (dto.detalles() == null || dto.detalles().isEmpty()) {
             throw new RuntimeException("La orden debe tener al menos un producto.");
         }
@@ -77,7 +77,7 @@ public class CompraServicioImpl implements CompraServicio {
 
     @Override
     @Transactional
-    public void receivePurchase(OrdenCompraRecepcionDTO dto) {
+    public void recibirCompra(OrdenCompraRecepcionDTO dto) {
         OrdenCompra order = purchaseOrderRepository.findById(dto.idOrdenCompra())
                 .orElseThrow(() -> new RuntimeException("PO not found"));
 
@@ -116,11 +116,11 @@ public class CompraServicioImpl implements CompraServicio {
     }
 
     @Override
-    public Page<CompraHistoricoRespuestaDTO> getPurchaseHistory(Long supplierId, Long productId, LocalDateTime start, LocalDateTime end, Integer pagina, Integer porPagina) {
+    public Page<CompraHistoricoRespuestaDTO> obtenerHistoricoCompras(Long idProveedor, Long idProducto, LocalDateTime fechaDesde, LocalDateTime fechaHasta, Integer pagina, Integer porPagina) {
         int pageNumber = (pagina != null) ? pagina : 0;
         int pageSize = (porPagina != null && porPagina > 0) ? porPagina : 10;
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        return purchaseDetailRepository.findHistoricalPurchases(supplierId, productId, start, end, pageable);
+        return purchaseDetailRepository.obtenerHistoricoCompras(idProveedor, idProducto, fechaDesde, fechaHasta, pageable);
     }
 
     private CompraInformacionDTO toInfo(OrdenCompra purchaseOrder) {

@@ -21,6 +21,7 @@ import { GestionOrdenesCompraComponent } from './componentes/gestion-ordenes-com
 import { GestionRutasComponent } from './componentes/gestion-rutas/gestion-rutas.component';
 import { SeguimientoEnviosComponent } from './componentes/seguimiento-envios/seguimiento-envios.component';
 import { GestionSucursalesComponent } from './componentes/gestion-sucursales/gestion-sucursales.component';
+import { GestionVentasComponent } from './componentes/gestion-ventas/gestion-ventas.component';
 
 export const routes: Routes = [
   {
@@ -45,6 +46,9 @@ export const routes: Routes = [
       // Logística
       { path: 'gestion-rutas', component: GestionRutasComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "MANAGER", "OPERATOR"] } },
       { path: 'seguimiento-envios', component: SeguimientoEnviosComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "MANAGER", "OPERATOR"] } },
+
+      // Comercialización
+      { path: 'gestion-ventas', component: GestionVentasComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "MANAGER", "OPERATOR"] } },
 
       // Configuración
       { path: 'gestion-usuario', component: GestionUsuarioComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN"] } },

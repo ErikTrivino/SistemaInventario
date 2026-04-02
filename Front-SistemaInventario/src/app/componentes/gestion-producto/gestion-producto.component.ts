@@ -35,7 +35,7 @@ export class GestionProductoComponent implements OnInit {
     private inventarioService: InventarioService,
     private proveedorService: ProveedorService,
     private sucursalService: SucursalService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.cargarSucursales();
@@ -60,10 +60,10 @@ export class GestionProductoComponent implements OnInit {
 
     observable.subscribe({
       next: (data: MensajeDTO) => {
-        console.log('Datos recibidos:', data.respuesta);
-        
+
+
         let content = data.respuesta.content || data.respuesta;
-        
+
         if (this.idSucursalSeleccionada && Array.isArray(content)) {
           this.productos = content.map((item: any) => ({
             id: item.idProducto,
@@ -72,15 +72,13 @@ export class GestionProductoComponent implements OnInit {
             descripcion: item.descripcion,
             unidadMedidaBase: item.unidadMedida,
             activo: item.activo,
-            stock: item.stock,
+            stockActual: item.stock,          // InventarioRespuestaDTO usa "stock"
+            stockTotal: item.stock,
             precioCostoPromedio: item.precioCostoPromedio,
             idProveedor: item.idProveedor
           }));
         } else if (Array.isArray(content)) {
-          this.productos = content.map((item: any) => ({
-            ...item,
-            stock: item.stockTotal
-          }));
+          this.productos = content as InformacionProducto[];
         } else {
           this.productos = [];
         }

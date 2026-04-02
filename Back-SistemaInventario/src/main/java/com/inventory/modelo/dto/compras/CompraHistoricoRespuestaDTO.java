@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 
 public record CompraHistoricoRespuestaDTO(
         Long idOrdenCompra,
+        Long idDetalle,
         Long idProducto,
         String nombreProducto,
         Long idProveedor,

@@ -7,9 +7,9 @@
     import org.springframework.data.domain.Page;
 
     public interface CompraServicio {
-        CompraInformacionDTO createPurchase(OrdenCompraCrearDTO dto, Long userId);
-        void receivePurchase(OrdenCompraRecepcionDTO dto);
-        Page<CompraHistoricoRespuestaDTO> getPurchaseHistory(Long supplierId, Long productId, LocalDateTime start, LocalDateTime end, Integer pagina, Integer porPagina);
+        CompraInformacionDTO crearCompra(OrdenCompraCrearDTO dto, Long userId);
+        void recibirCompra(OrdenCompraRecepcionDTO dto);
+        Page<CompraHistoricoRespuestaDTO> obtenerHistoricoCompras(Long idProveedor, Long idProducto, LocalDateTime fechaDesde, LocalDateTime fechaHasta, Integer pagina, Integer porPagina);
     }
 
 

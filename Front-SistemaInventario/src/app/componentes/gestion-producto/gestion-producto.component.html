@@ -61,9 +61,9 @@
                 <td class="text-black dark:text-white font-medium">{{ p.precioCostoPromedio | currency }}</td>
                 <td>
                   <span
-                    [class]="(p.stock || 0) < 5 ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400' : 'bg-slate-900 text-white dark:bg-slate-800 dark:text-white'"
+                    [class]="((p.stockActual ?? p.stockTotal) || 0) < 5 ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400' : 'bg-slate-900 text-white dark:bg-slate-800 dark:text-white'"
                     class="px-2.5 py-0.5 rounded-full text-xs font-medium">
-                    {{ p.stock || 0 }}unid.
+                    {{ (p.stockActual ?? p.stockTotal) || 0 }}unid.
                   </span>
                 </td>
                 <td>

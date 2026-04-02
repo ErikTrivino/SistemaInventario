@@ -16,7 +16,6 @@ public class MovimientoControlador {
     private final MovimientoServicio movimientoServicio;
 
     @PostMapping("/retiro")
-
     public ResponseEntity<MensajeDTO<Object>> registrarRetiro(@Valid @RequestBody MovimientoRetiroDTO dto) {
         movimientoServicio.registrarRetiro(dto);
         return ResponseEntity.ok(new MensajeDTO<>(false, "Retiro registrado exitosamente"));

@@ -1,71 +1,153 @@
-<aside class="bg-gradient-to-br from-gray-800 to-gray-900 -translate-x-80 fixed inset-0 z-50 my-4 ml-4 h-[calc(100vh-32px)] w-80 rounded-xl transition-transform duration-300 xl:translate-x-0">
+<aside
+  class="bg-gradient-to-br from-gray-800 to-gray-900 -translate-x-80 fixed inset-0 z-50 my-4 ml-4 h-[calc(100vh-32px)] w-80 rounded-xl transition-transform duration-300 xl:translate-x-0">
   <div class="relative border-b border-white/20">
     <a class="flex items-center gap-4 py-6 px-8" href="/">
-      <h6 class="block antialiased tracking-normal font-sans text-base font-semibold leading-relaxed text-white">Sistema Inventario</h6>
+      <h6 class="block antialiased tracking-normal font-sans text-base font-semibold leading-relaxed text-white">Sistema
+        Inventario</h6>
     </a>
   </div>
   <div class="m-4 h-[calc(100vh-180px)] overflow-y-auto pr-2 custom-scrollbar">
     <ul class="mb-4 flex flex-col gap-1">
       <li>
-        <button routerLink="/dashboard" routerLinkActive="bg-gradient-to-tr from-blue-600 to-blue-400 shadow-md" [routerLinkActiveOptions]="{exact: true}" class="middle none font-sans font-bold transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3.5 min-h-[48px] rounded-lg text-white hover:bg-white/10 active:bg-white/30 flex w-full items-center gap-6 pl-2 pr-5 capitalize" type="button">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 flex-shrink-0"><path d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a.75.75 0 101.06-1.06l-8.689-8.69a2.25 2.25 0 00-3.182 0l-8.69 8.69a.75.75 0 001.061 1.06l8.69-8.69z"></path><path d="M12 5.432l8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 01-.75-.75v-4.5a.75.75 0 00-.75-.75h-3a.75.75 0 00-.75.75V21a.75.75 0 01-.75.75H5.625a1.875 1.875 0 01-1.875-1.875v-6.198a2.29 2.29 0 00.091-.086L12 5.43z"></path></svg>
-          <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">Dashboard</p>
+        <button routerLink="/dashboard" routerLinkActive="bg-gradient-to-tr from-blue-600 to-blue-400 shadow-md"
+          [routerLinkActiveOptions]="{exact: true}"
+          class="middle none font-sans font-bold transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3.5 min-h-[48px] rounded-lg text-white hover:bg-white/10 active:bg-white/30 flex w-full items-center gap-6 pl-2 pr-5 capitalize"
+          type="button">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 flex-shrink-0">
+            <path
+              d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a.75.75 0 101.06-1.06l-8.689-8.69a2.25 2.25 0 00-3.182 0l-8.69 8.69a.75.75 0 001.061 1.06l8.69-8.69z">
+            </path>
+            <path
+              d="M12 5.432l8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 01-.75-.75v-4.5a.75.75 0 00-.75-.75h-3a.75.75 0 00-.75.75V21a.75.75 0 01-.75.75H5.625a1.875 1.875 0 01-1.875-1.875v-6.198a2.29 2.29 0 00.091-.086L12 5.43z">
+            </path>
+          </svg>
+          <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">Dashboard
+          </p>
         </button>
       </li>
 
       <!-- Inventario Section -->
       <li>
-        <p class="block antialiased font-sans text-xs leading-normal text-white font-black uppercase opacity-75 ml-2 mt-4 mb-2 tracking-widest">Inventario</p>
-        <button routerLink="/gestion-producto" routerLinkActive="bg-gradient-to-tr from-blue-600 to-blue-400 shadow-md" class="middle none font-sans font-bold transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3.5 min-h-[48px] rounded-lg text-white hover:bg-white/10 active:bg-white/30 flex w-full items-center gap-6 pl-2 pr-5 capitalize" type="button">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 flex-shrink-0"><path fill-rule="evenodd" d="M3 6.75A.75.75 0 013.75 6h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 12zm0 5.25a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75a.75.75 0 01-.75-.75z" clip-rule="evenodd" /></svg>
-          <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">Catálogo</p>
+        <p
+          class="block antialiased font-sans text-xs leading-normal text-white font-black uppercase opacity-75 ml-2 mt-4 mb-2 tracking-widest">
+          Inventario</p>
+        <button routerLink="/gestion-producto" routerLinkActive="bg-gradient-to-tr from-blue-600 to-blue-400 shadow-md"
+          class="middle none font-sans font-bold transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3.5 min-h-[48px] rounded-lg text-white hover:bg-white/10 active:bg-white/30 flex w-full items-center gap-6 pl-2 pr-5 capitalize"
+          type="button">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 flex-shrink-0">
+            <path fill-rule="evenodd"
+              d="M3 6.75A.75.75 0 013.75 6h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 12zm0 5.25a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75a.75.75 0 01-.75-.75z"
+              clip-rule="evenodd" />
+          </svg>
+          <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">Catálogo
+          </p>
         </button>
-        <button routerLink="/gestion-movimientos" routerLinkActive="bg-gradient-to-tr from-blue-600 to-blue-400 shadow-md" class="middle none font-sans font-bold transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3.5 min-h-[48px] rounded-lg text-white hover:bg-white/10 active:bg-white/30 flex w-full items-center gap-6 pl-2 pr-5 capitalize" type="button">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 flex-shrink-0"><path fill-rule="evenodd" d="M15.91 3.912a.75.75 0 01.907.365l2.25 4.5a.75.75 0 01-.136.872l-4.5 4.5a.75.75 0 11-1.06-1.06l3.22-3.22H8.25a.75.75 0 010-1.5h8.384l-3.22-3.22a.75.75 0 01-.136-.872l2.25-4.5a.75.75 0 01.382-.365z" clip-rule="evenodd" /></svg>
-          <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">Movimientos</p>
-        </button>
-        <button routerLink="/gestion-transferencias" routerLinkActive="bg-gradient-to-tr from-blue-600 to-blue-400 shadow-md" class="middle none font-sans font-bold transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3.5 min-h-[48px] rounded-lg text-white hover:bg-white/10 active:bg-white/30 flex w-full items-center gap-6 pl-2 pr-5 capitalize" type="button">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 flex-shrink-0"><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"/></svg>
-          <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">Transferencias</p>
+
+        <button routerLink="/gestion-transferencias"
+          routerLinkActive="bg-gradient-to-tr from-blue-600 to-blue-400 shadow-md"
+          class="middle none font-sans font-bold transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3.5 min-h-[48px] rounded-lg text-white hover:bg-white/10 active:bg-white/30 flex w-full items-center gap-6 pl-2 pr-5 capitalize"
+          type="button">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 flex-shrink-0">
+            <path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z" />
+          </svg>
+          <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">
+            Transferencias</p>
         </button>
       </li>
 
       <!-- Abastecimiento Section -->
       <li>
-        <p class="block antialiased font-sans text-xs leading-normal text-white font-black uppercase opacity-75 ml-2 mt-4 mb-2 tracking-widest">Abastecimiento</p>
-        <button routerLink="/gestion-proveedor" routerLinkActive="bg-gradient-to-tr from-blue-600 to-blue-400 shadow-md" class="middle none font-sans font-bold transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3.5 min-h-[48px] rounded-lg text-white hover:bg-white/10 active:bg-white/30 flex w-full items-center gap-6 pl-2 pr-5 capitalize" type="button">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 flex-shrink-0"><path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z" clip-rule="evenodd"></path></svg>
-          <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">Proveedores</p>
+        <p
+          class="block antialiased font-sans text-xs leading-normal text-white font-black uppercase opacity-75 ml-2 mt-4 mb-2 tracking-widest">
+          Abastecimiento</p>
+        <button routerLink="/gestion-proveedor" routerLinkActive="bg-gradient-to-tr from-blue-600 to-blue-400 shadow-md"
+          class="middle none font-sans font-bold transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3.5 min-h-[48px] rounded-lg text-white hover:bg-white/10 active:bg-white/30 flex w-full items-center gap-6 pl-2 pr-5 capitalize"
+          type="button">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 flex-shrink-0">
+            <path fill-rule="evenodd"
+              d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z"
+              clip-rule="evenodd"></path>
+          </svg>
+          <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">
+            Proveedores</p>
         </button>
-        <button routerLink="/gestion-ordenes-compra" routerLinkActive="bg-gradient-to-tr from-blue-600 to-blue-400 shadow-md" class="middle none font-sans font-bold transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3.5 min-h-[48px] rounded-lg text-white hover:bg-white/10 active:bg-white/30 flex w-full items-center gap-6 pl-2 pr-5 capitalize" type="button">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 flex-shrink-0"><path fill-rule="evenodd" d="M2.25 2.25a.75.75 0 000 1.5h1.386c.17 0 .315.114.363.274l.71 2.37c.18.601.733 1.006 1.353 1.006h11.232c.621 0 1.173-.405 1.353-1.006l.71-2.37a.375.375 0 00-.363-.483h-16zM3.487 7.5L5.433 14h13.134l1.946-6.5H3.487zM6 19.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm12 0a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" clip-rule="evenodd"/></svg>
-          <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">Órdenes de Compra</p>
+        <button routerLink="/gestion-ordenes-compra"
+          routerLinkActive="bg-gradient-to-tr from-blue-600 to-blue-400 shadow-md"
+          class="middle none font-sans font-bold transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3.5 min-h-[48px] rounded-lg text-white hover:bg-white/10 active:bg-white/30 flex w-full items-center gap-6 pl-2 pr-5 capitalize"
+          type="button">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 flex-shrink-0">
+            <path fill-rule="evenodd"
+              d="M2.25 2.25a.75.75 0 000 1.5h1.386c.17 0 .315.114.363.274l.71 2.37c.18.601.733 1.006 1.353 1.006h11.232c.621 0 1.173-.405 1.353-1.006l.71-2.37a.375.375 0 00-.363-.483h-16zM3.487 7.5L5.433 14h13.134l1.946-6.5H3.487zM6 19.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm12 0a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"
+              clip-rule="evenodd" />
+          </svg>
+          <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">Órdenes
+            de Compra</p>
         </button>
       </li>
 
       <!-- Logística Section -->
       <li>
-        <p class="block antialiased font-sans text-xs leading-normal text-white font-black uppercase opacity-75 ml-2 mt-4 mb-2 tracking-widest">Logística</p>
-        <button routerLink="/gestion-rutas" routerLinkActive="bg-gradient-to-tr from-blue-600 to-blue-400 shadow-md" class="middle none font-sans font-bold transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3.5 min-h-[48px] rounded-lg text-white hover:bg-white/10 active:bg-white/30 flex w-full items-center gap-6 pl-2 pr-5 capitalize" type="button">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 flex-shrink-0"><path fill-rule="evenodd" d="M11.545 20.91c-3.26-.607-5.464-2.247-6.132-4.49-.33-1.11-.274-2.223.167-3.25a.75.75 0 011.365.62c-.313.689-.355 1.455-.125 2.227.426 1.428 1.95 2.656 4.6 3.164.256-.475.56-.934.908-1.371a.75.75 0 111.164.945c-1.164 1.436-1.895 3.097-2.146 4.887a.75.75 0 01-.19-.731zM11.25 2.25a.75.75 0 01.75.75v3.16a7.512 7.512 0 014.288 1.528.75.75 0 11-.912 1.194A6.012 6.012 0 0012 7.5v3a.75.75 0 01-1.5 0v-4.5a.75.75 0 01.75-.75z" clip-rule="evenodd"/></svg>
-          <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">Rutas y Tiempos</p>
+        <p
+          class="block antialiased font-sans text-xs leading-normal text-white font-black uppercase opacity-75 ml-2 mt-4 mb-2 tracking-widest">
+          Logística</p>
+
+        <button routerLink="/seguimiento-envios"
+          routerLinkActive="bg-gradient-to-tr from-blue-600 to-blue-400 shadow-md"
+          class="middle none font-sans font-bold transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3.5 min-h-[48px] rounded-lg text-white hover:bg-white/10 active:bg-white/30 flex w-full items-center gap-6 pl-2 pr-5 capitalize"
+          type="button">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 flex-shrink-0">
+            <path
+              d="M3.375 3C2.339 3 1.5 3.84 1.5 4.875v11.25c0 1.035.84 1.875 1.875 1.875h17.25c1.035 0 1.875-.84 1.875-1.875V4.875C22.5 3.839 21.66 3 20.625 3H3.375zM12 9a2.25 2.25 0 110-4.5A2.25 2.25 0 0112 9z" />
+          </svg>
+          <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">
+            Reportes</p>
         </button>
-        <button routerLink="/seguimiento-envios" routerLinkActive="bg-gradient-to-tr from-blue-600 to-blue-400 shadow-md" class="middle none font-sans font-bold transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3.5 min-h-[48px] rounded-lg text-white hover:bg-white/10 active:bg-white/30 flex w-full items-center gap-6 pl-2 pr-5 capitalize" type="button">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 flex-shrink-0"><path d="M3.375 3C2.339 3 1.5 3.84 1.5 4.875v11.25c0 1.035.84 1.875 1.875 1.875h17.25c1.035 0 1.875-.84 1.875-1.875V4.875C22.5 3.839 21.66 3 20.625 3H3.375zM12 9a2.25 2.25 0 110-4.5A2.25 2.25 0 0112 9z" /></svg>
-          <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">Seguimiento</p>
+      </li>
+
+      <!-- Comercialización Section -->
+      <li>
+        <p
+          class="block antialiased font-sans text-xs leading-normal text-white font-black uppercase opacity-75 ml-2 mt-4 mb-2 tracking-widest">
+          Comercialización</p>
+        <button routerLink="/gestion-ventas" routerLinkActive="bg-gradient-to-tr from-blue-600 to-blue-400 shadow-md"
+          class="middle none font-sans font-bold transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3.5 min-h-[48px] rounded-lg text-white hover:bg-white/10 active:bg-white/30 flex w-full items-center gap-6 pl-2 pr-5 capitalize"
+          type="button">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 flex-shrink-0">
+            <path d="M2.25 2.25a.75.75 0 000 1.5h1.386c.17 0 .315.114.363.274l2.159 7.537A2.625 2.625 0 007.489 15h10.294a2.625 2.625 0 002.615-2.392l.592-7.105A.75.75 0 0020.244 4.5H5.446l-.29-1.013A1.875 1.875 0 003.358 2.25H2.25z" />
+            <path d="M7.5 19.5a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm10.5 0a1.5 1.5 0 110-3 1.5 1.5 0 010 3z" />
+          </svg>
+          <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">
+            Ventas</p>
         </button>
       </li>
 
       <!-- Configuración Section -->
       <li *ngIf="isAdmin()">
-        <p class="block antialiased font-sans text-xs leading-normal text-white font-black uppercase opacity-75 ml-2 mt-4 mb-2 tracking-widest">Configuración</p>
-        <button routerLink="/gestion-usuario" routerLinkActive="bg-gradient-to-tr from-blue-600 to-blue-400 shadow-md" class="middle none font-sans font-bold transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3.5 min-h-[48px] rounded-lg text-white hover:bg-white/10 active:bg-white/30 flex w-full items-center gap-6 pl-2 pr-5 capitalize" type="button">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 flex-shrink-0"><path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z" clip-rule="evenodd"></path></svg>
-          <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">Usuarios y Roles</p>
+        <p
+          class="block antialiased font-sans text-xs leading-normal text-white font-black uppercase opacity-75 ml-2 mt-4 mb-2 tracking-widest">
+          Configuración</p>
+        <button routerLink="/gestion-usuario" routerLinkActive="bg-gradient-to-tr from-blue-600 to-blue-400 shadow-md"
+          class="middle none font-sans font-bold transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3.5 min-h-[48px] rounded-lg text-white hover:bg-white/10 active:bg-white/30 flex w-full items-center gap-6 pl-2 pr-5 capitalize"
+          type="button">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 flex-shrink-0">
+            <path fill-rule="evenodd"
+              d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z"
+              clip-rule="evenodd"></path>
+          </svg>
+          <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">Usuarios
+            y Roles</p>
         </button>
-        <button routerLink="/gestion-sucursales" routerLinkActive="bg-gradient-to-tr from-blue-600 to-blue-400 shadow-md" class="middle none font-sans font-bold transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3.5 min-h-[48px] rounded-lg text-white hover:bg-white/10 active:bg-white/30 flex w-full items-center gap-6 pl-2 pr-5 capitalize" type="button">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 flex-shrink-0"><path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 9a.75.75 0 00-1.5 0v2.25H9a.75.75 0 000 1.5h2.25V15a.75.75 0 001.5 0v-2.25H15a.75.75 0 000-1.5h-2.25V9z" clip-rule="evenodd" /></svg>
-          <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">Sucursales</p>
+        <button routerLink="/gestion-sucursales"
+          routerLinkActive="bg-gradient-to-tr from-blue-600 to-blue-400 shadow-md"
+          class="middle none font-sans font-bold transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3.5 min-h-[48px] rounded-lg text-white hover:bg-white/10 active:bg-white/30 flex w-full items-center gap-6 pl-2 pr-5 capitalize"
+          type="button">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 flex-shrink-0">
+            <path fill-rule="evenodd"
+              d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 9a.75.75 0 00-1.5 0v2.25H9a.75.75 0 000 1.5h2.25V15a.75.75 0 001.5 0v-2.25H15a.75.75 0 000-1.5h-2.25V9z"
+              clip-rule="evenodd" />
+          </svg>
+          <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">
+            Sucursales</p>
         </button>
       </li>
     </ul>
@@ -73,20 +155,32 @@
     <div class="mt-auto pb-4">
       <ul class="flex flex-col gap-1">
         <li *ngIf="!isLogged()">
-          <button routerLink="/login" class="middle none font-sans font-bold transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3.5 min-h-[48px] rounded-lg text-white hover:bg-white/10 active:bg-white/30 w-full flex items-center gap-6 pl-2 pr-5 capitalize" type="button">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="w-5 h-5 text-inherit flex-shrink-0">
-              <path fill-rule="evenodd" d="M7.5 3.75A1.5 1.5 0 006 5.25v13.5a1.5 1.5 0 001.5 1.5h6a1.5 1.5 0 001.5-1.5V15a.75.75 0 011.5 0v3.75a3 3 0 01-3 3h-6a3 3 0 01-3-3V5.25a3 3 0 013-3h6a3 3 0 013 3V9A.75.75 0 0115 9V5.25a1.5 1.5 0 00-1.5-1.5h-6zm10.72 4.72a.75.75 0 011.06 0l3 3a.75.75 0 010 1.06l-3 3a.75.75 0 11-1.06-1.06l1.72-1.72H9a.75.75 0 010-1.5h10.94l-1.72-1.72a.75.75 0 010-1.06z" clip-rule="evenodd"></path>
+          <button routerLink="/login"
+            class="middle none font-sans font-bold transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3.5 min-h-[48px] rounded-lg text-white hover:bg-white/10 active:bg-white/30 w-full flex items-center gap-6 pl-2 pr-5 capitalize"
+            type="button">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
+              class="w-5 h-5 text-inherit flex-shrink-0">
+              <path fill-rule="evenodd"
+                d="M7.5 3.75A1.5 1.5 0 006 5.25v13.5a1.5 1.5 0 001.5 1.5h6a1.5 1.5 0 001.5-1.5V15a.75.75 0 011.5 0v3.75a3 3 0 01-3 3h-6a3 3 0 01-3-3V5.25a3 3 0 013-3h6a3 3 0 013 3V9A.75.75 0 0115 9V5.25a1.5 1.5 0 00-1.5-1.5h-6zm10.72 4.72a.75.75 0 011.06 0l3 3a.75.75 0 010 1.06l-3 3a.75.75 0 11-1.06-1.06l1.72-1.72H9a.75.75 0 010-1.5h10.94l-1.72-1.72a.75.75 0 010-1.06z"
+                clip-rule="evenodd"></path>
             </svg>
-            <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">Sign In</p>
+            <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">Sign In
+            </p>
           </button>
         </li>
 
         <li *ngIf="isLogged()">
-          <button (click)="logout()" class="middle none font-sans font-bold transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3.5 min-h-[48px] rounded-lg text-red-500 hover:bg-red-500/10 active:bg-red-500/30 flex w-full items-center gap-6 pl-2 pr-5 capitalize" type="button">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 flex-shrink-0">
-              <path fill-rule="evenodd" d="M7.5 3.75A1.5 1.5 0 006 5.25v13.5a1.5 1.5 0 001.5 1.5h6a1.5 1.5 0 001.5-1.5V15a.75.75 0 011.5 0v3.75a3 3 0 01-3 3h-6a3 3 0 01-3-3V5.25a3 3 0 013-3h6a3 3 0 013 3V9A.75.75 0 0115 9V5.25a1.5 1.5 0 00-1.5-1.5h-6z" clip-rule="evenodd"></path>
+          <button (click)="logout()"
+            class="middle none font-sans font-bold transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3.5 min-h-[48px] rounded-lg text-red-500 hover:bg-red-500/10 active:bg-red-500/30 flex w-full items-center gap-6 pl-2 pr-5 capitalize"
+            type="button">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+              class="w-5 h-5 flex-shrink-0">
+              <path fill-rule="evenodd"
+                d="M7.5 3.75A1.5 1.5 0 006 5.25v13.5a1.5 1.5 0 001.5 1.5h6a1.5 1.5 0 001.5-1.5V15a.75.75 0 011.5 0v3.75a3 3 0 01-3 3h-6a3 3 0 01-3-3V5.25a3 3 0 013-3h6a3 3 0 013 3V9A.75.75 0 0115 9V5.25a1.5 1.5 0 00-1.5-1.5h-6z"
+                clip-rule="evenodd"></path>
             </svg>
-            <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">Cerrar Sesión</p>
+            <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">Cerrar
+              Sesión</p>
           </button>
         </li>
       </ul>

@@ -1,7 +1,9 @@
 export interface CrearProducto {
   nombre: string;
   descripcion: string;
-  available: number;
-  singlePrice: number;
-  idProveedor: number;
+  sku: string;
+  unidadMedidaBase: string;
+  precioCostoPromedio: number;
+  cantidadInicial: number;
+  idSucursal: number;
 }

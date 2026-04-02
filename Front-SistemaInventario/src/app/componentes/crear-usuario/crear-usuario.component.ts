@@ -17,13 +17,12 @@ export class CrearUsuarioComponent {
     this.form = fb.group({
       nombre: ['', Validators.required],
       apellido: ['', Validators.required],
-      identificacion: ['', Validators.required],
-      numerophone: ['', Validators.required],
-      edad: ['', [Validators.required, Validators.min(0)]],
-      correo: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
-      estado: ['', Validators.required],
       rol: ['', Validators.required],
+      sucursalAsignadaId: [null],
+      activo: [true],
+      motivoInactivacion: ['']
     });
   }
 

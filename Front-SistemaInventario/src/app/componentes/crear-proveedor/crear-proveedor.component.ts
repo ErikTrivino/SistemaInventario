@@ -16,10 +16,10 @@ export class CrearProveedorComponent {
 
   constructor(private fb: FormBuilder, private svc: ProveedorService) {
     this.form = fb.group({
-      nombre: ['', Validators.required],
-      identificacion: ['', Validators.required],
-      telefono: ['', Validators.required],
-      correo: ['', [Validators.required, Validators.email]]
+      nitRut: ['', Validators.required],
+      razonSocial: ['', Validators.required],
+      contacto: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]]
     });
   }
 
