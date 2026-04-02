@@ -14,6 +14,7 @@ public record ProductoCrearDTO(
                 @DecimalMin("0.00") BigDecimal precioCostoPromedio,
                 @DecimalMin("0.00") BigDecimal cantidadInicial,
                 @DecimalMin("0.00") BigDecimal cantidadMinima,
+                boolean activo,
                 Long idProveedor,
                 Long idSucursal) {
 }

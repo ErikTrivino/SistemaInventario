@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { InventarioService } from '../../servicios/inventario.service';
 import { ProveedorService } from '../../servicios/proveedor.service';
+import { SucursalService } from '../../servicios/sucursal.service';
 import { TokenService } from '../../servicios/token.service';
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
@@ -19,11 +20,13 @@ export class EditarProductoComponent implements OnInit {
   id!: number;
   idSucursal!: number;
   proveedores: any[] = [];
+  sucursales: any[] = [];
 
   constructor(
     private fb: FormBuilder,
     private inventarioService: InventarioService,
     private proveedorService: ProveedorService,
+    private sucursalService: SucursalService,
     private tokenService: TokenService,
     private route: ActivatedRoute
   ) {
@@ -34,13 +37,16 @@ export class EditarProductoComponent implements OnInit {
       unidadMedidaBase: ['', Validators.required],
       precioCostoPromedio: [0, [Validators.required, Validators.min(0)]],
       stock: [{ value: 0, disabled: false }, [Validators.required, Validators.min(0)]],
-      idProveedor: ['', Validators.required],
+      activo: [true],
+      idSucursal: ['', Validators.required],
+      idProveedor: [null, Validators.required],
       razonCambio: ['', [Validators.required, Validators.minLength(5)]]
     });
   }
 
   ngOnInit() {
     this.cargarProveedores();
+    this.cargarSucursales();
     this.route.paramMap.subscribe(params => {
       const valId = params.get('id');
       const valSucursal = params.get('idSucursal');
@@ -52,16 +58,30 @@ export class EditarProductoComponent implements OnInit {
     });
   }
 
+  cargarSucursales(): void {
+    this.sucursalService.listar().subscribe({
+      next: (data: MensajeDTO) => {
+        this.sucursales = data.respuesta;
+      },
+      error: (err: any) => {
+        console.error(err);
+        Swal.fire('Error', 'No se pudo cargar la lista de sucursales', 'error');
+      }
+    });
+  }
+
   cargarProveedores() {
     this.proveedorService.listar().subscribe({
       next: (data: MensajeDTO) => {
-        this.proveedores = data.respuesta.map((prov: any) => ({
-          id: prov.idProveedor,
-          label: `${prov.nombre} - ${prov.identificacion}`
+        const content = data.respuesta.content || data.respuesta;
+        this.proveedores = content.map((prov: any) => ({
+          id: prov.id,
+          label: prov.razonSocial || prov.nombre
         }));
       },
       error: (err: any) => {
         console.error(err);
+        Swal.fire('Error', 'No se pudo cargar la lista de proveedores', 'error');
       }
     });
   }
@@ -77,7 +97,9 @@ export class EditarProductoComponent implements OnInit {
           unidadMedidaBase: prod.unidadMedidaBase,
           precioCostoPromedio: prod.precioCostoPromedio,
           stock: prod.stock,
-          idProveedor: prod.proveedor // Map 'proveedor' ID to 'idProveedor' form control
+          activo: prod.activo,
+          idSucursal: this.idSucursal,
+          idProveedor: prod.idProveedor || prod.proveedor
         });
       },
       error: (err: any) => {
@@ -91,9 +113,14 @@ export class EditarProductoComponent implements OnInit {
     if (this.form.valid) {
       const payload = {
         ...this.form.value,
-        idSucursal: this.idSucursal,
+        idSucursal: Number(this.form.value.idSucursal),
+        idProveedor: Number(this.form.value.idProveedor),
+        precioCostoPromedio: Number(this.form.value.precioCostoPromedio),
+        stock: Number(this.form.value.stock),
+        activo: this.form.value.activo,
         idUsuarioResponsable: +this.tokenService.getIDCuenta()
       };
+
 
       this.inventarioService.updateProduct(this.id, payload).subscribe({
         next: (data: MensajeDTO) => Swal.fire('Actualizado', data.respuesta || 'Producto actualizado', 'success'),

@@ -13,6 +13,7 @@ public record ProductoEditarDTO(
         @NotBlank @Size(max = 20) String unidadMedidaBase,
         @DecimalMin("0.00") BigDecimal precioCostoPromedio,
         BigDecimal stock,
+        boolean activo,
         Long idSucursal,
         Long idProveedor,
         Long idUsuarioResponsable,

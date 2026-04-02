@@ -69,6 +69,7 @@ public class InventarioServicioImpl implements InventarioServicio {
                     .sucursal(sucursal)
                     .stock(dto.cantidadInicial())
                     .stockMinimo(dto.cantidadMinima() == null ? java.math.BigDecimal.ZERO : dto.cantidadMinima())
+                    .activo(dto.activo())
                     .build();
             inventoryRepository.save(inventario);
 
@@ -90,6 +91,10 @@ public class InventarioServicioImpl implements InventarioServicio {
     @Override
     @Transactional
     public ProductoDetalleDTO updateProduct(Long id, ProductoEditarDTO dto) {
+        log.info(">>> [updateProduct] id={} | nombre={} | descripcion={} | sku={} | unidadMedida={} | precioCosto={} | stock={} | activo={} | idSucursal={} | idProveedor={} | idUsuario={} | razonCambio={}",
+                id, dto.nombre(), dto.descripcion(), dto.sku(), dto.unidadMedidaBase(),
+                dto.precioCostoPromedio(), dto.stock(), dto.activo(),
+                dto.idSucursal(), dto.idProveedor(), dto.idUsuarioResponsable(), dto.razonCambio());
         Producto product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
 
@@ -114,18 +119,16 @@ public class InventarioServicioImpl implements InventarioServicio {
                                 .sucursal(sucursal)
                                 .stock(java.math.BigDecimal.ZERO)
                                 .stockMinimo(java.math.BigDecimal.ZERO)
+                                .activo(dto.activo())
                                 .build();
                     });
-
-            java.math.BigDecimal diff = dto.stock().subtract(inv.getStock());
-
-            if (diff.compareTo(java.math.BigDecimal.ZERO) != 0) {
+                inv.setActivo(dto.activo());
                 inv.setStock(dto.stock());
                 inventoryRepository.save(inv);
 
                 MovimientoInventario movement = MovimientoInventario.builder()
                         .tipo(TipoMovimiento.AJUSTE)
-                        .cantidad(diff.abs())
+                        .cantidad(dto.stock())
                         .fechaMovimiento(LocalDateTime.now())
                         .sucursalId(dto.idSucursal())
                         .productoId(product.getId())
@@ -133,7 +136,7 @@ public class InventarioServicioImpl implements InventarioServicio {
                         .motivo(dto.razonCambio() != null ? dto.razonCambio() : "Actualización desde edición de producto")
                         .build();
                 movementRepository.save(movement);
-            }
+
         }
 
         // Actualización de proveedor
@@ -165,11 +168,19 @@ public class InventarioServicioImpl implements InventarioServicio {
     }
 
     @Override
-    public void deleteProduct(Long id) {
-        Producto product = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
-        product.setActivo(false);
-        productRepository.save(product);
+    @Transactional
+    public void deleteProduct(Long idProducto, Long idSucursal) {
+        if (idSucursal != null) {
+            inventoryRepository.updateActivoStatus(idProducto, idSucursal, false);
+            auditService.registrarAccion("1", "DELETE_BRANCH_INVENTORY", "Inventario", idProducto,
+                    "Producto desactivado en sucursal ID: " + idSucursal);
+        } else {
+            Producto product = productRepository.findById(idProducto)
+                    .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+            product.setActivo(false);
+            productRepository.save(product);
+            auditService.registrarAccion("1", "DELETE_PRODUCT", "Producto", idProducto, "Producto desactivado globalmente");
+        }
     }
 
     @Override
@@ -187,11 +198,11 @@ public class InventarioServicioImpl implements InventarioServicio {
     }
 
     @Override
-    public Page<InventarioRespuestaDTO> getInventoryByBranch(Long branchId, Integer pagina, Integer porPagina) {
+    public Page<InventarioRespuestaDTO> getInventoryByBranch(Long branchId, Boolean activo, Integer pagina, Integer porPagina) {
         int numPagina = (pagina != null && pagina > 0) ? pagina - 1 : 0;
         int tamanoPagina = (porPagina != null && porPagina > 0) ? porPagina : 10;
         Pageable pageable = PageRequest.of(numPagina, tamanoPagina);
-        return inventoryRepository.findActiveCatalogByBranch(branchId, pageable).map(this::enrichInventarioRespuesta);
+        return inventoryRepository.findCatalogByBranch(branchId, activo, pageable).map(this::enrichInventarioRespuesta);
     }
 
     private InventarioRespuestaDTO enrichInventarioRespuesta(InventarioRespuestaDTO dto) {
@@ -252,11 +263,11 @@ public class InventarioServicioImpl implements InventarioServicio {
     }
 
     @Override
-    public Page<InventarioRespuestaDTO> getCatalogoActivo(Long branchId, Integer pagina, Integer porPagina) {
+    public Page<InventarioRespuestaDTO> getCatalogoActivo(Long branchId, Boolean activo, Integer pagina, Integer porPagina) {
         int numPagina = (pagina != null && pagina > 0) ? pagina - 1 : 0;
         int tamanoPagina = (porPagina != null && porPagina > 0) ? porPagina : 10;
         Pageable pageable = PageRequest.of(numPagina, tamanoPagina);
-        return inventoryRepository.findActiveCatalogByBranch(branchId, pageable);
+        return inventoryRepository.findCatalogByBranch(branchId, activo, pageable);
     }
 
     private ProductoInformacionDTO toInformacionDTO(Producto product) {

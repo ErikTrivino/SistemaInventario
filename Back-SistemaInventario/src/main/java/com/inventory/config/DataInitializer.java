@@ -25,7 +25,6 @@ import com.inventory.repositorios.ventas.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
-import com.inventory.config.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -68,34 +67,91 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) throws Exception {
         log.info("🚀 Iniciando sembrado de datos iniciales...");
 
+        // 1. Datos base del sistema (Roles, Sucursales, Unidades)
+        Map<String, List<?>> coreData = seedCoreData();
+        @SuppressWarnings("unchecked")
+        List<Sucursal> sucursales = (List<Sucursal>) coreData.get("sucursales");
+
+        // 2. Catálogo de negocio (Proveedores, Productos)
+        Map<String, List<?>> catalogData = seedCatalogData();
+        @SuppressWarnings("unchecked")
+        List<Proveedor> proveedores = (List<Proveedor>) catalogData.get("proveedores");
+        @SuppressWarnings("unchecked")
+        List<Producto> productos = (List<Producto>) catalogData.get("productos");
+
+        // 3. Seguridad (Usuarios con sucursal asignada)
+        List<Usuario> usuarios = seedSecurityData(sucursales);
+
+        // 4. Operaciones y Transacciones
+        seedOperationData(sucursales, productos, proveedores, usuarios);
+
+        // 5. Logística y Envios
+        seedLogisticData(sucursales, usuarios);
+
+        // 6. Auditoría y Eventos
+        seedAuditData(usuarios);
+
+        log.info("✅ Sembrado de datos completado exitosamente.");
+    }
+
+    private Map<String, List<?>> seedCoreData() {
+        log.info("  - Sembrando datos Core...");
         seedRolEntidades();
         List<Sucursal> sucursales = seedSucursales();
         seedUnidadesMedida();
+        
+        Map<String, List<?>> data = new HashMap<>();
+        data.put("sucursales", sucursales);
+        return data;
+    }
+
+    private Map<String, List<?>> seedCatalogData() {
+        log.info("  - Sembrando datos de Catálogo...");
         List<Proveedor> proveedores = seedProveedores();
-        List<Usuario> usuarios = seedUsuarios();
         List<Producto> productos = seedProductos();
-        seedInventario(sucursales, productos);
         seedProductoProveedores(productos, proveedores);
 
-        List<OrdenCompra> compras = seedOrdenesCompra(sucursales, proveedores, usuarios);
-        seedDetalleCompras(compras, productos);
+        Map<String, List<?>> data = new HashMap<>();
+        data.put("proveedores", proveedores);
+        data.put("productos", productos);
+        return data;
+    }
 
-        List<Venta> ventas = seedVentas(sucursales, usuarios);
-        seedDetalleVentas(ventas, productos);
+    private List<Usuario> seedSecurityData(List<Sucursal> sucursales) {
+        log.info("  - Sembrando datos de Seguridad...");
+        return seedUsuarios(sucursales);
+    }
 
-        seedMovimientos(productos, sucursales);
+    private void seedOperationData(List<Sucursal> sucs, List<Producto> prods, List<Proveedor> provs, List<Usuario> usus) {
+        log.info("  - Sembrando datos de Operaciones...");
+        seedInventario(sucs, prods);
+        
+        List<OrdenCompra> compras = seedOrdenesCompra(sucs, provs, usus);
+        seedDetalleCompras(compras, prods);
 
+        List<Venta> ventas = seedVentas(sucs, usus);
+        seedDetalleVentas(ventas, prods);
+
+        seedMovimientos(prods, sucs);
+
+        List<Transferencia> transferencias = seedTransferencias(sucs, usus);
+        seedDetalleTransferencias(transferencias, prods);
+    }
+
+    private void seedLogisticData(List<Sucursal> sucs, List<Usuario> usus) {
+        log.info("  - Sembrando datos de Logística...");
         List<Transportista> transportistas = seedTransportistas();
-        List<Ruta> rutas = seedRutas(sucursales);
-
-        List<Transferencia> transferencias = seedTransferencias(sucursales, usuarios);
-        seedDetalleTransferencias(transferencias, productos);
+        List<Ruta> rutas = seedRutas(sucs);
+        
+        // Necesitamos las transferencias para los envíos, las recuperamos del repo
+        List<Transferencia> transferencias = transferenciaRepository.findAll();
         seedEnvios(transferencias, transportistas, rutas);
+    }
 
-        seedNotificaciones(usuarios);
+    private void seedAuditData(List<Usuario> usus) {
+        log.info("  - Sembrando datos de Auditoría...");
+        seedNotificaciones(usus);
         seedAuditoria();
-
-        log.info("✅ Sembrado de datos completado exitosamente.");
     }
 
     private void seedRolEntidades() {
@@ -161,21 +217,26 @@ public class DataInitializer implements CommandLineRunner {
         return proveedorRepository.findAll();
     }
 
-    private List<Usuario> seedUsuarios() {
+    private List<Usuario> seedUsuarios(List<Sucursal> sucursales) {
         if (userRepository.count() <= 1) { // 1 es el admin creado anteriormente
             List<Usuario> list = new ArrayList<>();
             String pass = passwordEncoder.encode("password123");
 
-            list.add(Usuario.builder().nombre("Juan").apellido("Pérez").correo("juan.vendedor@inventario.com")
-                    .contrasena(pass).rol(Rol.MANAGER).activo(true).build());
-            list.add(Usuario.builder().nombre("María").apellido("López").correo("maria.almacen@inventario.com")
-                    .contrasena(pass).rol(Rol.OPERATOR).activo(true).build());
-            list.add(Usuario.builder().nombre("Andrés").apellido("Castro").correo("andres.admin@inventario.com")
-                    .contrasena(pass).rol(Rol.ADMIN).activo(true).build());
-            list.add(Usuario.builder().nombre("Sofía").apellido("García").correo("sofia.vendedor@inventario.com")
-                    .contrasena(pass).rol(Rol.MANAGER).activo(true).build());
-            list.add(Usuario.builder().nombre("Pedro").apellido("Ramírez").correo("pedro.almacen@inventario.com")
-                    .contrasena(pass).rol(Rol.OPERATOR).activo(true).build());
+            // Asignamos sucursales de forma secuencial para pruebas consistentes
+            Sucursal sedePrincipal = sucursales.get(0);
+            Sucursal sucursalNorte = sucursales.size() > 1 ? sucursales.get(1) : sedePrincipal;
+            Sucursal sucursalMedellin = sucursales.size() > 2 ? sucursales.get(2) : sedePrincipal;
+
+            list.add(Usuario.builder().nombre("Juan").apellido("Vendedor").correo("juan.vendedor@inventario.com")
+                    .contrasena(pass).rol(Rol.MANAGER).sucursalAsignadaId(sedePrincipal.getId()).activo(true).build());
+            list.add(Usuario.builder().nombre("María").apellido("Almacén").correo("maria.almacen@inventario.com")
+                    .contrasena(pass).rol(Rol.OPERATOR).sucursalAsignadaId(sucursalNorte.getId()).activo(true).build());
+            list.add(Usuario.builder().nombre("Andrés").apellido("Admin").correo("andres.admin@inventario.com")
+                    .contrasena(pass).rol(Rol.ADMIN).sucursalAsignadaId(sedePrincipal.getId()).activo(true).build());
+            list.add(Usuario.builder().nombre("Sofía").apellido("Comercial").correo("sofia.vendedor@inventario.com")
+                    .contrasena(pass).rol(Rol.MANAGER).sucursalAsignadaId(sucursalMedellin.getId()).activo(true).build());
+            list.add(Usuario.builder().nombre("Pedro").apellido("Logística").correo("pedro.almacen@inventario.com")
+                    .contrasena(pass).rol(Rol.OPERATOR).sucursalAsignadaId(sucursalNorte.getId()).activo(true).build());
 
             return userRepository.saveAll(list);
         }
@@ -185,21 +246,24 @@ public class DataInitializer implements CommandLineRunner {
     private List<Producto> seedProductos() {
         if (productoRepository.count() == 0) {
             List<Producto> list = Arrays.asList(
-                    Producto.builder().nombre("Laptop Dell Latitude").sku("LAP-DELL-001")
-                            .descripcion("Intel i7, 16GB RAM, 512GB SSD").unidadMedidaBase("UND")
-                            .precioCostoPromedio(new BigDecimal("2500000")).activo(true).build(),
-                    Producto.builder().nombre("Monitor Samsung 24\"").sku("MON-SAM-024")
-                            .descripcion("Full HD IPS, Framelees").unidadMedidaBase("UND")
-                            .precioCostoPromedio(new BigDecimal("600000")).activo(true).build(),
-                    Producto.builder().nombre("Teclado Mecánico RGB").sku("TEC-MEC-K80")
-                            .descripcion("Switch Blue, Layout Español").unidadMedidaBase("UND")
-                            .precioCostoPromedio(new BigDecimal("150000")).activo(true).build(),
-                    Producto.builder().nombre("Impresora HP Laserjet").sku("IMP-HP-L01")
-                            .descripcion("Monocromática WiFi").unidadMedidaBase("UND")
-                            .precioCostoPromedio(new BigDecimal("800000")).activo(true).build(),
-                    Producto.builder().nombre("Disco Duro Externo 1TB").sku("DIS-EXT-001")
-                            .descripcion("Adata Anti-shocks USB 3.1").unidadMedidaBase("UND")
-                            .precioCostoPromedio(new BigDecimal("220000")).activo(true).build());
+                    Producto.builder().nombre("Laptop Dell Latitude 5420").sku("LAP-DELL-5420")
+                            .descripcion("Intel i7-1185G7, 16GB RAM, 512GB SSD, 14\" FHD").unidadMedidaBase("UND")
+                            .precioCostoPromedio(new BigDecimal("3200000")).activo(true).build(),
+                    Producto.builder().nombre("Monitor Samsung Odyssey G5").sku("MON-SAM-G5-27")
+                            .descripcion("27\" QHD, 144Hz, curvo 1000R").unidadMedidaBase("UND")
+                            .precioCostoPromedio(new BigDecimal("1200000")).activo(true).build(),
+                    Producto.builder().nombre("Teclado Logitech G Pro X").sku("TEC-LOG-GPROX")
+                            .descripcion("Mecánico, Switches GX Blue Clicky, RGB").unidadMedidaBase("UND")
+                            .precioCostoPromedio(new BigDecimal("450000")).activo(true).build(),
+                    Producto.builder().nombre("Impresora HP LaserJet Pro M404dw").sku("IMP-HP-M404DW")
+                            .descripcion("Láser Monocromática, Duplex, WiFi").unidadMedidaBase("UND")
+                            .precioCostoPromedio(new BigDecimal("950000")).activo(true).build(),
+                    Producto.builder().nombre("SSD Externo Samsung T7 1TB").sku("SSD-SAM-T7-1TB")
+                            .descripcion("Hasta 1050MB/s, USB 3.2 Gen 2, Titan Gray").unidadMedidaBase("UND")
+                            .precioCostoPromedio(new BigDecimal("550000")).activo(true).build(),
+                    Producto.builder().nombre("Mouse Razer DeathAdder V2").sku("MOU-RAZ-DV2")
+                            .descripcion("Ergonómico, 20K DPI Optical Sensor").unidadMedidaBase("UND")
+                            .precioCostoPromedio(new BigDecimal("280000")).activo(false).build()); // Inactivo globalmente
             return productoRepository.saveAll(list);
         }
         return productoRepository.findAll();
@@ -210,15 +274,22 @@ public class DataInitializer implements CommandLineRunner {
             Random rand = new Random();
             for (Sucursal s : sucursales) {
                 for (Producto p : productos) {
+                    // Lógica de coherencia:
+                    // 1. Si el producto ya está inactivo globalmente, queda inactivo en la sucursal.
+                    // 2. De lo contrario, activamos el producto en la sucursal, 
+                    //    EXCEPTO en un ~20% de casos aleatorios para pruebas de filtrado.
+                    boolean estaActivoEnSucursal = p.getActivo() && (rand.nextInt(10) > 1);
+
                     inventarioRepository.save(Inventario.builder()
                             .sucursal(s)
                             .producto(p)
                             .stock(new BigDecimal(rand.nextInt(100) + 10))
                             .stockMinimo(new BigDecimal(5))
+                            .activo(estaActivoEnSucursal)
                             .build());
                 }
             }
-            log.info("  - Inventario por sucursal inicializado.");
+            log.info("  - Inventario por sucursal inicializado (con varianza de estado activo/inactivo).");
         }
     }
 
@@ -325,14 +396,14 @@ public class DataInitializer implements CommandLineRunner {
 
     private void seedMovimientos(List<Producto> prods, List<Sucursal> sucursales) {
         if (movimientoRepository.count() == 0 && !prods.isEmpty()) {
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < prods.size(); i++) {
                 movimientoRepository.save(MovimientoInventario.builder()
                         .productoId(prods.get(i).getId())
                         .sucursalId(sucursales.get(0).getId())
                         .tipo(TipoMovimiento.ENTRADA_COMPRA)
-                        .cantidad(new BigDecimal("50"))
-                        .fechaMovimiento(LocalDateTime.now())
-                        .motivo("Carga Inicial")
+                        .cantidad(new BigDecimal("100"))
+                        .fechaMovimiento(LocalDateTime.now().minusDays(10))
+                        .motivo("Carga inicial de inventario")
                         .build());
             }
         }
@@ -395,7 +466,7 @@ public class DataInitializer implements CommandLineRunner {
                         .sucursalDestinoId(sucs.get(1).getId())
                         .usuarioSolicitaId(usus.get(0).getId())
                         .fechaSolicitud(LocalDateTime.now())
-                        .estado("EN_PROCESO")
+                        .estado(EstadoLogistico.EN_TRANSITO.name())
                         .build());
             }
             return transferenciaRepository.saveAll(list);
@@ -404,13 +475,16 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void seedDetalleTransferencias(List<Transferencia> transfs, List<Producto> prods) {
-        if (detalleTransferenciaRepository.count() == 0 && !transfs.isEmpty()) {
+        if (detalleTransferenciaRepository.count() == 0 && !transfs.isEmpty() && !prods.isEmpty()) {
             for (Transferencia t : transfs) {
-                detalleTransferenciaRepository.save(DetalleTransferencia.builder()
-                        .transferencia(t)
-                        .productoId(prods.get(0).getId())
-                        .cantidadSolicitada(new BigDecimal("5"))
-                        .build());
+                // Transferimos los primeros 2 productos
+                for (int i = 0; i < Math.min(2, prods.size()); i++) {
+                    detalleTransferenciaRepository.save(DetalleTransferencia.builder()
+                            .transferencia(t)
+                            .productoId(prods.get(i).getId())
+                            .cantidadSolicitada(new BigDecimal(5 + i))
+                            .build());
+                }
             }
         }
     }

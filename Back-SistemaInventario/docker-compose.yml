@@ -1,3 +1,5 @@
+version: "3.9"
+
 services:
   mysql:
     image: mysql:8.0
@@ -10,6 +12,11 @@ services:
       - "3308:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p12345"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   backend:
     build: .
@@ -17,14 +24,16 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - mysql
-      - kafka
+      mysql:
+        condition: service_healthy
+      kafka:
+        condition: service_started
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/optiplant_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=12345
-      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:29092
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/optiplant_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 12345
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.4.0

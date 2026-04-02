@@ -96,8 +96,10 @@
     <label class="form-label fw-semibold">Proveedor <span class="text-danger">*</span></label>
     <select formControlName="idProveedor" class="form-select"
       [class.is-invalid]="form.get('idProveedor')?.invalid && form.get('idProveedor')?.touched">
-      <option value="">-- Seleccione un proveedor --</option>
-      <option *ngFor="let prov of proveedores" [value]="prov.id">{{ prov.label }}</option>
+      <option [ngValue]="null">-- Seleccione un proveedor --</option>
+      <option *ngFor="let prov of proveedores" [ngValue]="prov.id">
+        {{ prov.label }}
+      </option>
     </select>
     <div class="invalid-feedback">Seleccione un proveedor válido.</div>
   </div>

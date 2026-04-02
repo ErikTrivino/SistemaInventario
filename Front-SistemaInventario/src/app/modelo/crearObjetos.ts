@@ -58,6 +58,7 @@ export interface CrearProducto {
   cantidadInicial: number;
   cantidadMinima: number;
   idSucursal: number;
+  activo?: boolean;
 
 }
 
@@ -70,30 +71,9 @@ export interface CrearProveedor {
 
 }
 
-export interface CrearPedido {
-  nombrePedido: string;
-  fechaPedido: Date;
-  estado: string;
-  idProveedor: number;
-  idEmpleado: number;
 
 
 
-}
-
-export interface CrearDetalleFactura {
-  costServicio: number;
-  idServicio: number;
-  idFactura: number;
-}
-
-export interface CrearDetalleServicioVehiculo {
-  descripcion: string;
-  idVehiculo: number;
-  idServicio: number;
-
-
-}
 
 export interface CrearDetalleServicioProducto {
 

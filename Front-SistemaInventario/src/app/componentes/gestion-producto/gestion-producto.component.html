@@ -21,12 +21,22 @@
 
         <div class="flex-grow"></div>
 
-        <div class="flex items-center gap-2 min-w-[250px]">
+        <div class="flex items-center gap-2">
           <label for="sucursal" class="text-sm font-medium text-slate-700 dark:text-slate-300">Sucursal:</label>
           <select id="sucursal" [(ngModel)]="idSucursalSeleccionada" (change)="onCambioSucursal()"
             class="form-select border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
             <option [ngValue]="null">--- Todas las sedes ---</option>
             <option *ngFor="let s of sucursales" [ngValue]="s.id">{{ s.nombre }}</option>
+          </select>
+        </div>
+
+        <div class="flex items-center gap-2 ms-2">
+          <label for="estado" class="text-sm font-medium text-slate-700 dark:text-slate-300">Estado:</label>
+          <select id="estado" [(ngModel)]="filtroActivo" (change)="onCambioFiltroActivo()"
+            class="form-select border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+            <option [ngValue]="true">Activos</option>
+            <option [ngValue]="false">Inactivos</option>
+            <option [ngValue]="null">Todos</option>
           </select>
         </div>
       </div>

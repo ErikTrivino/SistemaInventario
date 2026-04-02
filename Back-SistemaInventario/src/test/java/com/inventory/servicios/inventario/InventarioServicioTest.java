@@ -99,9 +99,9 @@ public class InventarioServicioTest {
 
     @Test
     void testConsultarInventarioPorSucursal() throws Exception {
-        when(inventoryRepository.findActiveCatalogByBranch(any(Long.class), any(Pageable.class)))
+        when(inventoryRepository.findCatalogByBranch(any(Long.class), any(), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of()));
-        Page<InventarioRespuestaDTO> inventario = inventarioServicio.getInventoryByBranch(1L, 1, 10);
+        Page<InventarioRespuestaDTO> inventario = inventarioServicio.getInventoryByBranch(1L, null, 1, 10);
         assertNotNull(inventario);
     }
 }

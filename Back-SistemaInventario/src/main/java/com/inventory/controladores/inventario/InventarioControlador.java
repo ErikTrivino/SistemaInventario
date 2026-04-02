@@ -36,9 +36,9 @@ public class InventarioControlador {
         return ResponseEntity.ok(new MensajeDTO<>(false, inventoryService.updateProduct(id, dto)));
     }
 
-    @DeleteMapping({ "/productos/{id}" })
-    public ResponseEntity<MensajeDTO<Object>> deleteProduct(@PathVariable Long id) {
-        inventoryService.deleteProduct(id);
+    @DeleteMapping({ "/productos/{idProducto}/{idSucursal}" })
+    public ResponseEntity<MensajeDTO<Object>> deleteProduct(@PathVariable Long idProducto,@PathVariable Long idSucursal) {
+        inventoryService.deleteProduct(idProducto, idSucursal);
         return ResponseEntity.ok(new MensajeDTO<>(false, "Operación exitosa"));
     }
 
@@ -46,20 +46,22 @@ public class InventarioControlador {
 
     public ResponseEntity<MensajeDTO<Object>> getInventoryByBranch(
             @PathVariable Long branchId,
+            @RequestParam(required = false) Boolean activo,
             @RequestParam(required = false, defaultValue = "10") Integer porPagina,
             @RequestParam(required = false) Integer pagina) {
         return ResponseEntity
-                .ok(new MensajeDTO<>(false, inventoryService.getInventoryByBranch(branchId, pagina, porPagina)));
+                .ok(new MensajeDTO<>(false, inventoryService.getInventoryByBranch(branchId, activo, pagina, porPagina)));
     }
 
     @GetMapping({ "/catalogo/{branchId}" })
 
     public ResponseEntity<MensajeDTO<Object>> getCatalogo(
             @PathVariable Long branchId,
+            @RequestParam(required = false) Boolean activo,
             @RequestParam(required = false, defaultValue = "10") Integer porPagina,
             @RequestParam(required = false) Integer pagina) {
         return ResponseEntity
-                .ok(new MensajeDTO<>(false, inventoryService.getCatalogoActivo(branchId, pagina, porPagina)));
+                .ok(new MensajeDTO<>(false, inventoryService.getCatalogoActivo(branchId, activo, pagina, porPagina)));
     }
 
     @PutMapping({ "/inventario/actualizar-stock" })

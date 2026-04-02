@@ -77,7 +77,7 @@ public class TransferenciaServicioImpl implements TransferenciaServicio {
             detalle.setCantidadConfirmada(detalle.getCantidadSolicitada());
         });
 
-        transfer.setEstado("PREPARADO");
+        transfer.setEstado(EstadoTransferencia.APROBADO.name());
         auditService.registrarAccion("1", "PREPARE_TRANSFER", "Transferencia", transfer.getId(),
                 "Productos preparados para despacho");
         return toInfo(transferRepository.save(transfer));
@@ -166,6 +166,16 @@ public class TransferenciaServicioImpl implements TransferenciaServicio {
         int pageSize = (porPagina != null && porPagina > 0) ? porPagina : 10;
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         return transferRepository.findHistoricalTransfers(branchId, status, startDate, endDate, pageable)
+                .map(this::toInfo);
+    }
+
+    @Override
+    public Page<TransferenciaInformacionDTO> getTransfersByDestino(Long sucursalDestinoId, String status, LocalDateTime startDate,
+            LocalDateTime endDate, Integer pagina, Integer porPagina) {
+        int pageNumber = (pagina != null) ? pagina : 0;
+        int pageSize = (porPagina != null && porPagina > 0) ? porPagina : 10;
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        return transferRepository.findTransfersBySucursalDestino(sucursalDestinoId, status, startDate, endDate, pageable)
                 .map(this::toInfo);
     }
 

@@ -24,6 +24,7 @@ export class GestionProductoComponent implements OnInit {
   // Sucursales
   sucursales: any[] = [];
   idSucursalSeleccionada: number | null = null;
+  filtroActivo: any = true; // true=activos, false=inactivos, null=todos
 
   // Estado de paginación
   paginaActual = 0;
@@ -54,9 +55,10 @@ export class GestionProductoComponent implements OnInit {
   }
 
   cargar() {
+
     const observable = this.idSucursalSeleccionada
-      ? this.inventarioService.getInventoryByBranch(this.idSucursalSeleccionada, this.paginaActual + 1, this.tamanoPagina)
-      : this.inventarioService.getProducts(this.paginaActual + 1, this.tamanoPagina);
+      ? this.inventarioService.getInventoryByBranch(this.idSucursalSeleccionada, this.paginaActual + 1, this.tamanoPagina, this.filtroActivo)
+      : this.inventarioService.getProducts(this.paginaActual + 1, this.tamanoPagina, this.filtroActivo);
 
     observable.subscribe({
       next: (data: MensajeDTO) => {
@@ -134,6 +136,11 @@ export class GestionProductoComponent implements OnInit {
     this.cargar();
   }
 
+  onCambioFiltroActivo() {
+    this.paginaActual = 0;
+    this.cargar();
+  }
+
   onCambioPagina(p: number) {
     this.paginaActual = p;
     this.cargar();
@@ -161,11 +168,11 @@ export class GestionProductoComponent implements OnInit {
 
   confirmarEliminar() {
     Swal.fire({
-      title: '¿Eliminar?',
-      text: `Se eliminarán ${this.seleccionados.length} producto(s).`,
+      title: '¿Inactivar?',
+      text: `Se inactivarán ${this.seleccionados.length} producto(s).`,
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: 'Sí, eliminar',
+      confirmButtonText: 'Sí, inactivar',
       cancelButtonText: 'Cancelar'
     }).then(result => {
       if (result.isConfirmed) this.eliminar();
@@ -173,20 +180,25 @@ export class GestionProductoComponent implements OnInit {
   }
 
   eliminar() {
+    if (this.idSucursalSeleccionada === null) {
+      Swal.fire('Error', 'Para inactivar productos, primero debe seleccionar una sucursal específica.', 'error');
+      return;
+    }
+
     const promises = this.seleccionados.map(p =>
-      this.inventarioService.deleteProduct(p.id!).toPromise()
+      this.inventarioService.deleteProduct(p.id!, this.idSucursalSeleccionada!).toPromise()
     );
 
     Promise.all(promises)
       .then(() => {
-        Swal.fire('Eliminado', 'Productos eliminados correctamente', 'success');
+        Swal.fire('Inactivado', 'Productos inactivados correctamente', 'success');
         this.cargar();
         this.seleccionados = [];
         this.textoBtnEliminar = '';
       })
       .catch((err: any) => {
         console.error(err);
-        Swal.fire('Error', 'No se pudo eliminar uno o más productos', 'error');
+        Swal.fire('Error', 'No se pudo inactivar uno o más productos', 'error');
       });
   }
 

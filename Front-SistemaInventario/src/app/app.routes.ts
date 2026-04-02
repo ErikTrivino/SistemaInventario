@@ -17,6 +17,7 @@ import { LayoutComponent } from './componentes/layout/layout.component';
 // New Components
 import { GestionMovimientosComponent } from './componentes/gestion-movimientos/gestion-movimientos.component';
 import { GestionTransferenciasComponent } from './componentes/gestion-transferencias/gestion-transferencias.component';
+import { GestionTransferenciasSolicitadasComponent } from './componentes/gestion-transferencias-solicitadas/gestion-transferencias-solicitadas.component';
 import { GestionOrdenesCompraComponent } from './componentes/gestion-ordenes-compra/gestion-ordenes-compra.component';
 import { GestionRutasComponent } from './componentes/gestion-rutas/gestion-rutas.component';
 import { SeguimientoEnviosComponent } from './componentes/seguimiento-envios/seguimiento-envios.component';
@@ -36,6 +37,7 @@ export const routes: Routes = [
       { path: 'crear-producto', component: CrearProductoComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "MANAGER", "OPERATOR"] } },
       { path: 'gestion-movimientos', component: GestionMovimientosComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "MANAGER", "OPERATOR"] } },
       { path: 'gestion-transferencias', component: GestionTransferenciasComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "MANAGER", "OPERATOR"] } },
+      { path: 'gestion-transferencias-solicitadas', component: GestionTransferenciasSolicitadasComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "MANAGER", "OPERATOR"] } },
 
       // Abastecimiento
       { path: 'gestion-proveedor', component: GestionProveedorComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "MANAGER", "OPERATOR"] } },

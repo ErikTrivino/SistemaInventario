@@ -13,13 +13,13 @@ import { TransferenciaCrearDTO, TransferenciaPrepararDTO, TransferenciaConfirmar
 import { MensajeDTO } from '../../modelo/mensaje-dto';
 
 @Component({
-  selector: 'app-gestion-transferencias',
+  selector: 'app-gestion-transferencias-solicitadas',
   standalone: true,
   imports: [CommonModule, FormsModule, PaginadorComponent],
-  templateUrl: './gestion-transferencias.component.html',
-  styleUrl: './gestion-transferencias.component.css'
+  templateUrl: './gestion-transferencias-solicitadas.component.html',
+  styleUrl: './gestion-transferencias-solicitadas.component.css'
 })
-export class GestionTransferenciasComponent implements OnInit {
+export class GestionTransferenciasSolicitadasComponent implements OnInit {
 
   transferencias: InformacionTransferencia[] = [];
 
@@ -67,6 +67,7 @@ export class GestionTransferenciasComponent implements OnInit {
           const usuario = data.respuesta;
           this.sucursalUsuario = usuario?.sucursalAsignadaId ?? 0;
           this.branchIdSeleccionada = this.sucursalUsuario;
+
           // Cargar sucursales y luego el histórico
           this.cargarSucursales();
         },
@@ -87,7 +88,7 @@ export class GestionTransferenciasComponent implements OnInit {
         this.sucursalMap = new Map(
           this.sucursales.map((s: any) => [s.id, s.nombre])
         );
-        this.nombreSucursalUsuario = this.sucursalMap.get(this.sucursalUsuario) ?? '';
+        this.nombreSucursalUsuario = this.sucursalMap.get(this.branchIdSeleccionada) ?? '';
         this.cargar();
       },
       error: (err) => {
@@ -112,7 +113,7 @@ export class GestionTransferenciasComponent implements OnInit {
     const hasta = this.fechaHasta ? new Date(this.fechaHasta).toISOString() : undefined;
     const estado = this.estadoSeleccionado || undefined;
 
-    this.svc.getHistorico(
+    this.svc.getEntrantes(
       this.branchIdSeleccionada,
       estado,
       desde,
@@ -121,6 +122,7 @@ export class GestionTransferenciasComponent implements OnInit {
       this.tamanoPagina
     ).subscribe({
       next: (data: MensajeDTO) => {
+        console.log('Datos traídos (Entrantes):', data.respuesta);
         const respuesta = data.respuesta;
         if (respuesta?.content) {
           this.transferencias = respuesta.content;
@@ -439,3 +441,4 @@ export class GestionTransferenciasComponent implements OnInit {
     return t.idTransferencia;
   }
 }
+

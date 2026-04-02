@@ -35,7 +35,9 @@ public class TransferenciaControlador {
         return ResponseEntity.ok(new MensajeDTO<>(false, transferService.shipTransfer(dto)));
     }
 
-    /** RF-20: Confirmar recepción — suma stock en destino y registra discrepancias. */
+    /**
+     * RF-20: Confirmar recepción — suma stock en destino y registra discrepancias.
+     */
     @PutMapping("/recibir")
     public ResponseEntity<MensajeDTO<Object>> recibir(@Valid @RequestBody TransferenciaRecepcionDTO dto) {
         return ResponseEntity.ok(new MensajeDTO<>(false, transferService.receiveTransfer(dto)));
@@ -49,13 +51,20 @@ public class TransferenciaControlador {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime desde,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime hasta,
             @RequestParam(required = false, defaultValue = "10") Integer porPagina,
-            @RequestParam(required = false) Integer pagina
-    ) {
-        return ResponseEntity.ok(new MensajeDTO<>(false, transferService.getTransfers(branchId, estado, desde, hasta, pagina, porPagina)));
+            @RequestParam(required = false) Integer pagina) {
+        return ResponseEntity.ok(new MensajeDTO<>(false,
+                transferService.getTransfers(branchId, estado, desde, hasta, pagina, porPagina)));
+    }
+
+    @GetMapping("/entrantes")
+    public ResponseEntity<MensajeDTO<Object>> entrantes(
+            @RequestParam Long sucursalDestino,
+            @RequestParam(required = false) String estado,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime desde,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime hasta,
+            @RequestParam(required = false, defaultValue = "10") Integer porPagina,
+            @RequestParam(required = false) Integer pagina) {
+        return ResponseEntity.ok(new MensajeDTO<>(false,
+                transferService.getTransfersByDestino(sucursalDestino, estado, desde, hasta, pagina, porPagina)));
     }
 }
-
-
-
-
-

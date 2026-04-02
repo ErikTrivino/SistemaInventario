@@ -33,7 +33,7 @@ export class CrearProductoComponent implements OnInit {
       activo: [true],
       cantidadInicial: [0, [Validators.required, Validators.min(0)]],
       idSucursal: [1, Validators.required], // Por defecto sucursal 1 (Central)
-      idProveedor: ['', Validators.required],
+      idProveedor: [null, Validators.required],
       cantidadMinima: [0, [Validators.required, Validators.min(0)]]
     });
   }
@@ -60,7 +60,7 @@ export class CrearProductoComponent implements OnInit {
       next: (data: MensajeDTO) => {
         const content = data.respuesta.content || data.respuesta;
         this.proveedores = content.map((prov: any) => ({
-          id: prov.idProveedor,
+          id: prov.id,
           label: prov.razonSocial
         }));
       },
@@ -78,6 +78,7 @@ export class CrearProductoComponent implements OnInit {
         precioCostoPromedio: Number(this.form.value.precioCostoPromedio),
         cantidadInicial: Number(this.form.value.cantidadInicial),
         cantidadMinima: Number(this.form.value.cantidadMinima),
+        activo: this.form.value.activo,
         idProveedor: Number(this.form.value.idProveedor),
         idSucursal: Number(this.form.value.idSucursal)
       };
@@ -85,7 +86,7 @@ export class CrearProductoComponent implements OnInit {
       console.log(dto);
       this.inventarioService.createProduct(dto).subscribe({
         next: (data: MensajeDTO) => {
-          Swal.fire('Éxito', data.respuesta || 'Producto creado correctamente', 'success');
+          Swal.fire('Éxito', 'Producto creado correctamente', 'success');
           this.form.reset({
             unidadMedidaBase: 'UND',
             idSucursal: 1,

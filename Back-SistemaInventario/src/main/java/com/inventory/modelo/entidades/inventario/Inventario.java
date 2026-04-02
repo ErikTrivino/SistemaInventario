@@ -36,6 +36,10 @@ public class Inventario {
     @Column(name = "stock_minimo", nullable = false, precision = 12, scale = 2)
     private java.math.BigDecimal stockMinimo = java.math.BigDecimal.ZERO;
 
+    @Builder.Default
+    @Column(name = "activo", nullable = false)
+    private Boolean activo = true;
+
     // Helper methods for migration/compatibility
     public Long getSucursalId() {
         return sucursal != null ? sucursal.getId() : null;

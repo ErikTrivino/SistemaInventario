@@ -18,9 +18,10 @@ export class InventarioService {
     return this.http.post<MensajeDTO>(`${this.apiUrl}/productos`, dto);
   }
 
-  getProducts(pagina?: number, porPagina: number = 10): Observable<MensajeDTO> {
+  getProducts(pagina?: number, porPagina: number = 10, activo?: boolean | null): Observable<MensajeDTO> {
     let params = new HttpParams().set('porPagina', porPagina.toString());
     if (pagina !== undefined) params = params.set('pagina', pagina.toString());
+    if (activo !== undefined && activo !== null) params = params.set('activo', activo.toString());
     return this.http.get<MensajeDTO>(`${this.apiUrl}/productos`, { params });
   }
 
@@ -36,20 +37,22 @@ export class InventarioService {
     return this.http.put<MensajeDTO>(`${this.apiUrl}/productos/${id}`, dto);
   }
 
-  deleteProduct(id: number): Observable<MensajeDTO> {
-    return this.http.delete<MensajeDTO>(`${this.apiUrl}/productos/${id}`);
+  deleteProduct(idProducto: number, idSucursal: number): Observable<MensajeDTO> {
+    return this.http.delete<MensajeDTO>(`${this.apiUrl}/productos/${idProducto}/${idSucursal}`);
   }
 
   // Inventario por sucursal
-  getInventoryByBranch(branchId: number, pagina?: number, porPagina: number = 10): Observable<MensajeDTO> {
+  getInventoryByBranch(branchId: number, pagina?: number, porPagina: number = 10, activo?: boolean | null): Observable<MensajeDTO> {
     let params = new HttpParams().set('porPagina', porPagina.toString());
     if (pagina !== undefined) params = params.set('pagina', pagina.toString());
+    if (activo !== undefined && activo !== null) params = params.set('activo', activo.toString());
     return this.http.get<MensajeDTO>(`${this.apiUrl}/inventario/${branchId}`, { params });
   }
 
-  getCatalogo(branchId: number, pagina?: number, porPagina: number = 10): Observable<MensajeDTO> {
+  getCatalogo(branchId: number, pagina?: number, porPagina: number = 10, activo?: boolean | null): Observable<MensajeDTO> {
     let params = new HttpParams().set('porPagina', porPagina.toString());
     if (pagina !== undefined) params = params.set('pagina', pagina.toString());
+    if (activo !== undefined && activo !== null) params = params.set('activo', activo.toString());
     return this.http.get<MensajeDTO>(`${this.apiUrl}/catalogo/${branchId}`, { params });
   }
 
