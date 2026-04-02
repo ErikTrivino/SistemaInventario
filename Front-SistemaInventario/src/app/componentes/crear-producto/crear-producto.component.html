@@ -1,19 +1,111 @@
 <form [formGroup]="form" (ngSubmit)="crear()" class="container mt-4">
-  <div class="mb-3"><label>Nombre</label><input formControlName="nombre" class="form-control" /></div>
-  <div class="mb-3"><label>Descripción</label><input formControlName="descripcion" class="form-control" /></div>
-  <div class="mb-3"><label>SKU</label><input formControlName="sku" class="form-control" /></div>
-  <div class="mb-3">
-    <label>Unidad de Medida Base</label>
-    <select formControlName="unidadMedidaBase" class="form-select">
-      <option value="UND">Unidades</option>
-      <option value="KG">Kilogramos</option>
-      <option value="MT">Metros</option>
-      <option value="LT">Litros</option>
-    </select>
-  </div>
-  <div class="mb-3"><label>Precio Costo Promedio</label><input formControlName="precioCostoPromedio" type="number" class="form-control" /></div>
-  <div class="mb-3"><label>Cantidad Inicial</label><input formControlName="cantidadInicial" type="number" class="form-control" /></div>
-  <div class="mb-3"><label>ID Sucursal</label><input formControlName="idSucursal" type="number" class="form-control" /></div>
+  <h4 class="mb-4">Crear Producto</h4>
 
-  <button class="btn btn-primary" type="submit">Crear Producto</button>
+  <!-- Nombre -->
+  <div class="mb-3">
+    <label class="form-label fw-semibold">Nombre <span class="text-danger">*</span></label>
+    <input formControlName="nombre" class="form-control"
+      [class.is-invalid]="form.get('nombre')?.invalid && form.get('nombre')?.touched"
+      placeholder="Ej: Arroz blanco 1kg" />
+    <div class="invalid-feedback">El nombre es obligatorio.</div>
+  </div>
+
+  <!-- Descripción -->
+  <div class="mb-3">
+    <label class="form-label fw-semibold">Descripción</label>
+    <textarea formControlName="descripcion" class="form-control" rows="3"
+      placeholder="Descripción detallada del producto"></textarea>
+  </div>
+
+  <!-- SKU -->
+  <div class="mb-3">
+    <label class="form-label fw-semibold">SKU</label>
+    <input formControlName="sku" class="form-control"
+      [class.is-invalid]="form.get('sku')?.invalid && form.get('sku')?.touched"
+      placeholder="Código único, máx. 50 caracteres" />
+    <div class="invalid-feedback">El SKU no puede superar 50 caracteres.</div>
+  </div>
+
+  <!-- Unidad de Medida Base -->
+  <div class="mb-3">
+    <label class="form-label fw-semibold">Unidad de Medida Base <span class="text-danger">*</span></label>
+    <select formControlName="unidadMedidaBase" class="form-select"
+      [class.is-invalid]="form.get('unidadMedidaBase')?.invalid && form.get('unidadMedidaBase')?.touched">
+      <option value="">-- Seleccione --</option>
+      <option value="UND">Unidades (UND)</option>
+      <option value="KG">Kilogramos (KG)</option>
+      <option value="MT">Metros (MT)</option>
+      <option value="LT">Litros (LT)</option>
+    </select>
+    <div class="invalid-feedback">Seleccione una unidad de medida.</div>
+  </div>
+
+  <!-- Precio Costo Promedio -->
+  <div class="mb-3">
+    <label class="form-label fw-semibold">Precio Costo Promedio <span class="text-danger">*</span></label>
+    <div class="input-group">
+      <span class="input-group-text">$</span>
+      <input formControlName="precioCostoPromedio" type="number" step="0.01" min="0" class="form-control"
+        [class.is-invalid]="form.get('precioCostoPromedio')?.invalid && form.get('precioCostoPromedio')?.touched"
+        placeholder="0.00" />
+      <div class="invalid-feedback">Ingrese un precio válido (≥ 0).</div>
+    </div>
+  </div>
+
+  <!-- Activo -->
+  <div class="mb-3">
+    <div class="form-check form-switch">
+      <input formControlName="activo" class="form-check-input" type="checkbox" id="activoSwitch" />
+      <label class="form-check-label fw-semibold" for="activoSwitch">Producto Activo</label>
+    </div>
+    <small class="text-muted">Indica si el producto está disponible en el sistema.</small>
+  </div>
+
+  <hr class="my-4" />
+  <h6 class="text-muted mb-3">Inventario Inicial</h6>
+
+  <!-- Cantidad Inicial -->
+  <div class="mb-3">
+    <label class="form-label fw-semibold">Cantidad Inicial <span class="text-danger">*</span></label>
+    <input formControlName="cantidadInicial" type="number" min="0" class="form-control"
+      [class.is-invalid]="form.get('cantidadInicial')?.invalid && form.get('cantidadInicial')?.touched"
+      placeholder="0" />
+    <div class="invalid-feedback">Ingrese una cantidad válida (≥ 0).</div>
+  </div>
+  <!-- Cantidad minima -->
+  <div class="mb-3">
+    <label class="form-label fw-semibold">Cantidad Minima <span class="text-danger">*</span></label>
+    <input formControlName="cantidadMinima" type="number" min="0" class="form-control"
+      [class.is-invalid]="form.get('cantidadMinima')?.invalid && form.get('cantidadMinima')?.touched" placeholder="0" />
+    <div class="invalid-feedback">Ingrese una cantidad mínima válida (≥ 0).</div>
+  </div>
+
+  <!-- Sucursal -->
+  <div class="mb-3">
+    <label class="form-label fw-semibold">Sucursal <span class="text-danger">*</span></label>
+    <select formControlName="idSucursal" class="form-select"
+      [class.is-invalid]="form.get('idSucursal')?.invalid && form.get('idSucursal')?.touched">
+      <option value="">-- Seleccione una sucursal --</option>
+      <option *ngFor="let suc of sucursales" [value]="suc.id">{{ suc.nombre }}</option>
+    </select>
+    <div class="invalid-feedback">Seleccione una sucursal válida.</div>
+  </div>
+
+  <!-- Proveedor -->
+  <div class="mb-3">
+    <label class="form-label fw-semibold">Proveedor <span class="text-danger">*</span></label>
+    <select formControlName="idProveedor" class="form-select"
+      [class.is-invalid]="form.get('idProveedor')?.invalid && form.get('idProveedor')?.touched">
+      <option value="">-- Seleccione un proveedor --</option>
+      <option *ngFor="let prov of proveedores" [value]="prov.id">{{ prov.label }}</option>
+    </select>
+    <div class="invalid-feedback">Seleccione un proveedor válido.</div>
+  </div>
+
+
+
+  <div class="d-flex gap-2 mt-4">
+    <button class="btn btn-primary" type="submit" [disabled]="form.invalid">Crear Producto</button>
+    <button class="btn btn-outline-secondary" type="button" (click)="form.reset()">Limpiar</button>
+  </div>
 </form>

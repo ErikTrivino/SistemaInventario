@@ -14,30 +14,35 @@ import org.springframework.http.ResponseEntity;
 public class InventarioControlador {
     private final InventarioServicio inventoryService;
 
-    @PostMapping({ "/productos", "/products" })
+    @PostMapping({ "/productos" })
     public ResponseEntity<MensajeDTO<Object>> createProduct(@RequestBody ProductoCrearDTO dto) {
         return ResponseEntity.ok(new MensajeDTO<>(false, inventoryService.createProduct(dto)));
     }
 
-    @GetMapping({ "/productos", "/products" })
+    @GetMapping({ "/productos" })
     public ResponseEntity<MensajeDTO<Object>> getProducts(
             @RequestParam(required = false, defaultValue = "10") Integer porPagina,
             @RequestParam(required = false) Integer pagina) {
         return ResponseEntity.ok(new MensajeDTO<>(false, inventoryService.getProducts(pagina, porPagina)));
     }
 
-    @PutMapping({ "/productos/{id}", "/products/{id}" })
+    @GetMapping({ "/productos/{idSucursal}/{idProducto}" })
+    public ResponseEntity<MensajeDTO<Object>> getProductById(@PathVariable Long idSucursal,@PathVariable Long idProducto) {
+        return ResponseEntity.ok(new MensajeDTO<>(false, inventoryService.getProductByIdSucursal(idSucursal, idProducto)));
+    }
+
+    @PutMapping({ "/productos/{id}" })
     public ResponseEntity<MensajeDTO<Object>> updateProduct(@PathVariable Long id, @RequestBody ProductoEditarDTO dto) {
         return ResponseEntity.ok(new MensajeDTO<>(false, inventoryService.updateProduct(id, dto)));
     }
 
-    @DeleteMapping({ "/productos/{id}", "/products/{id}" })
+    @DeleteMapping({ "/productos/{id}" })
     public ResponseEntity<MensajeDTO<Object>> deleteProduct(@PathVariable Long id) {
         inventoryService.deleteProduct(id);
         return ResponseEntity.ok(new MensajeDTO<>(false, "Operación exitosa"));
     }
 
-    @GetMapping({ "/inventario/{branchId}", "/inventory/{branchId}" })
+    @GetMapping({ "/inventario/{branchId}" })
 
     public ResponseEntity<MensajeDTO<Object>> getInventoryByBranch(
             @PathVariable Long branchId,
@@ -47,7 +52,7 @@ public class InventarioControlador {
                 .ok(new MensajeDTO<>(false, inventoryService.getInventoryByBranch(branchId, pagina, porPagina)));
     }
 
-    @GetMapping({ "/catalogo/{branchId}", "/catalog/{branchId}" })
+    @GetMapping({ "/catalogo/{branchId}" })
 
     public ResponseEntity<MensajeDTO<Object>> getCatalogo(
             @PathVariable Long branchId,
@@ -57,7 +62,7 @@ public class InventarioControlador {
                 .ok(new MensajeDTO<>(false, inventoryService.getCatalogoActivo(branchId, pagina, porPagina)));
     }
 
-    @PutMapping({ "/inventario/actualizar-stock", "/inventory/update-stock" })
+    @PutMapping({ "/inventario/actualizar-stock" })
 
     public ResponseEntity<MensajeDTO<Object>> updateStock(@RequestParam Long productId, @RequestParam Long branchId,
             @RequestParam Double quantity, @RequestParam String type, @RequestParam String reason,

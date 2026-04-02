@@ -29,6 +29,27 @@
     <input type="number" formControlName="precioCostoPromedio" class="form-control" />
   </div>
 
+  <div class="mb-3">
+    <label>Stock Actual (En esta sucursal)</label>
+    <input type="number" formControlName="stock" class="form-control" />
+  </div>
+
+  <div class="mb-3">
+    <label>Proveedor Principal</label>
+    <select formControlName="idProveedor" class="form-select">
+      <option value="">Seleccione un proveedor</option>
+      <option *ngFor="let prov of proveedores" [value]="prov.id">{{prov.label}}</option>
+    </select>
+  </div>
+
+  <div class="mb-3">
+    <label>Motivo del Cambio</label>
+    <textarea formControlName="razonCambio" class="form-control" rows="3" placeholder="Escriba la razón de la actualización..."></textarea>
+    <div *ngIf="form.get('razonCambio')?.invalid && form.get('razonCambio')?.touched" class="text-danger small">
+      El motivo es obligatorio y debe tener al menos 5 caracteres.
+    </div>
+  </div>
+
   <div class="text-center gap-2 d-flex justify-content-center">
     <button class="btn btn-primary" type="submit">Actualizar Producto</button>
     <a routerLink="/gestion-producto" class="btn btn-secondary">Cancelar</a>

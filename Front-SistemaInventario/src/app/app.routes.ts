@@ -32,7 +32,7 @@ export const routes: Routes = [
 
       // Inventario
       { path: 'gestion-producto', component: GestionProductoComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "MANAGER", "OPERATOR"] } },
-      { path: 'editar-producto/:id', component: EditarProductoComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "MANAGER", "OPERATOR"] } },
+      { path: 'editar-producto/:idSucursal/:id', component: EditarProductoComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "MANAGER", "OPERATOR"] } },
       { path: 'crear-producto', component: CrearProductoComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "MANAGER", "OPERATOR"] } },
       { path: 'gestion-movimientos', component: GestionMovimientosComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "MANAGER", "OPERATOR"] } },
       { path: 'gestion-transferencias', component: GestionTransferenciasComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "MANAGER", "OPERATOR"] } },

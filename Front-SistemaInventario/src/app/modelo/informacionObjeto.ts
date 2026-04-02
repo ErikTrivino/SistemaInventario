@@ -140,3 +140,15 @@ export interface InformacionTransferencia {
   items: ResumenDetalleDTO[];
   envio?: EnvioInfoDTO;
 }
+
+export interface ProductoDetallePorSucursalDTO {
+  id: number;
+  nombre: string;
+  descripcion: string;
+  sku: string;
+  unidadMedidaBase: string;
+  precioCostoPromedio: number;
+  stock: number;
+  idSucursal: number;
+  proveedor: number;
+}

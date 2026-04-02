@@ -1,9 +1,5 @@
     package com.inventory.servicios.interfaces.inventario;
-    import com.inventory.modelo.dto.inventario.InventarioInformacionDTO;
-    import com.inventory.modelo.dto.inventario.ProductoCrearDTO;
-    import com.inventory.modelo.dto.inventario.ProductoDetalleDTO;
-    import com.inventory.modelo.dto.inventario.ProductoEditarDTO;
-    import com.inventory.modelo.dto.inventario.ProductoInformacionDTO;
+    import com.inventory.modelo.dto.inventario.*;
     import org.springframework.data.domain.Page;
 
     public interface InventarioServicio {
@@ -11,6 +7,7 @@
         ProductoDetalleDTO updateProduct(Long id, ProductoEditarDTO dto);
         void deleteProduct(Long id);
         Page<ProductoInformacionDTO> getProducts(Integer pagina, Integer porPagina);
+        ProductoDetallePorSucursalDTO getProductByIdSucursal(Long idSucursal, Long idProducto);
         Page<com.inventory.modelo.dto.inventario.InventarioRespuestaDTO> getInventoryByBranch(Long branchId, Integer pagina, Integer porPagina);
         void updateStock(Long productId, Long branchId, Double quantity, String type, String reason, String usuarioResponsable);
         Page<InventarioInformacionDTO> getLowStockProducts(Integer pagina, Integer porPagina);

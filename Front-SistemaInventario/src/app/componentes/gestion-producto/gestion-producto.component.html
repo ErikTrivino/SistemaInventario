@@ -15,7 +15,7 @@
 
           <button type="button" class="btn btn-danger" (click)="confirmarEliminar()"
             [disabled]="seleccionados.length === 0">
-            <i class="fa-solid fa-trash me-1"></i> Eliminar {{ textoBtnEliminar }}
+            <i class="fa-solid fa-trash me-1"></i> Inactivar {{ textoBtnEliminar }}
           </button>
         </div>
 
@@ -41,7 +41,9 @@
                 <th class="text-xs font-bold uppercase tracking-wider text-black">Descripción</th>
                 <th class="text-xs font-bold uppercase tracking-wider text-black">Precio</th>
                 <th class="text-xs font-bold uppercase tracking-wider text-black">Stock</th>
+                <th class="text-xs font-bold uppercase tracking-wider text-black">Unidad</th>
                 <th class="text-xs font-bold uppercase tracking-wider text-black">Proveedor</th>
+                <th class="text-xs font-bold uppercase tracking-wider text-black text-center">Estado</th>
                 <th class="text-xs font-bold uppercase tracking-wider text-black pe-4">Acción</th>
               </tr>
             </thead>
@@ -66,6 +68,9 @@
                     {{ (p.stockActual ?? p.stockTotal) || 0 }}unid.
                   </span>
                 </td>
+                <td class="text-sm font-medium text-slate-700 dark:text-slate-300">
+                  {{ p.unidadMedidaBase }}
+                </td>
                 <td>
                   <div class="flex items-center gap-2">
                     <i class="fas fa-truck-field text-black text-xs"></i>
@@ -73,8 +78,14 @@
                       'Consultando...' }}</span>
                   </div>
                 </td>
+                <td class="text-center">
+                  <span [class]="p.activo ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
+                    class="px-2 py-1 rounded-full text-xs font-semibold">
+                    {{ p.activo ? 'Activo' : 'Inactivo' }}
+                  </span>
+                </td>
                 <td class="pe-4">
-                  <button [routerLink]="['/editar-producto', p.id]"
+                  <button *ngIf="idSucursalSeleccionada" [routerLink]="['/editar-producto', idSucursalSeleccionada, p.id]"
                     class="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50">
                     <i class="fa-solid fa-pen"></i>
                     <span>Editar</span>

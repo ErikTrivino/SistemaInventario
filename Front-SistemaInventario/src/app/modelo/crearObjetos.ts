@@ -7,7 +7,7 @@ export interface CrearCliente {
 }
 
 export interface CrearVehiculo {
-  
+
   matricula: string;
   modelo: string;
   description: string;
@@ -16,12 +16,12 @@ export interface CrearVehiculo {
 }
 
 export interface CrearServicio {
-  
+
   fecha: Date;
   descripcion: string;
   idCliente: number;
-  id_empleado:number;
-  
+  id_empleado: number;
+
 }
 
 export interface CrearUsuario {
@@ -43,7 +43,7 @@ export interface CrearFactura {
   total: number;
   metodoPago: string;
   idCliente: number;
-  idEmpleado:number;
+  idEmpleado: number;
 
 
 }
@@ -56,6 +56,7 @@ export interface CrearProducto {
   unidadMedidaBase: string;
   precioCostoPromedio: number;
   cantidadInicial: number;
+  cantidadMinima: number;
   idSucursal: number;
 
 }
@@ -74,16 +75,16 @@ export interface CrearPedido {
   fechaPedido: Date;
   estado: string;
   idProveedor: number;
-  idEmpleado:number;
+  idEmpleado: number;
 
 
-  
+
 }
 
 export interface CrearDetalleFactura {
   costServicio: number;
   idServicio: number;
-  idFactura:number;
+  idFactura: number;
 }
 
 export interface CrearDetalleServicioVehiculo {

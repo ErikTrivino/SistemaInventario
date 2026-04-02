@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { MensajeDTO } from '../modelo/mensaje-dto';
 import { environment } from '../../environments/environment';
+import { CrearProducto } from '../modelo/crearObjetos';
 
 @Injectable({
   providedIn: 'root'
@@ -10,10 +11,10 @@ import { environment } from '../../environments/environment';
 export class InventarioService {
   private apiUrl = `${environment.apiUrl}/api`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // Productos
-  createProduct(dto: any): Observable<MensajeDTO> {
+  createProduct(dto: CrearProducto): Observable<MensajeDTO> {
     return this.http.post<MensajeDTO>(`${this.apiUrl}/productos`, dto);
   }
 
@@ -25,6 +26,10 @@ export class InventarioService {
 
   consultarPorId(id: number): Observable<MensajeDTO> {
     return this.http.get<MensajeDTO>(`${this.apiUrl}/productos/${id}`);
+  }
+
+  getProductByIdSucursal(idSucursal: number, idProducto: number): Observable<MensajeDTO> {
+    return this.http.get<MensajeDTO>(`${this.apiUrl}/productos/${idSucursal}/${idProducto}`);
   }
 
   updateProduct(id: number, dto: any): Observable<MensajeDTO> {

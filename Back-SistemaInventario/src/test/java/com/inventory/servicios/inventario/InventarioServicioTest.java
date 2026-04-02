@@ -63,6 +63,7 @@ public class InventarioServicioTest {
                 "Unidad",
                 new BigDecimal("100.00"),
                 new BigDecimal("50.00"),
+                new BigDecimal("50.00"),
                 1L // idSucursal
         );
 
@@ -88,17 +89,18 @@ public class InventarioServicioTest {
         Inventario mockInv = new Inventario();
         mockInv.setStock(new BigDecimal("100.00"));
         mockInv.setStockMinimo(new BigDecimal("10.00"));
-        
+
         when(inventoryRepository.findByProducto_IdAndSucursal_Id(productId, branchId))
                 .thenReturn(Optional.of(mockInv));
 
-        assertDoesNotThrow(() -> 
-            inventarioServicio.updateStock(productId, branchId, 10.0, "IN", "Ajuste de prueba", "test-usuario"));
+        assertDoesNotThrow(() -> inventarioServicio.updateStock(productId, branchId, 10.0, "IN", "Ajuste de prueba",
+                "test-usuario"));
     }
 
     @Test
     void testConsultarInventarioPorSucursal() throws Exception {
-        when(inventoryRepository.findActiveCatalogByBranch(any(Long.class), any(Pageable.class))).thenReturn(new PageImpl<>(List.of()));
+        when(inventoryRepository.findActiveCatalogByBranch(any(Long.class), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of()));
         Page<InventarioRespuestaDTO> inventario = inventarioServicio.getInventoryByBranch(1L, 1, 10);
         assertNotNull(inventario);
     }

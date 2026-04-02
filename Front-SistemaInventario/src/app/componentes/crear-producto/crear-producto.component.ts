@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { InventarioService } from '../../servicios/inventario.service';
+import { SucursalService } from '../../servicios/sucursal.service';
 import { ProveedorService } from '../../servicios/proveedor.service';
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
@@ -15,33 +16,52 @@ import { MensajeDTO } from '../../modelo/mensaje-dto';
 export class CrearProductoComponent implements OnInit {
   form!: FormGroup;
   proveedores: any[] = [];
+  sucursales: any[] = [];
 
   constructor(
     private fb: FormBuilder,
     private inventarioService: InventarioService,
-    private proveedorService: ProveedorService
+    private proveedorService: ProveedorService,
+    private sucursalService: SucursalService
   ) {
     this.form = this.fb.group({
       nombre: ['', Validators.required],
-      descripcion: ['', Validators.required],
-      sku: ['', [Validators.required, Validators.maxLength(50)]],
+      descripcion: [''],
+      sku: ['', [Validators.maxLength(50)]],
       unidadMedidaBase: ['UND', Validators.required],
       precioCostoPromedio: [0, [Validators.required, Validators.min(0)]],
+      activo: [true],
       cantidadInicial: [0, [Validators.required, Validators.min(0)]],
-      idSucursal: [1, Validators.required] // Por defecto sucursal 1 (Central)
+      idSucursal: [1, Validators.required], // Por defecto sucursal 1 (Central)
+      idProveedor: ['', Validators.required],
+      cantidadMinima: [0, [Validators.required, Validators.min(0)]]
     });
   }
 
   ngOnInit(): void {
     this.cargarProveedores();
+    this.cargarSucursales();
+  }
+
+  cargarSucursales(): void {
+    this.sucursalService.listar().subscribe({
+      next: (data: MensajeDTO) => {
+        this.sucursales = data.respuesta;
+      },
+      error: (err: any) => {
+        console.error(err);
+        Swal.fire('Error', 'No se pudo cargar la lista de sucursales', 'error');
+      }
+    });
   }
 
   cargarProveedores() {
     this.proveedorService.listar().subscribe({
       next: (data: MensajeDTO) => {
-        this.proveedores = data.respuesta.map((prov: any) => ({
+        const content = data.respuesta.content || data.respuesta;
+        this.proveedores = content.map((prov: any) => ({
           id: prov.idProveedor,
-          label: `${prov.nombre} - ${prov.identificacion}`
+          label: prov.razonSocial
         }));
       },
       error: (err: any) => {
@@ -53,12 +73,27 @@ export class CrearProductoComponent implements OnInit {
 
   crear(): void {
     if (this.form.valid) {
-      // Map form to backend expected DTO structure if needed
-      // Current implementation assumes service handles the structure or DTO matches
-      this.inventarioService.createProduct(this.form.value).subscribe({
+      const dto = {
+        ...this.form.value,
+        precioCostoPromedio: Number(this.form.value.precioCostoPromedio),
+        cantidadInicial: Number(this.form.value.cantidadInicial),
+        cantidadMinima: Number(this.form.value.cantidadMinima),
+        idProveedor: Number(this.form.value.idProveedor),
+        idSucursal: Number(this.form.value.idSucursal)
+      };
+
+      console.log(dto);
+      this.inventarioService.createProduct(dto).subscribe({
         next: (data: MensajeDTO) => {
           Swal.fire('Éxito', data.respuesta || 'Producto creado correctamente', 'success');
-          this.form.reset();
+          this.form.reset({
+            unidadMedidaBase: 'UND',
+            idSucursal: 1,
+            activo: true,
+            precioCostoPromedio: 0,
+            cantidadInicial: 0,
+            cantidadMinima: 0
+          });
         },
         error: (err: any) => {
           console.error(err);

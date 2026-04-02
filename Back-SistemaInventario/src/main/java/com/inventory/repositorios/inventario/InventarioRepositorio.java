@@ -31,4 +31,11 @@ public interface InventarioRepositorio extends JpaRepository<Inventario, Inventa
            "FROM Inventario i " +
            "WHERE i.sucursal.id = :sucursalId AND i.producto.activo = true")
     org.springframework.data.domain.Page<com.inventory.modelo.dto.inventario.InventarioRespuestaDTO> findActiveCatalogByBranch(@Param("sucursalId") Long sucursalId, org.springframework.data.domain.Pageable pageable);
+    @Query("SELECT new com.inventory.modelo.dto.inventario.ProductoDetallePorSucursalDTO(" +
+           "i.producto.id, i.producto.nombre, i.producto.descripcion, i.producto.sku, i.producto.unidadMedidaBase, i.producto.precioCostoPromedio, " +
+           "i.stock, i.sucursal.id, " +
+           "(SELECT MIN(pp.proveedorId) FROM ProductoProveedor pp WHERE pp.productoId = i.producto.id)) " +
+           "FROM Inventario i " +
+           "WHERE i.sucursal.id = :sucursalId AND i.producto.id = :productoId")
+    Optional<com.inventory.modelo.dto.inventario.ProductoDetallePorSucursalDTO> findProductDetailByBranchAndProduct(@Param("sucursalId") Long sucursalId, @Param("productoId") Long productoId);
 }

@@ -11,4 +11,6 @@ public interface ProductoRepositorio extends JpaRepository<Producto, Long> {
     Optional<Producto> findBySku(String sku);
 
     List<Producto> findByNombreContaining(String nombre);
+
+
 }

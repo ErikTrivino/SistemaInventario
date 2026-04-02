@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { InventarioService } from '../../servicios/inventario.service';
 import { ProveedorService } from '../../servicios/proveedor.service';
+import { TokenService } from '../../servicios/token.service';
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
 import { MensajeDTO } from '../../modelo/mensaje-dto';
@@ -16,12 +17,14 @@ import { MensajeDTO } from '../../modelo/mensaje-dto';
 export class EditarProductoComponent implements OnInit {
   form!: FormGroup;
   id!: number;
+  idSucursal!: number;
   proveedores: any[] = [];
 
   constructor(
     private fb: FormBuilder,
     private inventarioService: InventarioService,
     private proveedorService: ProveedorService,
+    private tokenService: TokenService,
     private route: ActivatedRoute
   ) {
     this.form = this.fb.group({
@@ -29,16 +32,21 @@ export class EditarProductoComponent implements OnInit {
       descripcion: ['', Validators.required],
       sku: ['', [Validators.required, Validators.maxLength(50)]],
       unidadMedidaBase: ['', Validators.required],
-      precioCostoPromedio: [0, [Validators.required, Validators.min(0)]]
+      precioCostoPromedio: [0, [Validators.required, Validators.min(0)]],
+      stock: [{ value: 0, disabled: false }, [Validators.required, Validators.min(0)]],
+      idProveedor: ['', Validators.required],
+      razonCambio: ['', [Validators.required, Validators.minLength(5)]]
     });
   }
 
   ngOnInit() {
     this.cargarProveedores();
     this.route.paramMap.subscribe(params => {
-      const val = params.get('id');
-      if (val) {
-        this.id = +val;
+      const valId = params.get('id');
+      const valSucursal = params.get('idSucursal');
+      if (valId && valSucursal) {
+        this.id = +valId;
+        this.idSucursal = +valSucursal;
         this.cargarProducto();
       }
     });
@@ -59,9 +67,18 @@ export class EditarProductoComponent implements OnInit {
   }
 
   cargarProducto() {
-    this.inventarioService.consultarPorId(this.id).subscribe({
+    this.inventarioService.getProductByIdSucursal(this.idSucursal, this.id).subscribe({
       next: (data: MensajeDTO) => {
-        this.form.patchValue(data.respuesta);
+        const prod = data.respuesta;
+        this.form.patchValue({
+          nombre: prod.nombre,
+          descripcion: prod.descripcion,
+          sku: prod.sku,
+          unidadMedidaBase: prod.unidadMedidaBase,
+          precioCostoPromedio: prod.precioCostoPromedio,
+          stock: prod.stock,
+          idProveedor: prod.proveedor // Map 'proveedor' ID to 'idProveedor' form control
+        });
       },
       error: (err: any) => {
         console.error(err);
@@ -72,7 +89,13 @@ export class EditarProductoComponent implements OnInit {
 
   editar() {
     if (this.form.valid) {
-      this.inventarioService.updateProduct(this.id, this.form.value).subscribe({
+      const payload = {
+        ...this.form.value,
+        idSucursal: this.idSucursal,
+        idUsuarioResponsable: +this.tokenService.getIDCuenta()
+      };
+
+      this.inventarioService.updateProduct(this.id, payload).subscribe({
         next: (data: MensajeDTO) => Swal.fire('Actualizado', data.respuesta || 'Producto actualizado', 'success'),
         error: (err: any) => {
           console.error(err);
