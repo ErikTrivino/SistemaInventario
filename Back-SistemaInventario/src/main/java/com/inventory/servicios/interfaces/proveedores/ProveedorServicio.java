@@ -8,6 +8,7 @@ public interface ProveedorServicio {
     ProveedorInformacionDTO createSupplier(ProveedorCrearDTO dto);
     ProveedorInformacionDTO updateSupplier(Long id, ProveedorEditarDTO dto);
     ProveedorInformacionDTO toggleActivo(Long id);
+    ProveedorInformacionDTO getSupplierById(Long id);
     Page<ProveedorInformacionDTO> getSuppliers(Integer pagina, Integer porPagina);
     Page<ProveedorInformacionDTO> getAllSuppliers(Integer pagina, Integer porPagina);
 

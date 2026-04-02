@@ -21,10 +21,13 @@ public interface InventarioRepositorio extends JpaRepository<Inventario, Inventa
     @Query("SELECT i FROM Inventario i WHERE i.stock < i.stockMinimo")
     org.springframework.data.domain.Page<Inventario> findByQuantityLessThanMinStock(org.springframework.data.domain.Pageable pageable);
 
+    @Query("SELECT SUM(i.stock) FROM Inventario i WHERE i.producto.id = :productoId")
+    java.math.BigDecimal sumStockByProductoId(@Param("productoId") Long productoId);
+
     /** Búsqueda de catálogo activo por sucursal. */
     @Query("SELECT new com.inventory.modelo.dto.inventario.InventarioRespuestaDTO(" +
            "i.producto.id, i.producto.nombre, i.producto.sku, i.producto.unidadMedidaBase, i.producto.descripcion, i.producto.activo, " +
-           "i.sucursal.id, i.stock, i.stockMinimo) " +
+           "i.sucursal.id, i.stock, i.stockMinimo, i.producto.precioCostoPromedio, null) " +
            "FROM Inventario i " +
            "WHERE i.sucursal.id = :sucursalId AND i.producto.activo = true")
     org.springframework.data.domain.Page<com.inventory.modelo.dto.inventario.InventarioRespuestaDTO> findActiveCatalogByBranch(@Param("sucursalId") Long sucursalId, org.springframework.data.domain.Pageable pageable);

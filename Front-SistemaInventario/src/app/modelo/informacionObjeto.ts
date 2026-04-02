@@ -49,7 +49,7 @@ export interface InformacionProducto {
   unidadMedidaBase: string;
   precioCostoPromedio: number;
   activo: boolean;
-  stock?: number; // From Inventario if joined
+  stock?: number;
   idProveedor?: number;
   nombreProveedor?: string;
 }

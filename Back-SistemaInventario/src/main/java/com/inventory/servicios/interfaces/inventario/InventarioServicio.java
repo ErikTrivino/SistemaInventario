@@ -11,7 +11,7 @@
         ProductoDetalleDTO updateProduct(Long id, ProductoEditarDTO dto);
         void deleteProduct(Long id);
         Page<ProductoInformacionDTO> getProducts(Integer pagina, Integer porPagina);
-        Page<InventarioInformacionDTO> getInventoryByBranch(Long branchId, Integer pagina, Integer porPagina);
+        Page<com.inventory.modelo.dto.inventario.InventarioRespuestaDTO> getInventoryByBranch(Long branchId, Integer pagina, Integer porPagina);
         void updateStock(Long productId, Long branchId, Double quantity, String type, String reason, String usuarioResponsable);
         Page<InventarioInformacionDTO> getLowStockProducts(Integer pagina, Integer porPagina);
         Page<com.inventory.modelo.dto.inventario.InventarioRespuestaDTO> getCatalogoActivo(Long branchId, Integer pagina, Integer porPagina);

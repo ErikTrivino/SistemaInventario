@@ -12,6 +12,8 @@
     import com.inventory.modelo.dto.inventario.ProductoInformacionDTO;
     import com.inventory.modelo.dto.inventario.InventarioRespuestaDTO;
     import com.inventory.modelo.entidades.inventario.Producto;
+    import com.inventory.repositorios.proveedores.ProductoProveedorRepositorio;
+    import com.inventory.modelo.entidades.proveedores.ProductoProveedor;
     import com.inventory.modelo.entidades.inventario.Inventario;
     import com.inventory.modelo.entidades.inventario.MovimientoInventario;
     import com.inventory.modelo.entidades.inventario.TipoMovimiento;
@@ -31,6 +33,7 @@
         private final MovimientoInventarioRepositorio movementRepository;
         private final AuditoriaServicio auditService;
         private final PublicadorEventos eventPublisher;
+        private final ProductoProveedorRepositorio productProviderRepository;
 
         @Override
         @Transactional
@@ -97,11 +100,22 @@
         }
 
         @Override
-        public Page<InventarioInformacionDTO> getInventoryByBranch(Long branchId, Integer pagina, Integer porPagina) {
+        public Page<InventarioRespuestaDTO> getInventoryByBranch(Long branchId, Integer pagina, Integer porPagina) {
             int numPagina = (pagina != null && pagina > 0) ? pagina - 1 : 0;
             int tamanoPagina = (porPagina != null && porPagina > 0) ? porPagina : 10;
             Pageable pageable = PageRequest.of(numPagina, tamanoPagina);
-            return inventoryRepository.findBySucursal_Id(branchId, pageable).map(this::toInventarioInformacion);
+            return inventoryRepository.findActiveCatalogByBranch(branchId, pageable).map(this::enrichInventarioRespuesta);
+        }
+
+        private InventarioRespuestaDTO enrichInventarioRespuesta(InventarioRespuestaDTO dto) {
+            Long providerId = productProviderRepository.findByProductoId(dto.idProducto(), PageRequest.of(0, 1))
+                    .getContent().stream().findFirst().map(ProductoProveedor::getProveedorId).orElse(null);
+            
+            return new InventarioRespuestaDTO(
+                    dto.idProducto(), dto.nombreProducto(), dto.sku(), dto.unidadMedida(), 
+                    dto.descripcion(), dto.activo(), dto.idSucursal(), dto.stock(), 
+                    dto.stockMinimo(), dto.precioCostoPromedio(), providerId
+            );
         }
 
         @Override
@@ -158,6 +172,10 @@
         }
 
         private ProductoInformacionDTO toInformacionDTO(Producto product) {
+            java.math.BigDecimal stockTotal = inventoryRepository.sumStockByProductoId(product.getId());
+            Long providerId = productProviderRepository.findByProductoId(product.getId(), PageRequest.of(0, 1))
+                    .getContent().stream().findFirst().map(ProductoProveedor::getProveedorId).orElse(null);
+
             return new ProductoInformacionDTO(
                     product.getId(),
                     product.getNombre(),
@@ -165,7 +183,9 @@
                     product.getSku(),
                     product.getUnidadMedidaBase(),
                     product.getPrecioCostoPromedio(),
-                    product.getActivo()
+                    product.getActivo(),
+                    stockTotal != null ? stockTotal : java.math.BigDecimal.ZERO,
+                    providerId
             );
         }
 

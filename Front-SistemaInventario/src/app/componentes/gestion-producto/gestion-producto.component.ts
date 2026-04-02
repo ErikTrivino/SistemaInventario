@@ -8,6 +8,7 @@ import { ProveedorService } from '../../servicios/proveedor.service';
 import { MensajeDTO } from '../../modelo/mensaje-dto';
 import { PaginadorComponent } from '../comun/paginador/paginador.component';
 import { FormsModule } from '@angular/forms';
+import { SucursalService } from '../../servicios/sucursal.service';
 
 @Component({
   selector: 'app-gestion-producto',
@@ -20,6 +21,10 @@ export class GestionProductoComponent implements OnInit {
   seleccionados: InformacionProducto[] = [];
   textoBtnEliminar = '';
 
+  // Sucursales
+  sucursales: any[] = [];
+  idSucursalSeleccionada: number | null = null;
+
   // Estado de paginación
   paginaActual = 0;
   totalPaginas = 0;
@@ -28,50 +33,107 @@ export class GestionProductoComponent implements OnInit {
 
   constructor(
     private inventarioService: InventarioService,
-    private proveedorService: ProveedorService
+    private proveedorService: ProveedorService,
+    private sucursalService: SucursalService
   ) {}
 
   ngOnInit(): void {
+    this.cargarSucursales();
     this.cargar();
   }
 
-  cargar() {
-    this.inventarioService.getProducts(this.paginaActual + 1, this.tamanoPagina).subscribe({
+  cargarSucursales() {
+    this.sucursalService.listar().subscribe({
       next: (data: MensajeDTO) => {
-        console.log('Datos de inventario recibidos:', data.respuesta);
-        // Soporte para Page de Spring Boot o lista simple
+        this.sucursales = data.respuesta;
+      },
+      error: (err: any) => {
+        console.error('Error al cargar sucursales:', err);
+      }
+    });
+  }
+
+  cargar() {
+    const observable = this.idSucursalSeleccionada
+      ? this.inventarioService.getInventoryByBranch(this.idSucursalSeleccionada, this.paginaActual + 1, this.tamanoPagina)
+      : this.inventarioService.getProducts(this.paginaActual + 1, this.tamanoPagina);
+
+    observable.subscribe({
+      next: (data: MensajeDTO) => {
+        console.log('Datos recibidos:', data.respuesta);
+        
+        let content = data.respuesta.content || data.respuesta;
+        
+        if (this.idSucursalSeleccionada && Array.isArray(content)) {
+          this.productos = content.map((item: any) => ({
+            id: item.idProducto,
+            nombre: item.nombreProducto,
+            sku: item.sku,
+            descripcion: item.descripcion,
+            unidadMedidaBase: item.unidadMedida,
+            activo: item.activo,
+            stock: item.stock,
+            precioCostoPromedio: item.precioCostoPromedio,
+            idProveedor: item.idProveedor
+          }));
+        } else if (Array.isArray(content)) {
+          this.productos = content.map((item: any) => ({
+            ...item,
+            stock: item.stockTotal
+          }));
+        } else {
+          this.productos = [];
+        }
+
         if (data.respuesta.content) {
-          this.productos = data.respuesta.content;
           this.totalElementos = data.respuesta.totalElements;
           this.totalPaginas = data.respuesta.totalPages;
           this.paginaActual = data.respuesta.number;
         } else {
-          this.productos = data.respuesta;
           this.totalElementos = this.productos.length;
           this.totalPaginas = 1;
         }
 
-        // Buscar nombre del proveedor para cada producto de forma asíncrona
-        for (let prod of this.productos) {
-          if (prod.idProveedor) {
-            this.proveedorService.consultarPorId(prod.idProveedor).subscribe({
-              next: (prov: MensajeDTO) => {
-                prod.nombreProveedor = prov.respuesta.nombre;
-              },
-              error: () => {
-                prod.nombreProveedor = 'Proveedor no disponible';
-              }
-            });
-          } else {
-            prod.nombreProveedor = 'Sin asignar';
-          }
-        }
+        // Cargar nombres de proveedores
+        this.cargarProveedores();
       },
       error: (err: any) => {
         console.error(err);
         Swal.fire('Error', 'No se pudieron cargar los productos', 'error');
       }
     });
+  }
+
+  cargarProveedores() {
+    const proveedoresCache: { [key: number]: string } = {};
+
+    for (let prod of this.productos) {
+      if (prod.idProveedor) {
+        // Si ya lo tenemos en el cache del ciclo, lo usamos directamente
+        if (proveedoresCache[prod.idProveedor]) {
+          prod.nombreProveedor = proveedoresCache[prod.idProveedor];
+          continue;
+        }
+
+        this.proveedorService.consultarPorId(prod.idProveedor).subscribe({
+          next: (prov: MensajeDTO) => {
+            const nombre = prov.respuesta.razonSocial;
+            prod.nombreProveedor = nombre;
+            proveedoresCache[prod.idProveedor!] = nombre;
+          },
+          error: () => {
+            prod.nombreProveedor = 'Proveedor no disponible';
+          }
+        });
+      } else {
+        prod.nombreProveedor = 'Sin asignar';
+      }
+    }
+  }
+
+  onCambioSucursal() {
+    this.paginaActual = 0;
+    this.cargar();
   }
 
   onCambioPagina(p: number) {

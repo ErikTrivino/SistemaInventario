@@ -1,6 +1,5 @@
 package com.inventory.servicios.inventario;
 
-import com.inventory.modelo.dto.inventario.InventarioInformacionDTO;
 import com.inventory.modelo.dto.inventario.ProductoCrearDTO;
 import com.inventory.modelo.dto.inventario.ProductoDetalleDTO;
 
@@ -12,6 +11,8 @@ import com.inventory.repositorios.inventario.ProductoRepositorio;
 import com.inventory.servicios.interfaces.auditoria.AuditoriaServicio;
 import com.inventory.servicios.implementaciones.inventario.InventarioServicioImpl;
 import com.inventory.eventos.PublicadorEventos;
+import com.inventory.repositorios.proveedores.ProductoProveedorRepositorio;
+import com.inventory.modelo.dto.inventario.InventarioRespuestaDTO;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -49,6 +50,9 @@ public class InventarioServicioTest {
 
     @Mock
     private PublicadorEventos eventPublisher;
+
+    @Mock
+    private ProductoProveedorRepositorio productProviderRepository;
 
     @Test
     void testCrearProducto() throws Exception {
@@ -94,8 +98,8 @@ public class InventarioServicioTest {
 
     @Test
     void testConsultarInventarioPorSucursal() throws Exception {
-        when(inventoryRepository.findBySucursal_Id(any(Long.class), any(Pageable.class))).thenReturn(new PageImpl<>(List.of()));
-        Page<InventarioInformacionDTO> inventario = inventarioServicio.getInventoryByBranch(1L, 1, 10);
+        when(inventoryRepository.findActiveCatalogByBranch(any(Long.class), any(Pageable.class))).thenReturn(new PageImpl<>(List.of()));
+        Page<InventarioRespuestaDTO> inventario = inventarioServicio.getInventoryByBranch(1L, 1, 10);
         assertNotNull(inventario);
     }
 }

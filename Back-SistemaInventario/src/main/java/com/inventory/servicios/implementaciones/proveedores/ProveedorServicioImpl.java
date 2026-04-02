@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 @Service
 @RequiredArgsConstructor
 public class ProveedorServicioImpl implements ProveedorServicio {
@@ -54,6 +53,13 @@ public class ProveedorServicioImpl implements ProveedorServicio {
                 .orElseThrow(() -> new RuntimeException("Proveedor no encontrado: " + id));
         supplier.setActivo(!supplier.isActivo());
         return toInfo(supplierRepository.save(supplier));
+    }
+
+    @Override
+    public ProveedorInformacionDTO getSupplierById(Long id) {
+        Proveedor supplier = supplierRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Proveedor no encontrado: " + id));
+        return toInfo(supplier);
     }
 
     /** RF-38: Listar solo proveedores activos. */

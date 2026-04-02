@@ -11,5 +11,7 @@ public record InventarioRespuestaDTO(
         Boolean activo,
         Long idSucursal,
         BigDecimal stock,
-        BigDecimal stockMinimo
+        BigDecimal stockMinimo,
+        BigDecimal precioCostoPromedio,
+        Long idProveedor
 ) {}

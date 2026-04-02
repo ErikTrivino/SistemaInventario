@@ -8,7 +8,9 @@ public record ProductoInformacionDTO(
         String sku,
         String unidadMedidaBase,
         java.math.BigDecimal precioCostoPromedio,
-        boolean activo
+        boolean activo,
+        java.math.BigDecimal stockTotal,
+        Long idProveedor
 ) {
 }
 

@@ -15,9 +15,13 @@ import org.springframework.web.bind.annotation.*;
 public class ProveedorControlador {
     private final ProveedorServicio proveedorServicio;
 
+    @GetMapping("/{id}")
+    public ResponseEntity<MensajeDTO<Object>> consultarPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(new MensajeDTO<>(false, proveedorServicio.getSupplierById(id)));
+    }
+
     /** RF-38: Listar proveedores activos. */
     @GetMapping
-
     public ResponseEntity<MensajeDTO<Object>> listar(
             @RequestParam(required = false, defaultValue = "10") Integer porPagina,
             @RequestParam(required = false) Integer pagina) {

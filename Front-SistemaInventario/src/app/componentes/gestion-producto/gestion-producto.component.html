@@ -7,15 +7,28 @@
     </div>
 
     <div class="card-body p-5">
-      <div class="mb-3">
-        <button type="button" routerLink="/crear-producto" class="btn btn-success me-2">
-          <i class="fa-solid fa-plus me-1"></i> Crear
-        </button>
+      <div class="mb-4 flex flex-wrap items-center gap-3">
+        <div class="flex items-center gap-2">
+          <button type="button" routerLink="/crear-producto" class="btn btn-success">
+            <i class="fa-solid fa-plus me-1"></i> Crear
+          </button>
 
-        <button type="button" class="btn btn-danger" (click)="confirmarEliminar()"
-          [disabled]="seleccionados.length === 0">
-          <i class="fa-solid fa-trash me-1"></i> Eliminar {{ textoBtnEliminar }}
-        </button>
+          <button type="button" class="btn btn-danger" (click)="confirmarEliminar()"
+            [disabled]="seleccionados.length === 0">
+            <i class="fa-solid fa-trash me-1"></i> Eliminar {{ textoBtnEliminar }}
+          </button>
+        </div>
+
+        <div class="flex-grow"></div>
+
+        <div class="flex items-center gap-2 min-w-[250px]">
+          <label for="sucursal" class="text-sm font-medium text-slate-700 dark:text-slate-300">Sucursal:</label>
+          <select id="sucursal" [(ngModel)]="idSucursalSeleccionada" (change)="onCambioSucursal()"
+            class="form-select border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+            <option [ngValue]="null">--- Todas las sedes ---</option>
+            <option *ngFor="let s of sucursales" [ngValue]="s.id">{{ s.nombre }}</option>
+          </select>
+        </div>
       </div>
 
       <div class="rounded-xl w-100 overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm">
@@ -33,11 +46,12 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
-              <tr *ngFor="let p of productos; trackBy: trackById" class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+              <tr *ngFor="let p of productos; trackBy: trackById"
+                class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
                 <td class="ps-4">
                   <div class="flex items-center">
-                    <input #check type="checkbox" (change)="seleccionar(p, check.checked)" 
-                           class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                    <input #check type="checkbox" (change)="seleccionar(p, check.checked)"
+                      class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
                   </div>
                 </td>
                 <td class="py-4">
@@ -46,20 +60,22 @@
                 <td class="text-black dark:text-slate-400">{{ p.descripcion }}</td>
                 <td class="text-black dark:text-white font-medium">{{ p.precioCostoPromedio | currency }}</td>
                 <td>
-                  <span [class]="(p.stock || 0) < 5 ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400' : 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'"
-                        class="px-2.5 py-0.5 rounded-full text-xs font-medium">
-                    {{ p.stock || 0 }} unid.
+                  <span
+                    [class]="(p.stock || 0) < 5 ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400' : 'bg-slate-900 text-white dark:bg-slate-800 dark:text-white'"
+                    class="px-2.5 py-0.5 rounded-full text-xs font-medium">
+                    {{ p.stock || 0 }}unid.
                   </span>
                 </td>
                 <td>
                   <div class="flex items-center gap-2">
                     <i class="fas fa-truck-field text-black text-xs"></i>
-                    <span class="text-sm border-b border-dotted border-slate-300 text-black">{{ p.nombreProveedor || 'Consultando...' }}</span>
+                    <span class="text-sm border-b border-dotted border-slate-300 text-black">{{ p.nombreProveedor ||
+                      'Consultando...' }}</span>
                   </div>
                 </td>
                 <td class="pe-4">
-                  <button [routerLink]="['/editar-producto', p.id]" 
-                          class="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50">
+                  <button [routerLink]="['/editar-producto', p.id]"
+                    class="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50">
                     <i class="fa-solid fa-pen"></i>
                     <span>Editar</span>
                   </button>
@@ -68,14 +84,9 @@
             </tbody>
           </table>
         </div>
-        
-        <app-paginador 
-          [totalElementos]="totalElementos"
-          [totalPaginas]="totalPaginas"
-          [paginaActual]="paginaActual"
-          [tamanoPagina]="tamanoPagina"
-          (cambioPagina)="onCambioPagina($event)"
-          (cambioTamano)="onCambioTamano($event)">
+
+        <app-paginador [totalElementos]="totalElementos" [totalPaginas]="totalPaginas" [paginaActual]="paginaActual"
+          [tamanoPagina]="tamanoPagina" (cambioPagina)="onCambioPagina($event)" (cambioTamano)="onCambioTamano($event)">
         </app-paginador>
       </div>
     </div>
