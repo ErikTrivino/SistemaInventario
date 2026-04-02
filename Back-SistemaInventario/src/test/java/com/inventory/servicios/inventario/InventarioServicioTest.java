@@ -73,7 +73,7 @@ public class InventarioServicioTest {
         ProductoDetalleDTO resultado = inventarioServicio.createProduct(dto);
 
         assertNotNull(resultado);
-        assertNotNull(resultado.idProducto());
+        assertNotNull(resultado.id());
     }
 
     @Test

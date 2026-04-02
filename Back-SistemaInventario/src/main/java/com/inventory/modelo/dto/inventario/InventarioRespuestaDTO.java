@@ -7,6 +7,7 @@ public record InventarioRespuestaDTO(
         String nombreProducto,
         String sku,
         String unidadMedida,
+        String descripcion,
         Boolean activo,
         Long idSucursal,
         BigDecimal stock,

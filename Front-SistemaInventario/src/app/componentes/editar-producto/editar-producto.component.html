@@ -10,25 +10,27 @@
   </div>
 
   <div class="mb-3">
-    <label>Precio</label>
-    <input type="number" formControlName="precio" class="form-control" />
+    <label>SKU</label>
+    <input formControlName="sku" class="form-control" />
   </div>
 
   <div class="mb-3">
-    <label>Stock</label>
-    <input type="number" formControlName="stock" class="form-control" />
-  </div>
-
-  <!-- Selector de proveedor -->
-  <div class="mb-3">
-    <label>Proveedor</label>
-    <select formControlName="idProveedor" class="form-select">
-      <option value="">Seleccione un proveedor</option>
-      <option *ngFor="let p of proveedores" [value]="p.id">{{ p.label }}</option>
+    <label>Unidad de Medida Base</label>
+    <select formControlName="unidadMedidaBase" class="form-select">
+      <option value="UND">Unidades</option>
+      <option value="KG">Kilogramos</option>
+      <option value="MT">Metros</option>
+      <option value="LT">Litros</option>
     </select>
   </div>
 
-  <div class="text-center">
+  <div class="mb-3">
+    <label>Precio Costo Promedio</label>
+    <input type="number" formControlName="precioCostoPromedio" class="form-control" />
+  </div>
+
+  <div class="text-center gap-2 d-flex justify-content-center">
     <button class="btn btn-primary" type="submit">Actualizar Producto</button>
+    <a routerLink="/gestion-producto" class="btn btn-secondary">Cancelar</a>
   </div>
 </form>

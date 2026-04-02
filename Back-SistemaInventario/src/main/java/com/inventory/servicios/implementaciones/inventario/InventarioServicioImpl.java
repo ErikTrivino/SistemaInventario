@@ -161,9 +161,11 @@
             return new ProductoInformacionDTO(
                     product.getId(),
                     product.getNombre(),
+                    product.getDescripcion(),
                     product.getSku(),
                     product.getUnidadMedidaBase(),
-                    product.getPrecioCostoPromedio()
+                    product.getPrecioCostoPromedio(),
+                    product.getActivo()
             );
         }
 
@@ -180,8 +182,11 @@
 
         private InventarioInformacionDTO toInventarioInformacion(Inventario inventory) {
             return new InventarioInformacionDTO(
-                    inventory.getSucursalId(),
-                    inventory.getProductoId(),
+                    inventory.getSucursal().getId(),
+                    inventory.getProducto().getId(),
+                    inventory.getProducto().getNombre(),
+                    inventory.getProducto().getSku(),
+                    inventory.getProducto().getDescripcion(),
                     inventory.getStock(),
                     inventory.getStockMinimo()
             );

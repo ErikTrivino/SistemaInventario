@@ -23,7 +23,7 @@ public interface InventarioRepositorio extends JpaRepository<Inventario, Inventa
 
     /** Búsqueda de catálogo activo por sucursal. */
     @Query("SELECT new com.inventory.modelo.dto.inventario.InventarioRespuestaDTO(" +
-           "i.producto.id, i.producto.nombre, i.producto.sku, i.producto.unidadMedidaBase, i.producto.activo, " +
+           "i.producto.id, i.producto.nombre, i.producto.sku, i.producto.unidadMedidaBase, i.producto.descripcion, i.producto.activo, " +
            "i.sucursal.id, i.stock, i.stockMinimo) " +
            "FROM Inventario i " +
            "WHERE i.sucursal.id = :sucursalId AND i.producto.activo = true")

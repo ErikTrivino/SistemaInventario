@@ -133,7 +133,13 @@ public class ProveedorServicioImpl implements ProveedorServicio {
 
     private ProveedorInformacionDTO toInfo(Proveedor s) {
         return new ProveedorInformacionDTO(
-                s.getId(), s.getNitRut(), s.getRazonSocial(), s.getContacto(), s.getEmail(), s.isActivo());
+                s.getId(),
+                s.getNitRut(),
+                s.getRazonSocial(),
+                s.getContacto(),
+                s.getEmail(),
+                s.isActivo()
+        );
     }
 
     private ProductoProveedorInformacionDTO toPPInfo(ProductoProveedor pp) {

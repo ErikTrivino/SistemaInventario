@@ -1,7 +1,7 @@
 package com.inventory.modelo.dto.proveedores;
 
 public record ProveedorInformacionDTO(
-        Long idProveedor,
+        Long id,
         String nitRut,
         String razonSocial,
         String contacto,

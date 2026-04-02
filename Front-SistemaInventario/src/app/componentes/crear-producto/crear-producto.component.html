@@ -1,17 +1,19 @@
 <form [formGroup]="form" (ngSubmit)="crear()" class="container mt-4">
   <div class="mb-3"><label>Nombre</label><input formControlName="nombre" class="form-control" /></div>
   <div class="mb-3"><label>Descripción</label><input formControlName="descripcion" class="form-control" /></div>
-  <div class="mb-3"><label>Precio</label><input formControlName="precio" type="number" class="form-control" /></div>
-  <div class="mb-3"><label>Stock</label><input formControlName="stock" type="number" class="form-control" /></div>
-
-  <!-- Selector de proveedor -->
+  <div class="mb-3"><label>SKU</label><input formControlName="sku" class="form-control" /></div>
   <div class="mb-3">
-    <label>Proveedor</label>
-    <select formControlName="idProveedor" class="form-select">
-      <option value="">Seleccione un proveedor</option>
-      <option *ngFor="let p of proveedores" [value]="p.id">{{ p.label }}</option>
+    <label>Unidad de Medida Base</label>
+    <select formControlName="unidadMedidaBase" class="form-select">
+      <option value="UND">Unidades</option>
+      <option value="KG">Kilogramos</option>
+      <option value="MT">Metros</option>
+      <option value="LT">Litros</option>
     </select>
   </div>
+  <div class="mb-3"><label>Precio Costo Promedio</label><input formControlName="precioCostoPromedio" type="number" class="form-control" /></div>
+  <div class="mb-3"><label>Cantidad Inicial</label><input formControlName="cantidadInicial" type="number" class="form-control" /></div>
+  <div class="mb-3"><label>ID Sucursal</label><input formControlName="idSucursal" type="number" class="form-control" /></div>
 
   <button class="btn btn-primary" type="submit">Crear Producto</button>
 </form>

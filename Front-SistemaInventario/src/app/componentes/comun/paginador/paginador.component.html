@@ -1,21 +1,21 @@
 <div class="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 bg-white dark:bg-slate-800 rounded-b-xl border-t border-slate-200 dark:border-slate-700">
   <!-- Información de resultados -->
-  <div class="text-sm text-slate-500 dark:text-slate-400 order-2 sm:order-1">
+  <div class="text-sm text-black dark:text-slate-400 order-2 sm:order-1">
     Mostrando 
-    <span class="font-medium text-slate-900 dark:text-white">{{totalElementos > 0 ? (paginaActual * tamanoPagina + 1) : 0}}</span> - 
-    <span class="font-medium text-slate-900 dark:text-white">{{Math.min((paginaActual + 1) * tamanoPagina, totalElementos)}}</span> de 
-    <span class="font-medium text-slate-900 dark:text-white">{{totalElementos}}</span> resultados
+    <span class="font-medium text-black dark:text-white">{{totalElementos > 0 ? (paginaActual * tamanoPagina + 1) : 0}}</span> - 
+    <span class="font-medium text-black dark:text-white">{{Math.min((paginaActual + 1) * tamanoPagina, totalElementos)}}</span> de 
+    <span class="font-medium text-black dark:text-white">{{totalElementos}}</span> resultados
   </div>
 
   <!-- Controles -->
   <div class="flex flex-wrap items-center justify-center gap-4 order-1 sm:order-2">
     <!-- Selector de tamaño -->
     <div class="flex items-center gap-2">
-      <label class="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Filas:</label>
+      <label class="text-xs font-semibold uppercase tracking-wider text-black dark:text-slate-500">Filas:</label>
       <select 
         (change)="cambiarTamano($event)"
         [value]="tamanoPagina"
-        class="bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-1.5 dark:bg-slate-700 dark:border-slate-600 dark:text-white outline-none transition-colors">
+        class="bg-slate-50 border border-slate-200 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-1.5 dark:bg-slate-700 dark:border-slate-600 dark:text-white outline-none transition-colors">
         <option value="5">5</option>
         <option value="10">10</option>
         <option value="20">20</option>
@@ -29,7 +29,7 @@
       <button 
         (click)="irAPagina(paginaActual - 1)"
         [disabled]="paginaActual === 0"
-        class="group relative inline-flex items-center px-3 py-2 text-slate-500 bg-white hover:bg-slate-50 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all border-r border-slate-200 dark:border-slate-700"
+        class="group relative inline-flex items-center px-3 py-2 text-black bg-white hover:bg-slate-50 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all border-r border-slate-200 dark:border-slate-700"
         title="Página anterior">
         <i class="fas fa-chevron-left text-xs"></i>
       </button>
@@ -44,7 +44,7 @@
           [class.border-blue-600]="p === paginaActual"
           [class.hover:bg-blue-700]="p === paginaActual"
           [class.bg-white]="p !== paginaActual"
-          [class.text-slate-600]="p !== paginaActual"
+          [class.text-black]="p !== paginaActual"
           [class.dark:bg-slate-800]="p !== paginaActual"
           [class.dark:text-slate-400]="p !== paginaActual"
           [class.dark:hover:bg-slate-700]="p !== paginaActual"
@@ -63,7 +63,7 @@
       <button 
         (click)="irAPagina(paginaActual + 1)"
         [disabled]="paginaActual === totalPaginas - 1 || totalPaginas === 0"
-        class="group relative inline-flex items-center px-3 py-2 text-slate-500 bg-white hover:bg-slate-50 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+        class="group relative inline-flex items-center px-3 py-2 text-black bg-white hover:bg-slate-50 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
         title="Página siguiente">
         <i class="fas fa-chevron-right text-xs"></i>
       </button>

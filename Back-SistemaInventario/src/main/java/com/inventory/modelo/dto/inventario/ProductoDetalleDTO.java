@@ -3,7 +3,7 @@ package com.inventory.modelo.dto.inventario;
 import java.math.BigDecimal;
 
 public record ProductoDetalleDTO(
-        Long idProducto,
+        Long id,
         String nombre,
         String descripcion,
         String sku,

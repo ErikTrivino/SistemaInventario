@@ -35,6 +35,3 @@ public class DetalleCompra {
     @Builder.Default
     private java.math.BigDecimal descuentoAplicado = java.math.BigDecimal.ZERO;
 }
-
-
-

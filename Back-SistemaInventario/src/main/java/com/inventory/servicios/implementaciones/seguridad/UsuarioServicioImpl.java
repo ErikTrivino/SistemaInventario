@@ -134,7 +134,7 @@ public class UsuarioServicioImpl implements UsuarioServicio {
                 .id(usuario.getId())
                 .nombre(usuario.getNombre())
                 .apellido(usuario.getApellido())
-                .email(usuario.getCorreo())
+                .correo(usuario.getCorreo())
                 .rol(usuario.getRol())
                 .sucursalAsignadaId(usuario.getSucursalAsignadaId())
                 .activo(usuario.getActivo())

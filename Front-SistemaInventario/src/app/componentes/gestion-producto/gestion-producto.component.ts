@@ -38,6 +38,7 @@ export class GestionProductoComponent implements OnInit {
   cargar() {
     this.inventarioService.getProducts(this.paginaActual + 1, this.tamanoPagina).subscribe({
       next: (data: MensajeDTO) => {
+        console.log('Datos de inventario recibidos:', data.respuesta);
         // Soporte para Page de Spring Boot o lista simple
         if (data.respuesta.content) {
           this.productos = data.respuesta.content;

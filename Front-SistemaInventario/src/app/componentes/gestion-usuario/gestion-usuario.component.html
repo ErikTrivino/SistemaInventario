@@ -71,11 +71,11 @@
             <thead class="bg-slate-50 dark:bg-slate-800/50">
               <tr>
                 <th style="width: 40px;" class="ps-4"></th>
-                <th class="text-xs font-bold uppercase tracking-wider text-slate-500 py-4">Usuario</th>
-                <th class="text-xs font-bold uppercase tracking-wider text-slate-500">Contacto</th>
-                <th class="text-xs font-bold uppercase tracking-wider text-slate-500">Estado</th>
-                <th class="text-xs font-bold uppercase tracking-wider text-slate-500">Rol</th>
-                <th class="text-xs font-bold uppercase tracking-wider text-slate-500 pe-4">Acción</th>
+                <th class="text-xs font-bold uppercase tracking-wider text-black py-4">Usuario</th>
+                <th class="text-xs font-bold uppercase tracking-wider text-black">Contacto</th>
+                <th class="text-xs font-bold uppercase tracking-wider text-black">Estado</th>
+                <th class="text-xs font-bold uppercase tracking-wider text-black">Rol</th>
+                <th class="text-xs font-bold uppercase tracking-wider text-black pe-4">Acción</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
@@ -90,14 +90,14 @@
                       {{ u.nombre.charAt(0) }}{{ u.apellido.charAt(0) }}
                     </div>
                     <div>
-                      <div class="font-semibold text-slate-900 dark:text-white">{{ u.nombre }} {{ u.apellido }}</div>
-                      <div class="text-xs text-slate-500">ID: {{ u.id }}</div>
+                      <div class="font-semibold text-black dark:text-white">{{ u.nombre }} {{ u.apellido }}</div>
+                      <div class="text-xs text-black">ID: {{ u.id }}</div>
                     </div>
                   </div>
                 </td>
                 <td>
                   <div class="flex flex-col gap-1">
-                    <div class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+                    <div class="flex items-center gap-2 text-sm text-black dark:text-slate-400">
                       <i class="fas fa-envelope text-[10px] w-4"></i>
                       <span>{{ u.correo }}</span>
                     </div>
@@ -110,7 +110,7 @@
                   </span>
                 </td>
                 <td>
-                  <div [class]="u.rol === 'ADMIN' ? 'text-purple-600' : 'text-slate-600 dark:text-slate-400'" class="text-xs font-bold tracking-wider uppercase">
+                  <div [class]="u.rol === 'ADMIN' ? 'text-purple-600' : 'text-black dark:text-slate-400'" class="text-xs font-bold tracking-wider uppercase">
                     <i class="fas fa-shield-alt mr-1" *ngIf="u.rol === 'ADMIN'"></i>
                     {{ u.rol }}
                   </div>

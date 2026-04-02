@@ -24,9 +24,11 @@ export class CrearProductoComponent implements OnInit {
     this.form = this.fb.group({
       nombre: ['', Validators.required],
       descripcion: ['', Validators.required],
-      precio: [0, [Validators.required, Validators.min(0)]],
-      stock: [0, [Validators.required, Validators.min(0)]],
-      idProveedor: ['', Validators.required]
+      sku: ['', [Validators.required, Validators.maxLength(50)]],
+      unidadMedidaBase: ['UND', Validators.required],
+      precioCostoPromedio: [0, [Validators.required, Validators.min(0)]],
+      cantidadInicial: [0, [Validators.required, Validators.min(0)]],
+      idSucursal: [1, Validators.required] // Por defecto sucursal 1 (Central)
     });
   }
 

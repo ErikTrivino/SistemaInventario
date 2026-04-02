@@ -43,11 +43,11 @@
             <thead class="bg-slate-50 dark:bg-slate-800/50">
               <tr>
                 <th style="width: 40px;" class="ps-4"></th>
-                <th class="text-xs font-bold uppercase tracking-wider text-slate-500 py-4">Proveedor</th>
-                <th class="text-xs font-bold uppercase tracking-wider text-slate-500">NIT / Identificación</th>
-                <th class="text-xs font-bold uppercase tracking-wider text-slate-500">Contacto</th>
-                <th class="text-xs font-bold uppercase tracking-wider text-slate-500">Estado</th>
-                <th class="text-xs font-bold uppercase tracking-wider text-slate-500 pe-4">Acción</th>
+                <th class="text-xs font-bold uppercase tracking-wider text-black py-4">Proveedor</th>
+                <th class="text-xs font-bold uppercase tracking-wider text-black">NIT / Identificación</th>
+                <th class="text-xs font-bold uppercase tracking-wider text-black">Contacto</th>
+                <th class="text-xs font-bold uppercase tracking-wider text-black">Estado</th>
+                <th class="text-xs font-bold uppercase tracking-wider text-black pe-4">Acción</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
@@ -62,19 +62,19 @@
                       <i class="fas fa-building text-lg"></i>
                     </div>
                     <div>
-                      <div class="font-bold text-slate-900 dark:text-white">{{ p.razonSocial }}</div>
-                      <div class="text-xs text-slate-500 font-medium tracking-tight">{{ p.email }}</div>
+                      <div class="font-bold text-black dark:text-white">{{ p.razonSocial }}</div>
+                      <div class="text-xs text-black font-medium tracking-tight">{{ p.email }}</div>
                     </div>
                   </div>
                 </td>
                 <td>
-                  <div class="inline-flex items-center px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded text-xs font-mono text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
+                  <div class="inline-flex items-center px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded text-xs font-mono text-black dark:text-slate-400 border border-slate-200 dark:border-slate-700">
                     {{ p.nitRut }}
                   </div>
                 </td>
                 <td>
                   <div class="flex flex-col gap-1">
-                    <div class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+                    <div class="flex items-center gap-2 text-sm text-black dark:text-slate-400">
                       <i class="fas fa-user text-[10px] w-3"></i>
                       <span>{{ p.contacto }}</span>
                     </div>

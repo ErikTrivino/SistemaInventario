@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Builder
 public class OrdenCompra {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_compra")
@@ -39,8 +39,3 @@ public class OrdenCompra {
     @Column(name = "plazo_pago_dias")
     private Integer plazoPagoDias;
 }
-
-
-
-
-

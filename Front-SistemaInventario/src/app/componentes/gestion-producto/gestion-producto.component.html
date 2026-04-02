@@ -24,12 +24,12 @@
             <thead class="bg-slate-50 dark:bg-slate-800/50">
               <tr>
                 <th style="width: 40px;" class="ps-4"></th>
-                <th class="text-xs font-bold uppercase tracking-wider text-slate-500 py-4">Nombre</th>
-                <th class="text-xs font-bold uppercase tracking-wider text-slate-500">Descripción</th>
-                <th class="text-xs font-bold uppercase tracking-wider text-slate-500">Precio</th>
-                <th class="text-xs font-bold uppercase tracking-wider text-slate-500">Stock</th>
-                <th class="text-xs font-bold uppercase tracking-wider text-slate-500">Proveedor</th>
-                <th class="text-xs font-bold uppercase tracking-wider text-slate-500 pe-4">Acción</th>
+                <th class="text-xs font-bold uppercase tracking-wider text-black py-4">Nombre</th>
+                <th class="text-xs font-bold uppercase tracking-wider text-black">Descripción</th>
+                <th class="text-xs font-bold uppercase tracking-wider text-black">Precio</th>
+                <th class="text-xs font-bold uppercase tracking-wider text-black">Stock</th>
+                <th class="text-xs font-bold uppercase tracking-wider text-black">Proveedor</th>
+                <th class="text-xs font-bold uppercase tracking-wider text-black pe-4">Acción</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
@@ -41,10 +41,10 @@
                   </div>
                 </td>
                 <td class="py-4">
-                  <div class="font-semibold text-slate-900 dark:text-white">{{ p.nombre }}</div>
+                  <div class="font-semibold text-black dark:text-white">{{ p.nombre }}</div>
                 </td>
-                <td class="text-slate-600 dark:text-slate-400">{{ p.descripcion }}</td>
-                <td class="text-slate-900 dark:text-white font-medium">{{ p.precioCostoPromedio | currency }}</td>
+                <td class="text-black dark:text-slate-400">{{ p.descripcion }}</td>
+                <td class="text-black dark:text-white font-medium">{{ p.precioCostoPromedio | currency }}</td>
                 <td>
                   <span [class]="(p.stock || 0) < 5 ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400' : 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'"
                         class="px-2.5 py-0.5 rounded-full text-xs font-medium">
@@ -53,8 +53,8 @@
                 </td>
                 <td>
                   <div class="flex items-center gap-2">
-                    <i class="fas fa-truck-field text-slate-400 text-xs"></i>
-                    <span class="text-sm border-b border-dotted border-slate-300">{{ p.nombreProveedor || 'Consultando...' }}</span>
+                    <i class="fas fa-truck-field text-black text-xs"></i>
+                    <span class="text-sm border-b border-dotted border-slate-300 text-black">{{ p.nombreProveedor || 'Consultando...' }}</span>
                   </div>
                 </td>
                 <td class="pe-4">
