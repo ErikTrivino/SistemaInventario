@@ -1,115 +1,180 @@
-<div class="container mt-5">
-  <div class="card">
-    <div class="card-header ps-5 pt-4 pb-4">
-      <h5 class="mb-0">
-        <i class="fa-solid fa-box me-3"></i>Gestión de Productos
-      </h5>
-    </div>
+<div class="min-h-screen bg-gray-50 flex flex-col">
 
-    <div class="card-body p-5">
-      <div class="mb-4 flex flex-wrap items-center gap-3">
-        <div class="flex items-center gap-2">
-          <button type="button" routerLink="/crear-producto" class="btn btn-success">
-            <i class="fa-solid fa-plus me-1"></i> Crear
-          </button>
+  <!-- HEADER -->
+  <header class="bg-white border-b border-gray-200 px-6 py-4">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
 
-          <button type="button" class="btn btn-danger" (click)="confirmarEliminar()"
-            [disabled]="seleccionados.length === 0">
-            <i class="fa-solid fa-trash me-1"></i> Inactivar {{ textoBtnEliminar }}
-          </button>
+        <!-- Icono consistente -->
+        <div class="bg-blue-600 rounded-lg p-2 shadow-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10" />
+          </svg>
         </div>
 
-        <div class="flex-grow"></div>
-
-        <div class="flex items-center gap-2">
-          <label for="sucursal" class="text-sm font-medium text-slate-700 dark:text-slate-300">Sucursal:</label>
-          <select id="sucursal" [(ngModel)]="idSucursalSeleccionada" (change)="onCambioSucursal()"
-            class="form-select border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
-            <option [ngValue]="null">--- Todas las sedes ---</option>
-            <option *ngFor="let s of sucursales" [ngValue]="s.id">{{ s.nombre }}</option>
-          </select>
+        <!-- Texto -->
+        <div>
+          <h1 class="text-xl font-bold text-gray-900">
+            Gestión de Productos
+          </h1>
+          <p class="text-xs text-gray-600">
+            Administra el catálogo de productos y su inventario
+          </p>
         </div>
 
-        <div class="flex items-center gap-2 ms-2">
-          <label for="estado" class="text-sm font-medium text-slate-700 dark:text-slate-300">Estado:</label>
-          <select id="estado" [(ngModel)]="filtroActivo" (change)="onCambioFiltroActivo()"
-            class="form-select border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
-            <option [ngValue]="true">Activos</option>
-            <option [ngValue]="false">Inactivos</option>
-            <option [ngValue]="null">Todos</option>
-          </select>
-        </div>
       </div>
+    </div>
+  </header>
 
-      <div class="rounded-xl w-100 overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm">
-        <div class="table-responsive">
-          <table class="table table-hover align-middle mb-0">
-            <thead class="bg-slate-50 dark:bg-slate-800/50">
-              <tr>
-                <th style="width: 40px;" class="ps-4"></th>
-                <th class="text-xs font-bold uppercase tracking-wider text-black py-4">Nombre</th>
-                <th class="text-xs font-bold uppercase tracking-wider text-black">Descripción</th>
-                <th class="text-xs font-bold uppercase tracking-wider text-black">Precio</th>
-                <th class="text-xs font-bold uppercase tracking-wider text-black">Stock</th>
-                <th class="text-xs font-bold uppercase tracking-wider text-black">Unidad</th>
-                <th class="text-xs font-bold uppercase tracking-wider text-black">Proveedor</th>
-                <th class="text-xs font-bold uppercase tracking-wider text-black text-center">Estado</th>
-                <th class="text-xs font-bold uppercase tracking-wider text-black pe-4">Acción</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
-              <tr *ngFor="let p of productos; trackBy: trackById"
-                class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
-                <td class="ps-4">
-                  <div class="flex items-center">
+  <!-- MAIN -->
+  <main class="p-6">
+
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+
+      <div class="p-6">
+
+        <!-- FILTROS + ACCIONES -->
+        <div class="mb-4 flex flex-col sm:flex-row items-center gap-4">
+
+          <!-- Botones -->
+          <div class="flex gap-2">
+            <button routerLink="/crear-producto"
+              class="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-4 py-2 rounded-xl font-medium shadow-md shadow-blue-500/30 transition-all duration-300 hover:shadow-blue-500/50 hover:-translate-y-0.5">
+              <i class="fa-solid fa-plus text-sm"></i>
+              <span>Crear</span>
+            </button>
+
+            <button (click)="confirmarEliminar()" [disabled]="seleccionados.length === 0"
+              class="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl font-medium shadow-md transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
+              <i class="fa-solid fa-trash text-sm"></i>
+              <span>Inactivar {{ textoBtnEliminar }}</span>
+            </button>
+          </div>
+
+          <!-- Spacer -->
+          <div class="flex-grow"></div>
+
+          <!-- Filtros -->
+          <div class="flex flex-wrap items-center gap-3">
+
+            <div class="flex items-center gap-2">
+              <label class="text-sm font-medium text-gray-700">Sucursal:</label>
+              <select [(ngModel)]="idSucursalSeleccionada" (change)="onCambioSucursal()"
+                class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                <option [ngValue]="null">--- Todas ---</option>
+                <option *ngFor="let s of sucursales" [ngValue]="s.id">{{ s.nombre }}</option>
+              </select>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <label class="text-sm font-medium text-gray-700">Estado:</label>
+              <select [(ngModel)]="filtroActivo" (change)="onCambioFiltroActivo()"
+                class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                <option [ngValue]="true">Activos</option>
+                <option [ngValue]="false">Inactivos</option>
+                <option [ngValue]="null">Todos</option>
+              </select>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- TABLA -->
+        <div class="rounded-xl overflow-hidden border border-slate-200 shadow-sm">
+          <div class="table-responsive">
+
+            <table class="table table-hover align-middle mb-0">
+              <thead class="bg-slate-50">
+                <tr>
+                  <th style="width: 40px;" class="ps-4"></th>
+                  <th class="text-xs font-bold uppercase tracking-wider text-black py-4">Nombre</th>
+                  <th class="text-xs font-bold uppercase tracking-wider text-black">Descripción</th>
+                  <th class="text-xs font-bold uppercase tracking-wider text-black">Precio</th>
+                  <th class="text-xs font-bold uppercase tracking-wider text-black min-w-[120px]">Stock</th>
+                  <th class="text-xs font-bold uppercase tracking-wider text-black">Unidad</th>
+                  <th class="text-xs font-bold uppercase tracking-wider text-black">Proveedor</th>
+                  <th class="text-xs font-bold uppercase tracking-wider text-black text-center">Estado</th>
+                  <th class="text-xs font-bold uppercase tracking-wider text-black pe-4">Acción</th>
+                </tr>
+              </thead>
+
+              <tbody class="divide-y divide-slate-200">
+                <tr *ngFor="let p of productos; trackBy: trackById" class="hover:bg-slate-50 transition-colors">
+
+                  <td class="ps-4">
                     <input #check type="checkbox" (change)="seleccionar(p, check.checked)"
-                      class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
-                  </div>
-                </td>
-                <td class="py-4">
-                  <div class="font-semibold text-black dark:text-white">{{ p.nombre }}</div>
-                </td>
-                <td class="text-black dark:text-slate-400">{{ p.descripcion }}</td>
-                <td class="text-black dark:text-white font-medium">{{ p.precioCostoPromedio | currency }}</td>
-                <td>
-                  <span
-                    [class]="((p.stockActual ?? p.stockTotal) || 0) < 5 ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400' : 'bg-slate-900 text-white dark:bg-slate-800 dark:text-white'"
-                    class="px-2.5 py-0.5 rounded-full text-xs font-medium">
-                    {{ (p.stockActual ?? p.stockTotal) || 0 }}unid.
-                  </span>
-                </td>
-                <td class="text-sm font-medium text-slate-700 dark:text-slate-300">
-                  {{ p.unidadMedidaBase }}
-                </td>
-                <td>
-                  <div class="flex items-center gap-2">
-                    <i class="fas fa-truck-field text-black text-xs"></i>
-                    <span class="text-sm border-b border-dotted border-slate-300 text-black">{{ p.nombreProveedor ||
-                      'Consultando...' }}</span>
-                  </div>
-                </td>
-                <td class="text-center">
-                  <span [class]="p.activo ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
-                    class="px-2 py-1 rounded-full text-xs font-semibold">
-                    {{ p.activo ? 'Activo' : 'Inactivo' }}
-                  </span>
-                </td>
-                <td class="pe-4">
-                  <button *ngIf="idSucursalSeleccionada" [routerLink]="['/editar-producto', idSucursalSeleccionada, p.id]"
-                    class="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50">
-                    <i class="fa-solid fa-pen"></i>
-                    <span>Editar</span>
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                      class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" />
+                  </td>
+
+                  <td class="py-4 font-semibold text-black">
+                    {{ p.nombre }}
+                  </td>
+
+                  <td class="text-black">
+                    {{ p.descripcion }}
+                  </td>
+
+                  <td class="text-black font-medium">
+                    {{ p.precioCostoPromedio | currency }}
+                  </td>
+
+                  <td class="whitespace-nowrap">
+                    <span [class]="((p.stockActual ?? p.stockTotal) || 0) < 5 
+                      ? 'bg-red-100 text-red-800' 
+                      : 'bg-slate-900 text-white'" class="px-2.5 py-0.5 rounded-full text-xs font-medium">
+                      {{ (p.stockActual ?? p.stockTotal) || 0 }} {{ p.unidadMedidaBase }}
+                    </span>
+                  </td>
+
+                  <td class="text-sm font-medium text-black">
+                    {{ p.unidadMedidaBase }}
+                  </td>
+
+                  <td>
+                    <div class="flex items-center gap-2 text-black">
+                      <i class="fas fa-truck-field text-xs"></i>
+                      <span class="text-sm border-b border-dotted border-gray-300">
+                        {{ p.nombreProveedor || 'Consultando...' }}
+                      </span>
+                    </div>
+                  </td>
+
+                  <td class="text-center">
+                    <span [class]="p.activo ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
+                      class="px-2 py-1 rounded-full text-xs font-semibold">
+                      {{ p.activo ? 'Activo' : 'Inactivo' }}
+                    </span>
+                  </td>
+
+                  <td class="pe-4 text-right">
+                    <button *ngIf="idSucursalSeleccionada"
+                      [routerLink]="['/editar-producto', idSucursalSeleccionada, p.id]"
+                      class="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
+                      <i class="fa-solid fa-pen text-xs"></i>
+                      <span>Editar</span>
+                    </button>
+                  </td>
+
+                </tr>
+              </tbody>
+
+            </table>
+
+          </div>
+
+          <!-- PAGINADOR -->
+          <app-paginador [totalElementos]="totalElementos" [totalPaginas]="totalPaginas" [paginaActual]="paginaActual"
+            [tamanoPagina]="tamanoPagina" (cambioPagina)="onCambioPagina($event)"
+            (cambioTamano)="onCambioTamano($event)">
+          </app-paginador>
+
         </div>
 
-        <app-paginador [totalElementos]="totalElementos" [totalPaginas]="totalPaginas" [paginaActual]="paginaActual"
-          [tamanoPagina]="tamanoPagina" (cambioPagina)="onCambioPagina($event)" (cambioTamano)="onCambioTamano($event)">
-        </app-paginador>
       </div>
     </div>
-  </div>
+
+  </main>
 </div>
