@@ -1,6 +1,7 @@
 package com.inventory.servicios.implementaciones.ventas;
 
 import com.inventory.servicios.interfaces.ventas.VentaServicio;
+import com.inventory.servicios.interfaces.ventas.ComprobanteServicio;
 import com.inventory.servicios.interfaces.inventario.InventarioServicio;
 import com.inventory.servicios.interfaces.auditoria.AuditoriaServicio;
 import com.inventory.eventos.PublicadorEventos;
@@ -30,6 +31,7 @@ public class VentaServicioImpl implements VentaServicio {
     private final InventarioRepositorio inventoryRepository;
     private final AuditoriaServicio auditService;
     private final PublicadorEventos eventPublisher;
+    private final ComprobanteServicio receiptService;
 
     @Override
     public ValidacionStockDTO validateStock(Long productId, Long branchId, BigDecimal quantity) {
@@ -46,7 +48,7 @@ public class VentaServicioImpl implements VentaServicio {
 
     @Override
     @Transactional
-    public VentaInformacionDTO createSale(VentaCrearDTO dto, Long userId) {
+    public VentaInformacionDTO createSale(VentaCrearDTO dto) {
         if (dto.detalles() == null || dto.detalles().isEmpty()) {
             throw new RuntimeException("La venta debe contener al menos un producto.");
         }
@@ -74,7 +76,7 @@ public class VentaServicioImpl implements VentaServicio {
 
         Venta sale = Venta.builder()
                 .sucursalId(dto.idSucursal())
-                .vendedorId(userId)
+                .vendedorId(dto.idResponsable())
                 .fechaVenta(new Date())
                 .total(totalVenta)
                 .comprobanteOriginal(UUID.randomUUID().toString()) // Generador Dummy
@@ -88,7 +90,7 @@ public class VentaServicioImpl implements VentaServicio {
                 item.cantidad().doubleValue(), 
                 "OUT", 
                 "Venta #" + saved.getId(),
-                userId.toString()
+                dto.idResponsable().toString()
             );
 
             DetalleVenta d = DetalleVenta.builder()
@@ -102,8 +104,14 @@ public class VentaServicioImpl implements VentaServicio {
             detailRepository.save(d);
         }
 
-        eventPublisher.publicarVentaCompletada(saved, userId.toString());
-        auditService.registrarAccion(userId.toString(), "CREATE", "Venta", saved.getId(), "Comercialización procesada");
+        // Generar Comprobante PDF Realmente
+        byte[] pdf = receiptService.generarPdfVenta(saved.getId());
+        String fileName = receiptService.guardarComprobante(pdf, saved.getId() + "_" + saved.getComprobanteOriginal());
+        saved.setComprobanteOriginal(fileName);
+        saleRepository.save(saved);
+
+        eventPublisher.publicarVentaCompletada(saved, dto.idResponsable().toString());
+        auditService.registrarAccion(dto.idResponsable().toString(), "CREATE", "Venta", saved.getId(), "Comercialización procesada");
         
         return toInfo(saved);
     }

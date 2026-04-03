@@ -1,0 +1,68 @@
+# Generación y Almacenamiento de Comprobantes de Venta en PDF
+
+Implementar la lógica para que cada venta genere automáticamente un comprobante único en formato PDF, se almacene de forma persistente y pueda ser consultado a través del API en formato Base64.
+
+## User Review Required
+
+> [!IMPORTANT]
+> **Almacenamiento**: Se propone crear una carpeta `storage/comprobantes` en la raíz del proyecto para guardar los archivos físicos. ¿Desea que esta ruta sea configurable en `application.properties`?
+>
+> **Formato de Respuesta**: Siguiendo su solicitud, el API devolverá el PDF como una cadena Base64 dentro de un objeto JSON (`MensajeDTO<String>`).
+>
+> **Contenido del PDF**: El comprobante incluirá:
+> - ID Generado y UUID único.
+> - Fecha y hora de la transacción.
+> - Sucursal y Vendedor.
+> - Tabla de productos: Nombre, Cantidad, Precio Unitario, Descuento, Subtotal.
+> - Gran Total.
+
+## Proposed Changes
+
+---
+
+### Configuración y Dependencias
+
+#### [MODIFY] [build.gradle](file:///c:/Users/erikp/OneDrive/Documentos/Proyectos/SistemaInventario/Back-SistemaInventario/build.gradle)
+- Agregar `implementation 'com.github.librepdf:openpdf:2.0.3'` para la generación de documentos PDF.
+
+---
+
+### Capa de Servicio
+
+#### [NEW] [ComprobanteServicio.java](file:///c:/Users/erikp/OneDrive/Documentos/Proyectos/SistemaInventario/Back-SistemaInventario/src/main/java/com/inventory/servicios/interfaces/ventas/ComprobanteServicio.java)
+- Definir métodos para:
+  - `byte[] generarPdfVenta(Long ventaId)`: Genera el contenido binario.
+  - `String guardarComprobante(byte[] content, String uuid)`: Almacena el archivo y devuelve la ruta.
+  - `String obtenerBase64(Long ventaId)`: Recupera el archivo y lo convierte a Base64.
+
+#### [NEW] [ComprobanteServicioImpl.java](file:///c:/Users/erikp/OneDrive/Documentos/Proyectos/SistemaInventario/Back-SistemaInventario/src/main/java/com/inventory/servicios/implementaciones/ventas/ComprobanteServicioImpl.java)
+- Implementación usando **OpenPDF**.
+- Lógica para leer datos de `Venta` y `DetalleVenta`.
+- Manejo de sistema de archivos local para persistencia.
+
+#### [MODIFY] [VentaServicioImpl.java](file:///c:/Users/erikp/OneDrive/Documentos/Proyectos/SistemaInventario/Back-SistemaInventario/src/main/java/com/inventory/servicios/implementaciones/ventas/VentaServicioImpl.java)
+- Integrar la llamada a `ComprobanteServicio` después de guardar la venta.
+- Actualizar el campo `comprobanteOriginal` con el nombre del archivo o ruta generada.
+
+---
+
+### Capa de Controlador
+
+#### [MODIFY] [VentaControlador.java](file:///c:/Users/erikp/OneDrive/Documentos/Proyectos/SistemaInventario/Back-SistemaInventario/src/main/java/com/inventory/controladores/ventas/VentaControlador.java)
+- Agregar endpoint `GET /api/ventas/{id}/comprobante` que devuelva el Base64.
+
+## Open Questions
+
+- ¿El nombre del archivo PDF debe ser el UUID generado o algo más legible como `Venta_ID.pdf`?
+- ¿Existen requerimientos específicos de diseño (Logo, fuentes) para el PDF? Por ahora usaré un diseño minimalista y profesional.
+
+## Verification Plan
+
+### Automated Tests
+- Ejecutar pruebas unitarias para validar que la cadena Base64 no sea nula ni vacía.
+- Verificar que el archivo se cree físicamente en `storage/comprobantes`.
+
+### Manual Verification
+1. Crear una venta mediante `POST /api/ventas`.
+2. Consultar el comprobante mediante `GET /api/ventas/{id}/comprobante`.
+3. Decodificar el Base64 en una herramienta online o navegador para validar la visualización del PDF.

@@ -10,7 +10,7 @@ import { environment } from '../../environments/environment';
 export class VentaService {
   private apiUrl = `${environment.apiUrl}/api/ventas`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   createSale(dto: any): Observable<MensajeDTO> {
     return this.http.post<MensajeDTO>(this.apiUrl, dto);
@@ -37,5 +37,9 @@ export class VentaService {
       .set('porPagina', porPagina.toString());
     if (pagina !== undefined) params = params.set('pagina', pagina.toString());
     return this.http.get<MensajeDTO>(`${this.apiUrl}/rango-fechas`, { params });
+  }
+
+  obtenerComprobanteVenta(id: number): Observable<MensajeDTO> {
+    return this.http.get<MensajeDTO>(`${this.apiUrl}/comprobante/${id}`);
   }
 }

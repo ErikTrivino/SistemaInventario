@@ -8,7 +8,7 @@
 
     public interface VentaServicio {
         ValidacionStockDTO validateStock(Long productId, Long branchId, BigDecimal quantity);
-        VentaInformacionDTO createSale(VentaCrearDTO dto, Long userId);
+        VentaInformacionDTO createSale(VentaCrearDTO dto);
         Page<VentaInformacionDTO> getSalesByBranch(Long branchId, Integer pagina, Integer porPagina);
         Page<VentaInformacionDTO> getSalesByDateRange(Date start, Date end, Integer pagina, Integer porPagina);
     }

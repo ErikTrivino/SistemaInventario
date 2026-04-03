@@ -6,5 +6,6 @@ import java.util.List;
 
 public record VentaCrearDTO(
         @NotNull Long idSucursal,
+        @NotNull Long idResponsable,
         @NotEmpty List<DetalleVentaCrearDTO> detalles
 ) {}
