@@ -9,7 +9,7 @@
     public interface CompraServicio {
         CompraInformacionDTO crearCompra(OrdenCompraCrearDTO dto, Long userId);
         void recibirCompra(OrdenCompraRecepcionDTO dto);
-        Page<CompraHistoricoRespuestaDTO> obtenerHistoricoCompras(Long idProveedor, Long idProducto, LocalDateTime fechaDesde, LocalDateTime fechaHasta, Integer pagina, Integer porPagina);
+        Page<CompraHistoricoRespuestaDTO> obtenerHistoricoCompras(Long idProveedor, Long idProducto,Long idSucursal, LocalDateTime fechaDesde, LocalDateTime fechaHasta, Integer pagina, Integer porPagina);
     }
 
 

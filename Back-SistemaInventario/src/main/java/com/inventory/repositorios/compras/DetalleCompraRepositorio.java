@@ -17,11 +17,13 @@
                "JOIN Proveedor prov ON o.proveedorId = prov.id " +
                "WHERE (:proveedorId IS NULL OR prov.id = :proveedorId) " +
                "AND (:productoId IS NULL OR p.id = :productoId) " +
+               "AND (:sucursalDestinoId IS NULL OR o.sucursalDestinoId = :sucursalDestinoId) " +
                "AND (:fechaInicio IS NULL OR o.fechaCompra >= :fechaInicio) " +
                "AND (:fechaFin IS NULL OR o.fechaCompra <= :fechaFin)")
         Page<com.inventory.modelo.dto.compras.CompraHistoricoRespuestaDTO> obtenerHistoricoCompras(
             @org.springframework.data.repository.query.Param("proveedorId") Long proveedorId,
             @org.springframework.data.repository.query.Param("productoId") Long productoId,
+            @org.springframework.data.repository.query.Param("sucursalDestinoId") Long sucursalDestinoId,
             @org.springframework.data.repository.query.Param("fechaInicio") java.time.LocalDateTime fechaInicio,
             @org.springframework.data.repository.query.Param("fechaFin") java.time.LocalDateTime fechaFin,
             Pageable pageable

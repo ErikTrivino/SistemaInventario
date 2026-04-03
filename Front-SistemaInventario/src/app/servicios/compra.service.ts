@@ -20,10 +20,11 @@ export class CompraService {
     return this.http.post<MensajeDTO>(`${this.apiUrl}/recepcion`, dto);
   }
 
-  obtenerHistorico(idProveedor?: number, idProducto?: number, fechaDesde?: string, fechaHasta?: string, pagina?: number, porPagina: number = 10): Observable<MensajeDTO> {
+  obtenerHistorico(idProveedor?: number, idProducto?: number, idSucursal?: number, fechaDesde?: string, fechaHasta?: string, pagina?: number, porPagina: number = 10): Observable<MensajeDTO> {
     let params = new HttpParams().set('porPagina', porPagina.toString());
     if (idProveedor) params = params.set('idProveedor', idProveedor.toString());
     if (idProducto) params = params.set('idProducto', idProducto.toString());
+    if (idSucursal) params = params.set('idSucursal', idSucursal.toString());
     if (fechaDesde) params = params.set('fechaDesde', fechaDesde);
     if (fechaHasta) params = params.set('fechaHasta', fechaHasta);
     if (pagina !== undefined) params = params.set('pagina', pagina.toString());

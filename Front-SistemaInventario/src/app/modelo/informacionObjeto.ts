@@ -11,28 +11,9 @@ export interface CompraHistoricoRespuestaDTO {
   fechaCompra: Date;
 }
 
-export interface InformacionCliente {
-  idCliente: number;
-  nombre: string;
-  apellido: string;
-  identificacion: number;
-}
 
-export interface InformacionVehiculo {
-  idVehiculo: number;
-  matricula: string;
-  modelo: string;
-  description: string;
-  idCliente: number;
-}
 
-export interface InformacionServicio {
-  idServicio: number;
-  fecha: Date;
-  descripcion: string;
-  idCliente: number;
-  idEmpleado: number;
-}
+
 
 export interface InformacionUsuario {
   id: number;
@@ -45,14 +26,7 @@ export interface InformacionUsuario {
   motivoInactivacion?: string;
 }
 
-export interface InformacionFactura {
-  idFactura: number;
-  fechaFactura: Date;
-  total: number;
-  metodoPago: string;
-  idCliente: number;
-  idEmpleado: number;
-}
+
 
 export interface InformacionProducto {
   id: number;
@@ -86,19 +60,9 @@ export interface InformacionPedido {
   idEmpleado: number;
 }
 
-export interface InformacionDetalleFactura {
-  idDetalleFactura: number;
-  costServicio: number;
-  idServicio: number;
-  idFactura: number;
-}
 
-export interface InformacionDetalleServicioVehiculo {
-  idDetalleServicioVehiculo: number;
-  descripcion: string;
-  idVehiculo: number;
-  idServicio: number;
-}
+
+
 
 export interface InformacionDetalleServicioProducto {
   idDetalleServicioProducto: number;

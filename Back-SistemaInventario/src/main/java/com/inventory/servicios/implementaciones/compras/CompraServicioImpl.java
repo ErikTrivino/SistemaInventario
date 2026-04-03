@@ -1,5 +1,6 @@
 package com.inventory.servicios.implementaciones.compras;
 
+import com.inventory.modelo.enums.EstadoTransferencia;
 import com.inventory.servicios.interfaces.compras.CompraServicio;
 import com.inventory.servicios.interfaces.inventario.InventarioServicio;
 import com.inventory.servicios.interfaces.auditoria.AuditoriaServicio;
@@ -56,7 +57,7 @@ public class CompraServicioImpl implements CompraServicio {
         order.setUsuarioResponsableId(userId);
         order.setFechaCompra(LocalDateTime.now());
         order.setTotal(total);
-        order.setEstado("Pendiente");
+        order.setEstado(EstadoTransferencia.RECIBIDA.name());
         order.setPlazoPagoDias(dto.plazoPagoDias());
         OrdenCompra saved = purchaseOrderRepository.save(order);
 
@@ -110,17 +111,17 @@ public class CompraServicioImpl implements CompraServicio {
             }
         }
 
-        order.setEstado("Recibido");
+        order.setEstado(EstadoTransferencia.RECIBIDA.name());
         purchaseOrderRepository.save(order);
         auditService.registrarAccion("1", "RECEIVE", "OrdenCompra", order.getId(), "Received PO details and updated stock atomically.");
     }
 
     @Override
-    public Page<CompraHistoricoRespuestaDTO> obtenerHistoricoCompras(Long idProveedor, Long idProducto, LocalDateTime fechaDesde, LocalDateTime fechaHasta, Integer pagina, Integer porPagina) {
+    public Page<CompraHistoricoRespuestaDTO> obtenerHistoricoCompras(Long idProveedor, Long idProducto,Long idSucursal, LocalDateTime fechaDesde, LocalDateTime fechaHasta, Integer pagina, Integer porPagina) {
         int pageNumber = (pagina != null) ? pagina : 0;
         int pageSize = (porPagina != null && porPagina > 0) ? porPagina : 10;
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        return purchaseDetailRepository.obtenerHistoricoCompras(idProveedor, idProducto, fechaDesde, fechaHasta, pageable);
+        return purchaseDetailRepository.obtenerHistoricoCompras(idProveedor, idProducto,idSucursal, fechaDesde, fechaHasta, pageable);
     }
 
     private CompraInformacionDTO toInfo(OrdenCompra purchaseOrder) {

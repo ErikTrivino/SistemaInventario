@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { CompraService } from '../../servicios/compra.service';
 import { ProveedorService } from '../../servicios/proveedor.service';
 import { InventarioService } from '../../servicios/inventario.service';
+import { SucursalService } from '../../servicios/sucursal.service';
 import { CompraHistoricoRespuestaDTO, InformacionProveedor, InformacionProducto } from '../../modelo/informacionObjeto';
 import { OrdenCompraCrearDTO, DetalleCompraCrearDTO, OrdenCompraRecepcionDTO } from '../../modelo/crearObjetos';
 import { PaginadorComponent } from '../comun/paginador/paginador.component';
@@ -24,6 +25,7 @@ export class GestionOrdenesCompraComponent implements OnInit {
   // Filtros Histórico
   filtroProveedor?: number;
   filtroProducto?: number;
+  filtroSucursal?: number;
   fechaDesde?: string;
   fechaHasta?: string;
 
@@ -31,11 +33,13 @@ export class GestionOrdenesCompraComponent implements OnInit {
   compras: CompraHistoricoRespuestaDTO[] = [];
   paginaActual: number = 0;
   totalElementos: number = 0;
+  totalPaginas: number = 0;
   porPagina: number = 10;
 
   // Catalogos para select
   proveedores: InformacionProveedor[] = [];
   productos: InformacionProducto[] = [];
+  sucursales: any[] = [];
 
   // Estado Nueva Orden
   nuevaOrden: OrdenCompraCrearDTO = {
@@ -51,7 +55,8 @@ export class GestionOrdenesCompraComponent implements OnInit {
   constructor(
     private compraService: CompraService,
     private proveedorService: ProveedorService,
-    private inventarioService: InventarioService
+    private inventarioService: InventarioService,
+    private sucursalService: SucursalService
   ) { }
 
   ngOnInit(): void {
@@ -83,6 +88,14 @@ export class GestionOrdenesCompraComponent implements OnInit {
         }
       }
     });
+
+    this.sucursalService.listar().subscribe({
+      next: (res: any) => {
+        if (!res.error) {
+          this.sucursales = res.respuesta;
+        }
+      }
+    });
   }
 
   cargarHistorial(pagina: number = 0): void {
@@ -90,6 +103,7 @@ export class GestionOrdenesCompraComponent implements OnInit {
     this.compraService.obtenerHistorico(
       this.filtroProveedor,
       this.filtroProducto,
+      this.filtroSucursal,
       this.fechaDesde,
       this.fechaHasta,
       this.paginaActual,
@@ -99,6 +113,7 @@ export class GestionOrdenesCompraComponent implements OnInit {
         if (!res.error && res.respuesta) {
           this.compras = res.respuesta.content;
           this.totalElementos = res.respuesta.totalElements;
+          this.totalPaginas = res.respuesta.totalPages;
         }
       },
       error: (err) => {
@@ -114,6 +129,7 @@ export class GestionOrdenesCompraComponent implements OnInit {
   limpiarFiltros(): void {
     this.filtroProveedor = undefined;
     this.filtroProducto = undefined;
+    this.filtroSucursal = undefined;
     this.fechaDesde = undefined;
     this.fechaHasta = undefined;
     this.cargarHistorial(0);
@@ -241,16 +257,29 @@ export class GestionOrdenesCompraComponent implements OnInit {
     const maxPosible = compra.cantidadSolicitada - compra.cantidadRecibida;
 
     const { value: formValues } = await Swal.fire({
-      title: 'Recibir Producto',
+      title: 'Registrar Recepción',
+      width: 600,
       html: `
-        <p class="mb-4">Ingresa la cantidad recibida y la sucursal de destino final (normalmente en la que te encuentras). Esta acción generará una entrada de inventario.</p>
+        <div class="text-left mb-4 text-sm bg-gray-50 p-4 rounded-lg border border-gray-200 text-gray-800">
+          <h3 class="font-semibold text-lg border-b pb-2 mb-3">Datos de la Compra</h3>
+          <div class="grid grid-cols-2 gap-3">
+            <p><strong>ID Orden:</strong> ${compra.idOrdenCompra}</p>
+            <p><strong>Fecha:</strong> ${new Date(compra.fechaCompra).toLocaleDateString()}</p>
+            <p class="col-span-2"><strong>Proveedor:</strong> ${compra.nombreProveedor}</p>
+            <p class="col-span-2"><strong>Producto:</strong> ${compra.nombreProducto}</p>
+            <p><strong>Cantidad Solicitada:</strong> ${compra.cantidadSolicitada}</p>
+            <p><strong>Cantidad Ya Recibida:</strong> ${compra.cantidadRecibida}</p>
+            <p><strong>Precio Unitario:</strong> $${compra.precioUnitario}</p>
+          </div>
+        </div>
+        <p class="mb-3 text-sm text-gray-600 text-left">Ingreso de productos al almacén. La cantidad debe coincidir o registrarse la diferencia.</p>
         <div class="mb-3 text-left">
           <label class="block text-sm font-medium text-gray-700">Sucursal Destino ID:</label>
           <input id="rec-sucursal" class="swal2-input !mt-1 !w-full" type="number" min="1" value="1">
         </div>
         <div class="mb-3 text-left">
-          <label class="block text-sm font-medium text-gray-700">Cantidad a Recibir (Pendiente: ${maxPosible}):</label>
-          <input id="rec-cantidad" class="swal2-input !mt-1 !w-full" type="number" min="0.01" step="0.01" max="${maxPosible}">
+          <label class="block text-sm font-medium text-gray-700">Cantidad Recibida:</label>
+          <input id="rec-cantidad" class="swal2-input !mt-1 !w-full" type="number" min="0.01" step="0.01" value="${maxPosible}">
         </div>
       `,
       focusConfirm: false,
@@ -264,8 +293,8 @@ export class GestionOrdenesCompraComponent implements OnInit {
           Swal.showValidationMessage('Revisar datos ingresados.');
           return false;
         }
-        if (Number(cant) <= 0 || Number(cant) > maxPosible) {
-          Swal.showValidationMessage('La cantidad no puede superar el pendiente (' + maxPosible + ').');
+        if (Number(cant) <= 0) {
+          Swal.showValidationMessage('La cantidad recibida debe ser mayor a 0.');
           return false;
         }
         return { suc: Number(sucId), cant: Number(cant) };

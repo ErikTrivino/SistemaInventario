@@ -111,10 +111,10 @@ public class CompraServicioTest {
     @Test
     void testConsultarHistorial() throws Exception {
         Page<CompraHistoricoRespuestaDTO> mockPage = new PageImpl<>(List.of());
-        when(purchaseDetailRepository.obtenerHistoricoCompras(any(), any(), any(), any(), any())).thenReturn(mockPage);
+        when(purchaseDetailRepository.obtenerHistoricoCompras(any(), any(), any(), any(), any(), any())).thenReturn(mockPage);
 
         Page<CompraHistoricoRespuestaDTO> historial = compraServicio.obtenerHistoricoCompras(
-                1L, null, LocalDateTime.now().minusDays(30), LocalDateTime.now(), 0, 10
+                1L, null,1L, LocalDateTime.now().minusDays(30), LocalDateTime.now(), 0, 10
         );
 
         assertNotNull(historial);
