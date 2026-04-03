@@ -1,76 +1,184 @@
-<div class="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-4 pt-8">
-  <!-- Productos Card -->
-  <div class="relative flex flex-col bg-clip-border rounded-xl bg-white text-gray-700 shadow-md">
-    <div class="bg-clip-border mx-4 rounded-xl overflow-hidden bg-gradient-to-tr from-blue-600 to-blue-400 text-white shadow-blue-500/40 shadow-lg absolute -mt-4 grid h-16 w-16 place-items-center">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6"><path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z" clip-rule="evenodd"></path></svg>
+<div class="p-6 bg-gray-50 min-h-screen">
+  <!-- Header del Dashboard -->
+  <div class="mb-8 flex items-center justify-between">
+    <div>
+      <h2 class="text-3xl font-bold text-gray-800">Panel de Control</h2>
+      <p class="text-gray-500 mt-1">Estado general y métricas de rendimiento en tiempo real</p>
     </div>
-    <div class="p-4 text-right">
-      <p class="block antialiased font-sans text-sm leading-normal font-normal text-blue-gray-600">Total Productos</p>
-      <h4 class="block antialiased tracking-normal font-sans text-2xl font-semibold leading-snug text-blue-gray-900">{{ resumen.totalProductos }}</h4>
-    </div>
-    <div class="border-t border-blue-gray-50 p-4">
-      <p class="block antialiased font-sans text-base leading-relaxed font-normal text-blue-gray-600">
-        <span class="text-green-500 font-bold">Activos</span> en inventario
-      </p>
-    </div>
-  </div>
-
-  <!-- Alertas Stock Card -->
-  <div class="relative flex flex-col bg-clip-border rounded-xl bg-white text-gray-700 shadow-md">
-    <div class="bg-clip-border mx-4 rounded-xl overflow-hidden bg-gradient-to-tr from-red-600 to-red-400 text-white shadow-red-500/40 shadow-lg absolute -mt-4 grid h-16 w-16 place-items-center">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6"><path fill-rule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" /></svg>
-    </div>
-    <div class="p-4 text-right">
-      <p class="block antialiased font-sans text-sm leading-normal font-normal text-blue-gray-600">Bajo Stock</p>
-      <h4 class="block antialiased tracking-normal font-sans text-2xl font-semibold leading-snug text-blue-gray-900">{{ resumen.bajoStock }}</h4>
-    </div>
-    <div class="border-t border-blue-gray-50 p-4">
-      <p class="block antialiased font-sans text-base leading-relaxed font-normal text-blue-gray-600">
-        Requiere <span class="text-red-500 font-bold">atención</span> inmediata
-      </p>
+    <div class="flex items-center gap-3">
+      <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold">
+        Sincronizado: {{ resumen.ultimaSincronizacion | date:'shortTime' }}
+      </span>
+      <button (click)="cargarDatos()" class="p-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-50 transition-colors">
+        <i class="fas fa-sync-alt text-gray-600"></i>
+      </button>
     </div>
   </div>
 
-  <!-- Transferencias Card -->
-  <div class="relative flex flex-col bg-clip-border rounded-xl bg-white text-gray-700 shadow-md">
-    <div class="bg-clip-border mx-4 rounded-xl overflow-hidden bg-gradient-to-tr from-green-600 to-green-400 text-white shadow-green-500/40 shadow-lg absolute -mt-4 grid h-16 w-16 place-items-center">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6"><path d="M12 7.5a2.25 2.25 0 100 4.5 2.25 2.25 0 000-4.5z" /><path fill-rule="evenodd" d="M1.5 4.875C1.5 3.839 2.34 3 3.375 3h17.25c1.035 0 1.875.84 1.875 1.875v9.75c0 1.036-.84 1.875-1.875 1.875H3.375A1.875 1.875 0 011.5 14.625v-9.75z" clip-rule="evenodd" /><path d="M12 15.75h.007v.008H12v-.008z" /></svg>
+  <!-- Fila 1: KPIs Principales -->
+  <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-4 mb-8">
+    <!-- Ventas del Día -->
+    <div class="relative flex flex-col bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-md transition-shadow">
+      <div class="p-6 flex items-center justify-between">
+        <div>
+          <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Ventas Hoy</p>
+          <h4 class="text-2xl font-bold text-gray-800">${{ resumen.ventasHoy | number:'1.2-2' }}</h4>
+        </div>
+        <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+          <i class="fas fa-shopping-cart text-orange-600 text-xl"></i>
+        </div>
+      </div>
+      <div class="px-6 pb-4">
+        <div class="flex items-center text-sm text-green-500 font-medium">
+          <i class="fas fa-arrow-up mr-1 text-xs"></i>
+          <span>12% respecto ayer</span>
+        </div>
+      </div>
+      <div class="absolute bottom-0 left-0 h-1 bg-orange-500 w-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
     </div>
-    <div class="p-4 text-right">
-      <p class="block antialiased font-sans text-sm leading-normal font-normal text-blue-gray-600">Transf. Pendientes</p>
-      <h4 class="block antialiased tracking-normal font-sans text-2xl font-semibold leading-snug text-blue-gray-900">{{ resumen.transferenciasPendientes }}</h4>
+
+    <!-- Productos en Inventario -->
+    <div class="relative flex flex-col bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-md transition-shadow">
+      <div class="p-6 flex items-center justify-between">
+        <div>
+          <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Total Productos</p>
+          <h4 class="text-2xl font-bold text-gray-800">{{ resumen.totalProductos }}</h4>
+        </div>
+        <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+          <i class="fas fa-box text-blue-600 text-xl"></i>
+        </div>
+      </div>
+      <div class="px-6 pb-4">
+        <div class="flex items-center text-sm text-blue-500 font-medium">
+          <span>{{ resumen.totalProductosActivos || '0' }} activos</span>
+        </div>
+      </div>
+      <div class="absolute bottom-0 left-0 h-1 bg-blue-500 w-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
     </div>
-    <div class="border-t border-blue-gray-50 p-4">
-      <p class="block antialiased font-sans text-base leading-relaxed font-normal text-blue-gray-600">
-        Entre <span class="text-green-500 font-bold">sucursales</span>
-      </p>
+
+    <!-- Bajo Stock -->
+    <div class="relative flex flex-col bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-md transition-shadow">
+      <div class="p-6 flex items-center justify-between">
+        <div>
+          <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Bajo Stock</p>
+          <h4 class="text-2xl font-bold text-gray-800">{{ resumen.bajoStock }}</h4>
+        </div>
+        <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+          <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+        </div>
+      </div>
+      <div class="px-6 pb-4">
+        <div class="flex items-center text-sm text-red-500 font-medium">
+          <span>Atención inmediata</span>
+        </div>
+      </div>
+      <div class="absolute bottom-0 left-0 h-1 bg-red-500 w-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+    </div>
+
+    <!-- Transferencias Pendientes -->
+    <div class="relative flex flex-col bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-md transition-shadow">
+      <div class="p-6 flex items-center justify-between">
+        <div>
+          <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Transf. Pendientes</p>
+          <h4 class="text-2xl font-bold text-gray-800">{{ resumen.transferenciasPendientes }}</h4>
+        </div>
+        <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+          <i class="fas fa-exchange-alt text-green-600 text-xl"></i>
+        </div>
+      </div>
+      <div class="px-6 pb-4">
+        <div class="flex items-center text-sm text-green-500 font-medium">
+          <span>Entre sucursales</span>
+        </div>
+      </div>
+      <div class="absolute bottom-0 left-0 h-1 bg-green-500 w-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
     </div>
   </div>
 
-  <!-- Ventas Card -->
-  <div class="relative flex flex-col bg-clip-border rounded-xl bg-white text-gray-700 shadow-md">
-    <div class="bg-clip-border mx-4 rounded-xl overflow-hidden bg-gradient-to-tr from-orange-600 to-orange-400 text-white shadow-orange-500/40 shadow-lg absolute -mt-4 grid h-16 w-16 place-items-center">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6"><path d="M2.25 2.25a.75.75 0 000 1.5h1.386c.17 0 .315.114.363.274l.71 2.37c.18.601.733 1.006 1.353 1.006h11.232c.621 0 1.173-.405 1.353-1.006l.71-2.37a.375.375 0 00-.363-.483h-16z" /><path d="M6.085 9a1.5 1.5 0 011.46 1.157l1.183 3.943c.241.801.97 1.4 1.806 1.4h5.466c.835 0 1.564-.599 1.806-1.4l1.183-3.943A1.5 1.5 0 0120.45 9H6.085z" /></svg>
+  <!-- Fila 2: Gráficos de Tendencias -->
+  <div class="grid gap-6 grid-cols-1 xl:grid-cols-3 mb-8">
+    <!-- Tendencia de Ventas (Línea) -->
+    <div class="xl:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-lg font-bold text-gray-800">Ventas por Día (Última Semana)</h3>
+        <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">Actualizado</span>
+      </div>
+      <div class="w-full">
+        <apx-chart
+          [series]="chartVentas.series!"
+          [chart]="chartVentas.chart!"
+          [xaxis]="chartVentas.xaxis!"
+          [stroke]="chartVentas.stroke!"
+          [dataLabels]="chartVentas.dataLabels!"
+          [colors]="chartVentas.colors!"
+          [fill]="chartVentas.fill!"
+          [tooltip]="chartVentas.tooltip!"
+          [yaxis]="chartVentas.yaxis!"
+        ></apx-chart>
+      </div>
     </div>
-    <div class="p-4 text-right">
-      <p class="block antialiased font-sans text-sm leading-normal font-normal text-blue-gray-600">Ventas Hoy</p>
-      <h4 class="block antialiased tracking-normal font-sans text-2xl font-semibold leading-snug text-blue-gray-900">{{ resumen.ventasHoy }}</h4>
-    </div>
-    <div class="border-t border-blue-gray-50 p-4">
-      <p class="block antialiased font-sans text-base leading-relaxed font-normal text-blue-gray-600">
-        Resumen de <span class="text-orange-500 font-bold">hoy</span>
-      </p>
+
+    <!-- Productos Más Vendidos (Barras) -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-lg font-bold text-gray-800">Top Productos</h3>
+        <i class="fas fa-trophy text-yellow-500"></i>
+      </div>
+      <div class="w-full">
+        <apx-chart
+          [series]="chartProductos.series!"
+          [chart]="chartProductos.chart!"
+          [plotOptions]="chartProductos.plotOptions!"
+          [xaxis]="chartProductos.xaxis!"
+          [dataLabels]="chartProductos.dataLabels!"
+          [colors]="chartProductos.colors!"
+        ></apx-chart>
+      </div>
     </div>
   </div>
-</div>
 
-<div class="grid grid-cols-1 gap-6 xl:grid-cols-2">
-  <div class="relative flex flex-col bg-clip-border rounded-xl bg-white text-gray-700 shadow-md overflow-hidden xl:col-span-2">
-    <div class="p-6">
-      <h6 class="block antialiased tracking-normal font-sans text-base font-semibold leading-relaxed text-blue-gray-900 mb-1">Estado General del Sistema</h6>
-      <p class="antialiased font-sans text-sm leading-normal font-normal text-blue-gray-600">
-        Bienvenido al panel de control central para la gestión de inventarios y logística multicanal.
-      </p>
+  <!-- Fila 3: Movimientos y Actividad -->
+  <div class="grid gap-6 grid-cols-1 xl:grid-cols-3">
+    <!-- Estado de Movimientos (Donut) -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+      <h3 class="text-lg font-bold text-gray-800 mb-6">Estado de Transferencias</h3>
+      <div class="flex justify-center">
+        <apx-chart
+          [series]="chartMovimientos.series!"
+          [chart]="chartMovimientos.chart!"
+          [labels]="chartMovimientos.labels!"
+          [colors]="chartMovimientos.colors!"
+          [legend]="chartMovimientos.legend!"
+        ></apx-chart>
+      </div>
+    </div>
+
+    <!-- Actividad Reciente (Feed) -->
+    <div class="xl:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-lg font-bold text-gray-800">Actividad Reciente</h3>
+        <a href="/auditoria" class="text-xs font-semibold text-blue-600 hover:underline">Ver todo el log</a>
+      </div>
+      
+      <div class="overflow-y-auto max-h-[350px] pr-2 custom-scrollbar">
+        <div *ngFor="let act of actividades" class="flex items-start gap-4 mb-5 pb-5 border-b border-gray-50 last:border-0 last:mb-0 last:pb-0">
+          <div class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center shrink-0">
+            <i class="fas" [ngClass]="getIconForActivity(act.tipo)"></i>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center justify-between">
+              <p class="text-sm font-semibold text-gray-800">{{ act.descripcion }}</p>
+              <span class="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">{{ act.fecha | date:'shortTime' }}</span>
+            </div>
+            <p class="text-xs text-gray-500 mt-0.5">Realizado por: <span class="text-gray-700 italic">{{ act.usuarioNombre }}</span></p>
+          </div>
+        </div>
+
+        <div *ngIf="actividades.length === 0" class="flex flex-col items-center justify-center py-10 opacity-40">
+          <i class="fas fa-history text-4xl mb-2"></i>
+          <p class="text-sm">No hay actividad reciente registrada</p>
+        </div>
+      </div>
     </div>
   </div>
 </div>
