@@ -1,0 +1,324 @@
+<div class="gestion-reportes-container">
+  <header class="page-header">
+    <div class="header-content">
+      <h1>Gestión de Reportes</h1>
+      <p>Genera y visualiza informes operativos y estratégicos del sistema.</p>
+    </div>
+  </header>
+
+  <!-- Report Selection Cards -->
+  <div class="report-grid">
+    <div class="report-card" [class.active]="tipoReporte === 'VENTAS'" (click)="seleccionarReporte('VENTAS')">
+      <div class="card-icon"><i class="fas fa-chart-line"></i></div>
+      <h3>Reporte de Ventas</h3>
+      <p>Ingresos, promedios y resumen por sucursal.</p>
+    </div>
+    <div class="report-card" [class.active]="tipoReporte === 'INVENTARIO'" (click)="seleccionarReporte('INVENTARIO')">
+      <div class="card-icon"><i class="fas fa-boxes"></i></div>
+      <h3>Estado de Inventario</h3>
+      <p>Stock actual, productos agotados y valor total.</p>
+    </div>
+    <div class="report-card" [class.active]="tipoReporte === 'TRANSFERENCIAS'" (click)="seleccionarReporte('TRANSFERENCIAS')">
+      <div class="card-icon"><i class="fas fa-exchange-alt"></i></div>
+      <h3>Transferencias</h3>
+      <p>Seguimiento de movimientos entre sucursales.</p>
+    </div>
+    <div class="report-card" [class.active]="tipoReporte === 'COMPARATIVO'" (click)="seleccionarReporte('COMPARATIVO')">
+      <div class="card-icon"><i class="fas fa-balance-scale"></i></div>
+      <h3>Comparativo Anual</h3>
+      <p>Variación mensual de ingresos en el año.</p>
+    </div>
+    <div class="report-card" [class.active]="tipoReporte === 'ROTACION'" (click)="seleccionarReporte('ROTACION')">
+      <div class="card-icon"><i class="fas fa-sync"></i></div>
+      <h3>Análisis de Rotación</h3>
+      <p>Clasificación ABC de productos movidos.</p>
+    </div>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="filters-container" *ngIf="tipoReporte">
+    <div class="filters-card glass">
+      <header class="filters-header">
+        <h2>Filtros para {{ tipoReporte | titlecase }}</h2>
+      </header>
+      
+      <div class="filters-row">
+        <!-- Common Date Filter -->
+        <ng-container *ngIf="tipoReporte === 'VENTAS' || tipoReporte === 'TRANSFERENCIAS'">
+          <div class="filter-group">
+            <label>Fecha Inicio</label>
+            <input type="date" [(ngModel)]="fechaInicio" class="form-control">
+          </div>
+          <div class="filter-group">
+            <label>Fecha Fin</label>
+            <input type="date" [(ngModel)]="fechaFin" class="form-control">
+          </div>
+        </ng-container>
+
+        <!-- Inventory Branch Filter -->
+        <div class="filter-group" *ngIf="tipoReporte === 'INVENTARIO'">
+          <label>Sucursal (Opcional)</label>
+          <select [(ngModel)]="idSucursal" class="form-control">
+            <option [ngValue]="null">Todas las sucursales</option>
+            <option *ngFor="let s of sucursales" [ngValue]="s.id">{{ s.nombre }}</option>
+          </select>
+        </div>
+
+        <!-- Comparative/Rotation Year Filter -->
+        <div class="filter-group" *ngIf="tipoReporte === 'COMPARATIVO' || tipoReporte === 'ROTACION'">
+          <label>Año</label>
+          <input type="number" [(ngModel)]="anio" class="form-control">
+        </div>
+
+        <!-- Rotation Month Filter -->
+        <div class="filter-group" *ngIf="tipoReporte === 'ROTACION'">
+          <label>Mes</label>
+          <select [(ngModel)]="mes" class="form-control">
+            <option *ngFor="let m of meses" [ngValue]="m.n">{{ m.nombre }}</option>
+          </select>
+        </div>
+
+        <div class="filter-actions">
+          <button class="btn btn-primary" (click)="generar()" [disabled]="cargando">
+            <span *ngIf="!cargando">Generar Reporte</span>
+            <span *ngIf="cargando">Procesando...</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Report Content -->
+  <div class="report-content" *ngIf="!cargando">
+    
+    <!-- VENTAS CONTENT -->
+    <div *ngIf="reporteVentas" class="report-section fade-in">
+      <div class="summary-grid">
+        <div class="summary-card">
+          <label>Total Ventas</label>
+          <span class="value">{{ reporteVentas.totalVentas }}</span>
+        </div>
+        <div class="summary-card">
+          <label>Ingreso Total</label>
+          <span class="value">{{ reporteVentas.ingresoTotal | currency }}</span>
+        </div>
+        <div class="summary-card">
+          <label>Promedio Venta</label>
+          <span class="value">{{ reporteVentas.promedioVenta | currency }}</span>
+        </div>
+      </div>
+
+      <div class="table-container glass mt-4">
+        <h3>Ventas por Sucursal</h3>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>ID Sucursal</th>
+              <th>Nombre Sucursal</th>
+              <th>Cantidad Ventas</th>
+              <th>Ingreso Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let s of reporteVentas.porSucursal.content">
+              <td>{{ s.idSucursal }}</td>
+              <td>{{ getNombreSucursal(s.idSucursal) }}</td>
+              <td>{{ s.cantidadVentas }}</td>
+              <td class="bold">{{ s.ingresoTotal | currency }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <app-paginador 
+          [paginaActual]="paginaActual" 
+          [totalPaginas]="totalPaginas" 
+          (cambioPagina)="onCambioPagina($event)">
+        </app-paginador>
+      </div>
+    </div>
+
+    <!-- INVENTARIO CONTENT -->
+    <div *ngIf="reporteInventario" class="report-section fade-in">
+      <div class="summary-grid">
+        <div class="summary-card">
+          <label>Total Productos</label>
+          <span class="value">{{ reporteInventario.totalProductos }}</span>
+        </div>
+        <div class="summary-card warning">
+          <label>Stock Mínimo</label>
+          <span class="value text-warning">{{ reporteInventario.productosEnStockMinimo }}</span>
+        </div>
+        <div class="summary-card danger">
+          <label>Agotados</label>
+          <span class="value text-danger">{{ reporteInventario.productosAgotados }}</span>
+        </div>
+        <div class="summary-card info">
+          <label>Valor Total</label>
+          <span class="value text-info">{{ reporteInventario.valorTotalInventario | currency }}</span>
+        </div>
+      </div>
+
+      <div class="table-container glass mt-4">
+        <h3>Detalle de Existencias</h3>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>SKU</th>
+              <th>Stock Actual</th>
+              <th>Stock Mínimo</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of reporteInventario.detalle.content">
+              <td>{{ item.nombreProducto }}</td>
+              <td>{{ item.sku }}</td>
+              <td>{{ item.stockActual }}</td>
+              <td>{{ item.stockMinimo }}</td>
+              <td>
+                <span class="badge" [ngClass]="{
+                  'badge-success': item.estadoStock === 'NORMAL',
+                  'badge-warning': item.estadoStock === 'BAJO',
+                  'badge-danger': item.estadoStock === 'AGOTADO'
+                }">{{ item.estadoStock }}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <app-paginador 
+          [paginaActual]="paginaActual" 
+          [totalPaginas]="totalPaginas" 
+          (cambioPagina)="onCambioPagina($event)">
+        </app-paginador>
+      </div>
+    </div>
+
+    <!-- TRANSFERENCIAS CONTENT -->
+    <div *ngIf="reporteTransferencias" class="report-section fade-in">
+      <div class="summary-grid">
+        <div class="summary-card">
+          <label>Total Movimientos</label>
+          <span class="value">{{ reporteTransferencias.totalTransferencias }}</span>
+        </div>
+        <div class="summary-card success">
+          <label>Completadas</label>
+          <span class="value text-success">{{ reporteTransferencias.completadas }}</span>
+        </div>
+        <div class="summary-card danger">
+          <label>Discrepancias</label>
+          <span class="value text-danger">{{ reporteTransferencias.conDiscrepancias }}</span>
+        </div>
+      </div>
+
+      <div class="table-container glass mt-4">
+        <h3>Listado de Transferencias</h3>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Origen</th>
+              <th>Destino</th>
+              <th>Solicitado</th>
+              <th>Recibido</th>
+              <th>Estado</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let t of reporteTransferencias.detalle.content">
+              <td>#{{ t.idTransferencia }}</td>
+              <td>{{ getNombreSucursal(t.idSucursalOrigen) }}</td>
+              <td>{{ getNombreSucursal(t.idSucursalDestino) }}</td>
+              <td>{{ t.cantidadSolicitada }}</td>
+              <td>{{ t.cantidadRecibida }}</td>
+              <td><span class="badge">{{ t.estado }}</span></td>
+              <td>{{ t.fechaSolicitud | date:'shortDate' }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <app-paginador 
+          [paginaActual]="paginaActual" 
+          [totalPaginas]="totalPaginas" 
+          (cambioPagina)="onCambioPagina($event)">
+        </app-paginador>
+      </div>
+    </div>
+
+    <!-- COMPARATIVO CONTENT -->
+    <div *ngIf="reporteComparativo" class="report-section fade-in">
+      <div class="table-container glass">
+        <h3>Comparativa Mensual de Ingresos - {{ reporteComparativo.anio }}</h3>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Mes</th>
+              <th>Ventas</th>
+              <th>Ingresos</th>
+              <th>Variación</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let m of reporteComparativo.meses">
+              <td class="bold">{{ m.nombreMes }}</td>
+              <td>{{ m.cantidadVentas }}</td>
+              <td>{{ m.ingresoTotal | currency }}</td>
+              <td>
+                <span [ngClass]="m.variacionPorcentual >= 0 ? 'text-success' : 'text-danger'">
+                  {{ m.variacionPorcentual > 0 ? '+' : '' }}{{ m.variacionPorcentual }}%
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ROTACION CONTENT -->
+    <div *ngIf="reporteRotacion" class="report-section fade-in">
+      <div class="table-container glass">
+        <h3>Clasificación ABC de Productos ({{ reporteRotacion.mes }}/{{ reporteRotacion.anio }})</h3>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Salidas</th>
+              <th>Valor Salidas</th>
+              <th>Participación</th>
+              <th>Clase</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let p of reporteRotacion.productos.content">
+              <td>{{ p.nombreProducto }}</td>
+              <td>{{ p.totalSalidas }}</td>
+              <td>{{ p.valorTotalSalidas | currency }}</td>
+              <td>{{ p.porcentajeParticipacion }}%</td>
+              <td>
+                <span class="abc-badge" [attr.data-class]="p.clasificacion">{{ p.clasificacion }}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <app-paginador 
+          [paginaActual]="paginaActual" 
+          [totalPaginas]="totalPaginas" 
+          (cambioPagina)="onCambioPagina($event)">
+        </app-paginador>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="empty-state" *ngIf="!tipoReporte">
+    <div class="empty-content">
+      <i class="fas fa-file-invoice"></i>
+      <h2>Selecciona un reporte para comenzar</h2>
+      <p>Elige una de las categorías superiores para ver los filtros y generar resultados.</p>
+    </div>
+  </div>
+
+  <div class="loading-overlay" *ngIf="cargando">
+    <div class="loader"></div>
+    <p>Generando reporte...</p>
+  </div>
+</div>

@@ -1,0 +1,334 @@
+.gestion-reportes-container {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  font-family: 'Inter', sans-serif;
+  color: #334155;
+}
+
+.page-header {
+  margin-bottom: 2rem;
+}
+
+.page-header h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.5rem;
+}
+
+.page-header p {
+  color: #64748b;
+  font-size: 1.1rem;
+}
+
+/* Report Grid */
+.report-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.report-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  border: 1px solid #e2e8f0;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+.report-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+  border-color: #3b82f6;
+}
+
+.report-card.active {
+  background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%);
+  border: 2px solid #3b82f6;
+  box-shadow: 0 10px 15px -3px rgb(59 130 246 / 0.2);
+}
+
+.card-icon {
+  width: 50px;
+  height: 50px;
+  background: #f1f5f9;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: #3b82f6;
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+}
+
+.report-card.active .card-icon {
+  background: #3b82f6;
+  color: white;
+}
+
+.report-card h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #1e293b;
+}
+
+.report-card p {
+  font-size: 0.875rem;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+/* Glassmorphism */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.125);
+  border-radius: 1rem;
+}
+
+/* Filters */
+.filters-container {
+  margin-bottom: 2rem;
+}
+
+.filters-card {
+  padding: 1.5rem;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.05);
+}
+
+.filters-header h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #1e293b;
+}
+
+.filters-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  align-items: flex-end;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+  min-width: 200px;
+}
+
+.filter-group label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #475569;
+}
+
+.form-control {
+  padding: 0.625rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #cbd5e1;
+  background: white;
+  transition: all 0.2s;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.btn-primary {
+  background: #2563eb;
+  color: white;
+  padding: 0.625rem 2rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+.btn-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Summary Cards */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.summary-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  border-left: 4px solid #3b82f6;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+}
+
+.summary-card label {
+  display: block;
+  font-size: 0.875rem;
+  color: #64748b;
+  margin-bottom: 0.5rem;
+}
+
+.summary-card .value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.summary-card.warning { border-left-color: #f59e0b; }
+.summary-card.danger { border-left-color: #ef4444; }
+.summary-card.success { border-left-color: #10b981; }
+.summary-card.info { border-left-color: #0ea5e9; }
+
+/* Table Section */
+.table-container {
+  padding: 1.5rem;
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+  overflow-x: auto;
+}
+
+.table-container h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #1e293b;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  text-align: left;
+  padding: 1rem;
+  border-bottom: 2px solid #f1f5f9;
+  color: #64748b;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.table td {
+  padding: 1rem;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 0.9375rem;
+}
+
+.bold { font-weight: 700; color: #1e293b; }
+
+.badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.badge-success { background: #dcfce7; color: #166534; }
+.badge-warning { background: #fef3c7; color: #92400e; }
+.badge-danger { background: #fee2e2; color: #991b1b; }
+
+.abc-badge {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-weight: 800;
+  color: white;
+}
+
+.abc-badge[data-class="A"] { background: #10b981; }
+.abc-badge[data-class="B"] { background: #f59e0b; }
+.abc-badge[data-class="C"] { background: #64748b; }
+
+/* States */
+.empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  text-align: center;
+}
+
+.empty-content i {
+  font-size: 4rem;
+  color: #e2e8f0;
+  margin-bottom: 1.5rem;
+}
+
+.empty-content h2 {
+  font-size: 1.5rem;
+  color: #64748b;
+  margin-bottom: 0.5rem;
+}
+
+.empty-content p {
+  color: #94a3b8;
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.loader {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3b82f6;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

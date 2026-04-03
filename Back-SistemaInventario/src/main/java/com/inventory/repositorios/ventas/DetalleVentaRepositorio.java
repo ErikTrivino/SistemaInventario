@@ -19,7 +19,7 @@ public interface DetalleVentaRepositorio extends JpaRepository<DetalleVenta, Lon
         SELECT dv.id_producto,
                SUM(dv.cantidad) as total_salidas,
                SUM(dv.cantidad * dv.precio_unitario * (1 - dv.descuento_aplicado / 100)) as valor_total
-        FROM sale_details dv
+        FROM detalles_venta dv
         JOIN ventas v ON v.id_venta = dv.id_venta
         WHERE MONTH(v.fecha_venta) = :mes AND YEAR(v.fecha_venta) = :anio
         GROUP BY dv.id_producto
