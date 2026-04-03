@@ -127,7 +127,7 @@ export class GestionOrdenesCompraComponent implements OnInit {
       this.porPagina
     ).subscribe({
       next: (res) => {
-        console.log('Datos recibidos del servicio (Historial):', res);
+
         if (!res.error && res.respuesta) {
           const flatResult: CompraHistoricoRespuestaDTO[] = res.respuesta.content;
           this.compras = flatResult; // Mantener por si acaso, pero usaremos agrupadas
@@ -147,9 +147,9 @@ export class GestionOrdenesCompraComponent implements OnInit {
               });
             }
             // Inicializar cantidad a recibir en 0
-            const detalleLocal: CompraDetalleLocal = { 
+            const detalleLocal: CompraDetalleLocal = {
               ...item,
-              cantidadRecibiendo: 0 
+              cantidadRecibiendo: 0
             };
             map.get(item.idOrdenCompra)?.detalles.push(detalleLocal);
           });

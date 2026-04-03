@@ -122,7 +122,7 @@ export class GestionTransferenciasSolicitadasComponent implements OnInit {
       this.tamanoPagina
     ).subscribe({
       next: (data: MensajeDTO) => {
-        console.log('Datos traídos (Entrantes):', data.respuesta);
+
         const respuesta = data.respuesta;
         if (respuesta?.content) {
           this.transferencias = respuesta.content;
@@ -377,7 +377,7 @@ export class GestionTransferenciasSolicitadasComponent implements OnInit {
   async enviarTransferencia(t: InformacionTransferencia) {
     let stockActual = 0;
     let nombreProducto = 'Producto desconocido';
-    
+
     // Obtener el stock actual en la sucursal de origen
     if (t.items && t.items.length > 0) {
       const idProducto = t.items[0].idProducto;
@@ -392,8 +392,8 @@ export class GestionTransferenciasSolicitadasComponent implements OnInit {
       }
     }
 
-    const cantidadAEnviarOriginal = t.items && t.items.length > 0 
-      ? (t.items[0].cantidadConfirmada || t.items[0].cantidadSolicitada) 
+    const cantidadAEnviarOriginal = t.items && t.items.length > 0
+      ? (t.items[0].cantidadConfirmada || t.items[0].cantidadSolicitada)
       : 0;
 
     const { value: formValues } = await Swal.fire({
@@ -435,20 +435,20 @@ export class GestionTransferenciasSolicitadasComponent implements OnInit {
         const msgContainer = document.getElementById('swal-stock-msg-container') as HTMLElement;
 
         inputCant.addEventListener('input', () => {
-             const nuevaCant = Number(inputCant.value);
-             if (stockActual >= nuevaCant) {
-               warningDiv.style.background = '#ecfdf5';
-               warningDiv.style.borderColor = '#a7f3d0';
-               warningDiv.querySelector('span:first-child')!.setAttribute('style', 'font-weight: bold; color: #065f46;');
-               warningDiv.querySelector('span:last-child')!.setAttribute('style', 'font-size: 18px; font-weight: 800; color: #059669;');
-               msgContainer.innerHTML = '';
-             } else {
-               warningDiv.style.background = '#fef2f2';
-               warningDiv.style.borderColor = '#fecaca';
-               warningDiv.querySelector('span:first-child')!.setAttribute('style', 'font-weight: bold; color: #991b1b;');
-               warningDiv.querySelector('span:last-child')!.setAttribute('style', 'font-size: 18px; font-weight: 800; color: #dc2626;');
-               msgContainer.innerHTML = '<div style="color: #dc2626; font-size: 12px; margin-top: 8px; font-weight: 600;">⚠️ Tienes menos stock del que vas a enviar.</div>';
-             }
+          const nuevaCant = Number(inputCant.value);
+          if (stockActual >= nuevaCant) {
+            warningDiv.style.background = '#ecfdf5';
+            warningDiv.style.borderColor = '#a7f3d0';
+            warningDiv.querySelector('span:first-child')!.setAttribute('style', 'font-weight: bold; color: #065f46;');
+            warningDiv.querySelector('span:last-child')!.setAttribute('style', 'font-size: 18px; font-weight: 800; color: #059669;');
+            msgContainer.innerHTML = '';
+          } else {
+            warningDiv.style.background = '#fef2f2';
+            warningDiv.style.borderColor = '#fecaca';
+            warningDiv.querySelector('span:first-child')!.setAttribute('style', 'font-weight: bold; color: #991b1b;');
+            warningDiv.querySelector('span:last-child')!.setAttribute('style', 'font-size: 18px; font-weight: 800; color: #dc2626;');
+            msgContainer.innerHTML = '<div style="color: #dc2626; font-size: 12px; margin-top: 8px; font-weight: 600;">⚠️ Tienes menos stock del que vas a enviar.</div>';
+          }
         });
       },
       preConfirm: () => {

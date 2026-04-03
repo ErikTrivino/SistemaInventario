@@ -1,37 +1,54 @@
-<div class="container mt-5">
-  <div class="card">
-    <div class="card-header ps-5 pt-4 pb-4">
-      <h5 class="mb-0">
-        <i class="fa-solid fa-truck me-3"></i>Gestión de Proveedores
-      </h5>
+<div class="min-h-screen bg-gray-50 flex flex-col">
+  <header class="bg-white border-b border-gray-200 px-6 py-4">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="bg-blue-600 rounded-lg p-2 shadow-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1" />
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold text-gray-900">Gestión de Proveedores</h1>
+          <p class="text-xs text-gray-600">Administra la base de datos de proveedores y contactos</p>
+        </div>
+      </div>
     </div>
+  </header>
 
-    <div class="card-body p-5">
+  <main class="p-6">
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div class="p-6">
       <div class="mb-4 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div class="flex gap-2">
-          <button type="button" routerLink="/crear-proveedor" class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-all shadow-sm">
+
+          <!-- Nuevo Proveedor -->
+          <button type="button" routerLink="/crear-proveedor"
+            class="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-4 py-2 rounded-xl font-medium shadow-md shadow-blue-500/30 transition-all duration-300 hover:shadow-blue-500/50 hover:-translate-y-0.5">
             <i class="fa-solid fa-plus text-sm"></i>
             <span>Nuevo Proveedor</span>
           </button>
 
-          <button type="button" class="inline-flex items-center gap-2 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-lg transition-all shadow-sm disabled:opacity-50 disabled:grayscale"
-            (click)="toggleEstadoSelec()" [disabled]="seleccionados.length === 0">
+          <!-- Cambiar Estado -->
+          <button type="button" (click)="toggleEstadoSelec()" [disabled]="seleccionados.length === 0"
+            class="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl font-medium shadow-md transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
             <i class="fa-solid fa-toggle-on text-sm"></i>
             <span>Cambiar Estado {{ textoBtnAccion }}</span>
           </button>
+
         </div>
 
-        <div class="flex items-center gap-3 bg-slate-100 dark:bg-slate-800 p-1 rounded-lg border border-slate-200 dark:border-slate-700">
-          <button (click)="mostrarTodos = false; cargar()" 
-                  [class.bg-white]="!mostrarTodos" [class.shadow-sm]="!mostrarTodos" [class.text-blue-600]="!mostrarTodos"
-                  [class.bg-transparent]="mostrarTodos" [class.text-slate-500]="mostrarTodos"
-                  class="px-4 py-1.5 rounded-md text-sm font-medium transition-all focus:outline-none">
+        <div
+          class="flex items-center gap-3 bg-slate-100 dark:bg-slate-800 p-1 rounded-lg border border-slate-200 dark:border-slate-700">
+          <button (click)="mostrarTodos = false; cargar()" [class.bg-white]="!mostrarTodos"
+            [class.shadow-sm]="!mostrarTodos" [class.text-blue-600]="!mostrarTodos"
+            [class.bg-transparent]="mostrarTodos" [class.text-slate-500]="mostrarTodos"
+            class="px-4 py-1.5 rounded-md text-sm font-medium transition-all focus:outline-none">
             Activos
           </button>
-          <button (click)="mostrarTodos = true; cargar()" 
-                  [class.bg-white]="mostrarTodos" [class.shadow-sm]="mostrarTodos" [class.text-blue-600]="mostrarTodos"
-                  [class.bg-transparent]="!mostrarTodos" [class.text-slate-500]="!mostrarTodos"
-                  class="px-4 py-1.5 rounded-md text-sm font-medium transition-all focus:outline-none">
+          <button (click)="mostrarTodos = true; cargar()" [class.bg-white]="mostrarTodos"
+            [class.shadow-sm]="mostrarTodos" [class.text-blue-600]="mostrarTodos" [class.bg-transparent]="!mostrarTodos"
+            [class.text-slate-500]="!mostrarTodos"
+            class="px-4 py-1.5 rounded-md text-sm font-medium transition-all focus:outline-none">
             Todos
           </button>
         </div>
@@ -51,14 +68,16 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
-              <tr *ngFor="let p of proveedores; trackBy: trackById" class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+              <tr *ngFor="let p of proveedores; trackBy: trackById"
+                class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
                 <td class="ps-4">
-                  <input #check type="checkbox" (change)="seleccionar(p, check.checked)" 
-                         class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:bg-gray-700 dark:border-gray-600" />
+                  <input #check type="checkbox" (change)="seleccionar(p, check.checked)"
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:bg-gray-700 dark:border-gray-600" />
                 </td>
                 <td class="py-4">
                   <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded shadow-sm bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold">
+                    <div
+                      class="w-10 h-10 rounded shadow-sm bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold">
                       <i class="fas fa-building text-lg"></i>
                     </div>
                     <div>
@@ -68,7 +87,8 @@
                   </div>
                 </td>
                 <td>
-                  <div class="inline-flex items-center px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded text-xs font-mono text-black dark:text-slate-400 border border-slate-200 dark:border-slate-700">
+                  <div
+                    class="inline-flex items-center px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded text-xs font-mono text-black dark:text-slate-400 border border-slate-200 dark:border-slate-700">
                     {{ p.nitRut }}
                   </div>
                 </td>
@@ -81,14 +101,15 @@
                   </div>
                 </td>
                 <td>
-                  <span [class]="p.activo ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'"
-                        class="px-2.5 py-0.5 rounded-full text-xs font-medium">
+                  <span
+                    [class]="p.activo ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'"
+                    class="px-2.5 py-0.5 rounded-full text-xs font-medium">
                     {{ p.activo ? 'Activo' : 'Inactivo' }}
                   </span>
                 </td>
                 <td class="pe-4 text-right">
-                  <button [routerLink]="['/editar-proveedor', p.id]" 
-                          class="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50">
+                  <button [routerLink]="['/editar-proveedor', p.id]"
+                    class="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50">
                     <i class="fa-solid fa-pen text-xs"></i>
                     <span>Editar</span>
                   </button>
@@ -98,15 +119,11 @@
           </table>
         </div>
 
-        <app-paginador 
-          [totalElementos]="totalElementos"
-          [totalPaginas]="totalPaginas"
-          [paginaActual]="paginaActual"
-          [tamanoPagina]="tamanoPagina"
-          (cambioPagina)="onCambioPagina($event)"
-          (cambioTamano)="onCambioTamano($event)">
+        <app-paginador [totalElementos]="totalElementos" [totalPaginas]="totalPaginas" [paginaActual]="paginaActual"
+          [tamanoPagina]="tamanoPagina" (cambioPagina)="onCambioPagina($event)" (cambioTamano)="onCambioTamano($event)">
         </app-paginador>
       </div>
+      </div>
     </div>
-  </div>
+  </main>
 </div>

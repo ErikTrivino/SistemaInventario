@@ -1,9 +1,28 @@
 <div class="p-6 max-w-7xl mx-auto space-y-6 animate-fade-in fade-in">
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-            <h1 class="text-3xl font-bold text-gray-800 dark:text-black tracking-tight">Gestión solicitudes de
-                Transferencias</h1>
-            <p class="text-gray-500 dark:text-gray-400 mt-1">Controla los traslados de inventario de tu sucursal</p>
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+
+            <div class="flex items-center gap-4">
+
+                <!-- Icono -->
+                <div class="p-3 rounded-xl bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                        <path d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+                    </svg>
+                </div>
+
+                <!-- Texto -->
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800 dark:text-black tracking-tight">
+                        Gestión solicitudes de Transferencias
+                    </h1>
+                    <p class="text-gray-500 dark:text-gray-400 mt-1">
+                        Controla los traslados de inventario de tu sucursal
+                    </p>
+                </div>
+
+            </div>
+
         </div>
         <div class="flex gap-3">
             <button (click)="solicitarTransferencia()"

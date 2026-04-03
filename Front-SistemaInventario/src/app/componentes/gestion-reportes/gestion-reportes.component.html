@@ -1,10 +1,21 @@
-<div class="gestion-reportes-container">
-  <header class="page-header">
-    <div class="header-content">
-      <h1>Gestión de Reportes</h1>
-      <p>Genera y visualiza informes operativos y estratégicos del sistema.</p>
+<div class="min-h-screen bg-gray-50 flex flex-col">
+  <header class="bg-white border-b border-gray-200 px-6 py-4">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="bg-blue-600 rounded-lg p-2 shadow-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold text-gray-900">Gestión de Reportes</h1>
+          <p class="text-xs text-gray-600">Genera e interpreta informes operativos y estratégicos</p>
+        </div>
+      </div>
     </div>
   </header>
+
+  <main class="p-6 overflow-y-auto">
 
   <!-- Report Selection Cards -->
   <div class="report-grid">
@@ -18,7 +29,8 @@
       <h3>Estado de Inventario</h3>
       <p>Stock actual, productos agotados y valor total.</p>
     </div>
-    <div class="report-card" [class.active]="tipoReporte === 'TRANSFERENCIAS'" (click)="seleccionarReporte('TRANSFERENCIAS')">
+    <div class="report-card" [class.active]="tipoReporte === 'TRANSFERENCIAS'"
+      (click)="seleccionarReporte('TRANSFERENCIAS')">
       <div class="card-icon"><i class="fas fa-exchange-alt"></i></div>
       <h3>Transferencias</h3>
       <p>Seguimiento de movimientos entre sucursales.</p>
@@ -41,7 +53,7 @@
       <header class="filters-header">
         <h2>Filtros para {{ tipoReporte | titlecase }}</h2>
       </header>
-      
+
       <div class="filters-row">
         <!-- Common Date Filter -->
         <ng-container *ngIf="tipoReporte === 'VENTAS' || tipoReporte === 'TRANSFERENCIAS'">
@@ -90,7 +102,7 @@
 
   <!-- Report Content -->
   <div class="report-content" *ngIf="!cargando">
-    
+
     <!-- VENTAS CONTENT -->
     <div *ngIf="reporteVentas" class="report-section fade-in">
       <div class="summary-grid">
@@ -128,9 +140,7 @@
             </tr>
           </tbody>
         </table>
-        <app-paginador 
-          [paginaActual]="paginaActual" 
-          [totalPaginas]="totalPaginas" 
+        <app-paginador [paginaActual]="paginaActual" [totalPaginas]="totalPaginas"
           (cambioPagina)="onCambioPagina($event)">
         </app-paginador>
       </div>
@@ -185,9 +195,7 @@
             </tr>
           </tbody>
         </table>
-        <app-paginador 
-          [paginaActual]="paginaActual" 
-          [totalPaginas]="totalPaginas" 
+        <app-paginador [paginaActual]="paginaActual" [totalPaginas]="totalPaginas"
           (cambioPagina)="onCambioPagina($event)">
         </app-paginador>
       </div>
@@ -236,9 +244,7 @@
             </tr>
           </tbody>
         </table>
-        <app-paginador 
-          [paginaActual]="paginaActual" 
-          [totalPaginas]="totalPaginas" 
+        <app-paginador [paginaActual]="paginaActual" [totalPaginas]="totalPaginas"
           (cambioPagina)="onCambioPagina($event)">
         </app-paginador>
       </div>
@@ -299,9 +305,7 @@
             </tr>
           </tbody>
         </table>
-        <app-paginador 
-          [paginaActual]="paginaActual" 
-          [totalPaginas]="totalPaginas" 
+        <app-paginador [paginaActual]="paginaActual" [totalPaginas]="totalPaginas"
           (cambioPagina)="onCambioPagina($event)">
         </app-paginador>
       </div>
@@ -319,6 +323,6 @@
 
   <div class="loading-overlay" *ngIf="cargando">
     <div class="loader"></div>
-    <p>Generando reporte...</p>
   </div>
+  </main>
 </div>
