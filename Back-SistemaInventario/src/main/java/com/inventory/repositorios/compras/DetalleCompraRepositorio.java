@@ -10,19 +10,22 @@
         List<DetalleCompra> findByOrdenCompraId(Long ordenCompraId);
         
         @org.springframework.data.jpa.repository.Query("SELECT new com.inventory.modelo.dto.compras.CompraHistoricoRespuestaDTO(" +
-               "o.id, d.id, p.id, p.nombre, prov.id, prov.razonSocial, d.cantidadSolicitada, d.cantidadRecibida, d.precioUnitario, o.fechaCompra" +
+               "o.id, d.id, p.id, p.nombre, prov.id, prov.razonSocial, d.cantidadSolicitada, d.cantidadRecibida, d.precioUnitario, o.fechaCompra, o.estado" +
                ") FROM DetalleCompra d " +
                "JOIN OrdenCompra o ON d.ordenCompraId = o.id " +
                "JOIN Producto p ON d.productoId = p.id " +
                "JOIN Proveedor prov ON o.proveedorId = prov.id " +
                "WHERE (:proveedorId IS NULL OR prov.id = :proveedorId) " +
                "AND (:productoId IS NULL OR p.id = :productoId) " +
+               "AND (:estado IS NULL OR o.estado = :estado) " +
                "AND (:sucursalDestinoId IS NULL OR o.sucursalDestinoId = :sucursalDestinoId) " +
                "AND (:fechaInicio IS NULL OR o.fechaCompra >= :fechaInicio) " +
-               "AND (:fechaFin IS NULL OR o.fechaCompra <= :fechaFin)")
+               "AND (:fechaFin IS NULL OR o.fechaCompra <= :fechaFin) " +
+               "ORDER BY o.fechaCompra DESC")
         Page<com.inventory.modelo.dto.compras.CompraHistoricoRespuestaDTO> obtenerHistoricoCompras(
             @org.springframework.data.repository.query.Param("proveedorId") Long proveedorId,
             @org.springframework.data.repository.query.Param("productoId") Long productoId,
+            @org.springframework.data.repository.query.Param("estado") String estado,
             @org.springframework.data.repository.query.Param("sucursalDestinoId") Long sucursalDestinoId,
             @org.springframework.data.repository.query.Param("fechaInicio") java.time.LocalDateTime fechaInicio,
             @org.springframework.data.repository.query.Param("fechaFin") java.time.LocalDateTime fechaFin,

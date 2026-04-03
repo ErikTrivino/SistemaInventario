@@ -337,14 +337,15 @@ public class DataInitializer implements CommandLineRunner {
         if (ordenCompraRepository.count() == 0 && !provs.isEmpty()) {
             List<OrdenCompra> list = new ArrayList<>();
             Random rand = new Random();
-            for (int i = 1; i <= 5; i++) {
+            for (int i = 1; i <= 6; i++) {
+                String estado = (i % 2 == 0) ? EstadoCompra.PENDIENTE.name() : EstadoCompra.RECIBIDO.name();
                 list.add(OrdenCompra.builder()
                         .sucursalDestinoId(sucs.get(rand.nextInt(sucs.size())).getId())
                         .proveedorId(provs.get(rand.nextInt(provs.size())).getId())
                         .usuarioResponsableId(usus.get(rand.nextInt(usus.size())).getId())
                         .fechaCompra(LocalDateTime.now().minusDays(i))
                         .total(BigDecimal.ZERO)
-                        .estado("COMPLETADA")
+                        .estado(estado)
                         .plazoPagoDias(30)
                         .build());
             }
@@ -361,10 +362,12 @@ public class DataInitializer implements CommandLineRunner {
                     Producto p = prods.get(i);
                     BigDecimal cant = new BigDecimal("10");
                     BigDecimal precio = p.getPrecioCostoPromedio();
+                    BigDecimal cantRecibida = "RECIBIDO".equals(c.getEstado()) ? cant : BigDecimal.ZERO;
                     detalleCompraRepository.save(DetalleCompra.builder()
                             .ordenCompraId(c.getId())
                             .productoId(p.getId())
                             .cantidadSolicitada(cant)
+                            .cantidadRecibida(cantRecibida)
                             .precioUnitario(precio)
                             .build());
                     total = total.add(cant.multiply(precio));

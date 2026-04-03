@@ -9,7 +9,7 @@ import com.inventory.modelo.dto.transferencias.*;
 import com.inventory.modelo.entidades.transferencias.Transferencia;
 import com.inventory.modelo.entidades.transferencias.DetalleTransferencia;
 import com.inventory.modelo.entidades.logistica.Envio;
-import com.inventory.modelo.entidades.transferencias.EstadoTransferencia;
+import com.inventory.modelo.enums.EstadoTransferencia;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;

@@ -32,12 +32,14 @@
         public ResponseEntity<MensajeDTO<Object>> obtenerHistoricoCompras(
             @RequestParam(required = false) Long idProveedor,
             @RequestParam(required = false) Long idProducto,
+            @RequestParam(required = false) String estado,
+            @RequestParam(required = false) Long idSucursal,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) java.time.LocalDateTime fechaDesde,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) java.time.LocalDateTime fechaHasta,
             @RequestParam(required = false, defaultValue = "10") Integer porPagina,
             @RequestParam(required = false) Integer pagina
         ) { 
-            return ResponseEntity.ok(new MensajeDTO<>(false, compraServicio.obtenerHistoricoCompras(idProveedor, idProducto, fechaDesde, fechaHasta, pagina, porPagina))); 
+            return ResponseEntity.ok(new MensajeDTO<>(false, compraServicio.obtenerHistoricoCompras(idProveedor, idProducto, estado, idSucursal, fechaDesde, fechaHasta, pagina, porPagina)));
         }
     }
 

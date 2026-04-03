@@ -141,6 +141,16 @@
             <option *ngFor="let s of sucursales" [value]="s.id">{{s.identificador}} ({{s.nombre}})</option>
           </select>
         </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Filtrar Estado</label>
+          <select [(ngModel)]="filtroEstado" (change)="aplicarFiltros()"
+            class="w-full text-sm border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm">
+            <option [ngValue]="undefined">Todos</option>
+            <option value="PENDIENTE">PENDIENTE</option>
+            <option value="RECIBIDO">RECIBIDO</option>
+
+          </select>
+        </div>
         <div class="flex items-end space-x-2">
           <button (click)="limpiarFiltros()"
             class="w-full py-2 px-4 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 transition-colors">
@@ -150,59 +160,148 @@
       </div>
     </div>
 
-    <!-- Tabla de Histórico -->
-    <div class="overflow-x-auto">
+    <!-- Tabla de Histórico Agrupada -->
+    <div class="overflow-x-auto overflow-y-visible">
       <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-50">
           <tr>
+            <th scope="col" class="w-12 px-6 py-3"></th> <!-- Flecha de expansión -->
             <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">ID
-              Orden / Fecha</th>
+              Orden</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              Fecha</th>
             <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
               Proveedor</th>
             <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-              Producto (Detalle)</th>
-            <th scope="col" class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
-              Acciones</th>
+              Estado General</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              Ítems</th>
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
-          <tr *ngIf="compras.length === 0">
-            <td colspan="4" class="px-6 py-10 text-center text-sm text-gray-500">
-              No se encontraron registros de compras.
+          <tr *ngIf="ordenesAgrupadas.length === 0">
+            <td colspan="6" class="px-6 py-10 text-center text-sm text-gray-500">
+              No se encontraron órdenes de compra.
             </td>
           </tr>
-          <tr *ngFor="let iter of compras" class="hover:bg-gray-50/50 transition-colors group">
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm font-semibold text-indigo-600">Orden #{{ iter.idOrdenCompra }}</div>
-              <div class="text-xs text-gray-500 mt-1">{{ iter.fechaCompra | date:'medium' }}</div>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm font-medium text-gray-900">{{ iter.nombreProveedor }}</div>
-              <div class="text-xs text-gray-500">Prov. ID: {{ iter.idProveedor }}</div>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm font-medium text-gray-900">{{ iter.nombreProducto }}</div>
-              <div class="text-xs text-gray-500">Pr. Unit: ${{ iter.precioUnitario | number:'1.2-2' }}</div>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-              <button *ngIf="iter.cantidadRecibida < iter.cantidadSolicitada" (click)="recibirProducto(iter)"
-                class="inline-flex items-center justify-center h-8 w-8 rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-700 focus:outline-none transition-colors"
-                title="Recibir Inventario">
-                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+
+          <ng-container *ngFor="let ord of ordenesAgrupadas">
+            <!-- Fila Principal de la Orden -->
+            <tr (click)="toggleOrden(ord)" class="hover:bg-indigo-50/30 cursor-pointer transition-colors group">
+              <td class="px-6 py-4 whitespace-nowrap text-center">
+                <svg [ngClass]="{'rotate-180': ord.expandida}"
+                  class="h-5 w-5 text-gray-400 group-hover:text-indigo-500 transition-transform duration-200"
+                  fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                 </svg>
-              </button>
-            </td>
-          </tr>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="text-sm font-bold text-indigo-600">ORD-{{ ord.idOrdenCompra }}</span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-700">{{ ord.fechaCompra | date:'medium' }}</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm font-medium text-gray-900">{{ ord.nombreProveedor }}</div>
+                <div class="text-xs text-gray-500">ID: {{ ord.idProveedor }}</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span [ngClass]="{
+                  'bg-green-100 text-green-800': ord.estado === 'RECIBIDO' || ord.estado === 'RECIBIDO' || ord.estado === 'COMPLETADA',
+                  'bg-yellow-100 text-yellow-800': ord.estado === 'PENDIENTE',
+                  'bg-gray-100 text-gray-800': !['RECIBIDO', 'RECIBIDO', 'COMPLETADA', 'PENDIENTE'].includes(ord.estado)
+                }" class="px-2.5 py-0.5 rounded-full text-xs font-semibold shadow-sm">
+                  {{ ord.estado }}
+                </span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span
+                  class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600">
+                  {{ ord.detalles.length }} productos
+                </span>
+              </td>
+            </tr>
+
+            <!-- Fila de Detalles (Desplegable) -->
+            <tr *ngIf="ord.expandida" class="bg-gray-50/50">
+              <td colspan="6" class="px-10 py-6">
+                <div
+                  class="bg-white rounded-lg border border-indigo-100 shadow-sm overflow-hidden animate-fade-in-down">
+                  <div class="px-4 py-3 bg-indigo-50/50 border-b border-indigo-100 flex justify-between items-center">
+                    <h4 class="text-xs font-bold text-indigo-700 uppercase tracking-widest">Detalle de Productos - Orden
+                      #{{ ord.idOrdenCompra }}</h4>
+                    <div class="flex items-center space-x-4">
+                      <span class="text-xs text-indigo-500">Total de ítems: {{ ord.detalles.length }}</span>
+                      <button *ngIf="ord.estado === 'PENDIENTE' || ord.estado === 'PARCIAL'"
+                        (click)="recibirOrden(ord); $event.stopPropagation()"
+                        class="inline-flex items-center px-4 py-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-bold rounded-md shadow-sm transition-colors uppercase">
+                        <svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        Confirmar Recepción de la Orden
+                      </button>
+                    </div>
+                  </div>
+                  <table class="min-w-full divide-y divide-gray-100">
+                    <thead class="bg-gray-50/80">
+                      <tr>
+                        <th class="px-4 py-2 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                          Producto</th>
+                        <th class="px-4 py-2 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                          Cant. Solicitada</th>
+                        <th class="px-4 py-2 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                          Cant. Recibida</th>
+                        <th class="px-4 py-2 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                          Cant. a Recibir Ahora</th>
+                        <th class="px-4 py-2 text-right text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                          Precio Unit.</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                      <tr *ngFor="let det of ord.detalles" class="hover:bg-gray-50 transition-colors">
+                        <td class="px-4 py-3 whitespace-nowrap">
+                          <div class="text-sm font-semibold text-gray-800">{{ det.nombreProducto }}</div>
+                          <div class="text-[10px] text-gray-400 truncate max-w-[150px]">ID Prod: {{ det.idProducto }}
+                          </div>
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">{{ det.cantidadSolicitada }}</td>
+                        <td class="px-4 py-3 whitespace-nowrap">
+                          <div class="flex items-center">
+                            <span class="text-sm font-medium mr-2"
+                              [ngClass]="{'text-green-600': det.cantidadRecibida >= det.cantidadSolicitada, 'text-blue-600': det.cantidadRecibida > 0 && det.cantidadRecibida < det.cantidadSolicitada, 'text-gray-400': det.cantidadRecibida === 0}">
+                              {{ det.cantidadRecibida }}
+                            </span>
+                            <div class="w-16 bg-gray-200 rounded-full h-1.5 hidden sm:block">
+                              <div class="bg-indigo-500 h-1.5 rounded-full"
+                                [style.width.%]="(det.cantidadRecibida / det.cantidadSolicitada) * 100"></div>
+                            </div>
+                          </div>
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap">
+                          <input *ngIf="det.cantidadRecibida < det.cantidadSolicitada" type="number"
+                            [(ngModel)]="det.cantidadRecibiendo"
+                            class="w-20 px-2 py-1 text-sm border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                            placeholder="0" min="0" [max]="det.cantidadSolicitada - det.cantidadRecibida">
+                          <span *ngIf="det.cantidadRecibida >= det.cantidadSolicitada"
+                            class="text-[10px] font-bold text-green-500 uppercase">Completado</span>
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-right text-sm text-gray-700 font-mono">${{
+                          det.precioUnitario | number:'1.2-2' }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
         </tbody>
       </table>
     </div>
 
     <!-- Paginación Común -->
     <div class="px-6 py-4 border-t border-gray-200">
-      <app-paginador [paginaActual]="paginaActual" [totalPaginas]="totalPaginas" [totalElementos]="totalElementos" [tamanoPagina]="porPagina"
-        (cambioPagina)="cambiarPagina($event)">
+      <app-paginador [paginaActual]="paginaActual" [totalPaginas]="totalPaginas" [totalElementos]="totalElementos"
+        [tamanoPagina]="porPagina" (cambioPagina)="cambiarPagina($event)">
       </app-paginador>
     </div>
   </div>

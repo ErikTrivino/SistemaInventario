@@ -10,6 +10,20 @@ import { OrdenCompraCrearDTO, DetalleCompraCrearDTO, OrdenCompraRecepcionDTO } f
 import { PaginadorComponent } from '../comun/paginador/paginador.component';
 import Swal from 'sweetalert2';
 
+export interface CompraDetalleLocal extends CompraHistoricoRespuestaDTO {
+  cantidadRecibiendo?: number;
+}
+
+export interface OrdenAgrupada {
+  idOrdenCompra: number;
+  fechaCompra: Date;
+  nombreProveedor: string;
+  idProveedor: number;
+  estado: string;
+  detalles: CompraDetalleLocal[];
+  expandida?: boolean;
+}
+
 @Component({
   selector: 'app-gestion-ordenes-compra',
   standalone: true,
@@ -26,11 +40,13 @@ export class GestionOrdenesCompraComponent implements OnInit {
   filtroProveedor?: number;
   filtroProducto?: number;
   filtroSucursal?: number;
+  filtroEstado?: string;
   fechaDesde?: string;
   fechaHasta?: string;
 
   // Histórico y Paginación
   compras: CompraHistoricoRespuestaDTO[] = [];
+  ordenesAgrupadas: OrdenAgrupada[] = [];
   paginaActual: number = 0;
   totalElementos: number = 0;
   totalPaginas: number = 0;
@@ -103,6 +119,7 @@ export class GestionOrdenesCompraComponent implements OnInit {
     this.compraService.obtenerHistorico(
       this.filtroProveedor,
       this.filtroProducto,
+      this.filtroEstado,
       this.filtroSucursal,
       this.fechaDesde,
       this.fechaHasta,
@@ -110,8 +127,34 @@ export class GestionOrdenesCompraComponent implements OnInit {
       this.porPagina
     ).subscribe({
       next: (res) => {
+        console.log('Datos recibidos del servicio (Historial):', res);
         if (!res.error && res.respuesta) {
-          this.compras = res.respuesta.content;
+          const flatResult: CompraHistoricoRespuestaDTO[] = res.respuesta.content;
+          this.compras = flatResult; // Mantener por si acaso, pero usaremos agrupadas
+
+          // Lógica de agrupar por ID Orden
+          const map = new Map<number, OrdenAgrupada>();
+          flatResult.forEach(item => {
+            if (!map.has(item.idOrdenCompra)) {
+              map.set(item.idOrdenCompra, {
+                idOrdenCompra: item.idOrdenCompra,
+                fechaCompra: item.fechaCompra,
+                nombreProveedor: item.nombreProveedor,
+                idProveedor: item.idProveedor,
+                estado: item.estado, // Mantenemos el estado de la primera fila como general
+                detalles: [],
+                expandida: false
+              });
+            }
+            // Inicializar cantidad a recibir en 0
+            const detalleLocal: CompraDetalleLocal = { 
+              ...item,
+              cantidadRecibiendo: 0 
+            };
+            map.get(item.idOrdenCompra)?.detalles.push(detalleLocal);
+          });
+
+          this.ordenesAgrupadas = Array.from(map.values());
           this.totalElementos = res.respuesta.totalElements;
           this.totalPaginas = res.respuesta.totalPages;
         }
@@ -130,6 +173,7 @@ export class GestionOrdenesCompraComponent implements OnInit {
     this.filtroProveedor = undefined;
     this.filtroProducto = undefined;
     this.filtroSucursal = undefined;
+    this.filtroEstado = undefined;
     this.fechaDesde = undefined;
     this.fechaHasta = undefined;
     this.cargarHistorial(0);
@@ -137,6 +181,10 @@ export class GestionOrdenesCompraComponent implements OnInit {
 
   cambiarPagina(nuevaPagina: number): void {
     this.cargarHistorial(nuevaPagina);
+  }
+
+  toggleOrden(orden: OrdenAgrupada): void {
+    orden.expandida = !orden.expandida;
   }
 
   // --- NUEVA ORDEN ---
@@ -247,84 +295,68 @@ export class GestionOrdenesCompraComponent implements OnInit {
 
   // --- RECEPCION DE MERCADERIA ---
 
-  async recibirProducto(compra: CompraHistoricoRespuestaDTO) {
-    // Si la cantidad solicitada ya es igual a la recibida
-    if (compra.cantidadSolicitada <= compra.cantidadRecibida) {
-      Swal.fire('Aviso', 'Este producto ya fue recibido en su totalidad.', 'info');
+  async recibirOrden(orden: OrdenAgrupada) {
+    // Filtrar solo los detalles que tienen cantidad para recibir
+    const detallesParaRecibir = orden.detalles.filter(d => (d.cantidadRecibiendo || 0) > 0);
+
+    if (detallesParaRecibir.length === 0) {
+      Swal.fire('Atención', 'Debe ingresar una cantidad a recibir en al menos un producto.', 'warning');
       return;
     }
 
-    const maxPosible = compra.cantidadSolicitada - compra.cantidadRecibida;
+    // Validar que no se reciba más de lo pendiente (opcional, pero recomendado)
+    for (const det of detallesParaRecibir) {
+      const pendiente = det.cantidadSolicitada - det.cantidadRecibida;
+      if ((det.cantidadRecibiendo || 0) > pendiente) {
+        Swal.fire('Atención', `La cantidad a recibir de ${det.nombreProducto} supera lo pendiente (${pendiente}).`, 'warning');
+        return;
+      }
+    }
 
-    const { value: formValues } = await Swal.fire({
-      title: 'Registrar Recepción',
-      width: 600,
-      html: `
-        <div class="text-left mb-4 text-sm bg-gray-50 p-4 rounded-lg border border-gray-200 text-gray-800">
-          <h3 class="font-semibold text-lg border-b pb-2 mb-3">Datos de la Compra</h3>
-          <div class="grid grid-cols-2 gap-3">
-            <p><strong>ID Orden:</strong> ${compra.idOrdenCompra}</p>
-            <p><strong>Fecha:</strong> ${new Date(compra.fechaCompra).toLocaleDateString()}</p>
-            <p class="col-span-2"><strong>Proveedor:</strong> ${compra.nombreProveedor}</p>
-            <p class="col-span-2"><strong>Producto:</strong> ${compra.nombreProducto}</p>
-            <p><strong>Cantidad Solicitada:</strong> ${compra.cantidadSolicitada}</p>
-            <p><strong>Cantidad Ya Recibida:</strong> ${compra.cantidadRecibida}</p>
-            <p><strong>Precio Unitario:</strong> $${compra.precioUnitario}</p>
-          </div>
-        </div>
-        <p class="mb-3 text-sm text-gray-600 text-left">Ingreso de productos al almacén. La cantidad debe coincidir o registrarse la diferencia.</p>
-        <div class="mb-3 text-left">
-          <label class="block text-sm font-medium text-gray-700">Sucursal Destino ID:</label>
-          <input id="rec-sucursal" class="swal2-input !mt-1 !w-full" type="number" min="1" value="1">
-        </div>
-        <div class="mb-3 text-left">
-          <label class="block text-sm font-medium text-gray-700">Cantidad Recibida:</label>
-          <input id="rec-cantidad" class="swal2-input !mt-1 !w-full" type="number" min="0.01" step="0.01" value="${maxPosible}">
-        </div>
-      `,
-      focusConfirm: false,
+    const { value: sucursalId } = await Swal.fire({
+      title: 'Confirmar Recepción',
+      text: 'Seleccione la sucursal de destino para el ingreso al inventario:',
+      input: 'number',
+      inputValue: 1, // Por defecto
       showCancelButton: true,
       confirmButtonText: 'Confirmar Recepción',
       cancelButtonText: 'Cancelar',
-      preConfirm: () => {
-        const sucId = (document.getElementById('rec-sucursal') as HTMLInputElement).value;
-        const cant = (document.getElementById('rec-cantidad') as HTMLInputElement).value;
-        if (!sucId || !cant) {
-          Swal.showValidationMessage('Revisar datos ingresados.');
-          return false;
+      inputValidator: (value) => {
+        if (!value || Number(value) < 1) {
+          return 'Debe ingresar un ID de sucursal válido';
         }
-        if (Number(cant) <= 0) {
-          Swal.showValidationMessage('La cantidad recibida debe ser mayor a 0.');
-          return false;
-        }
-        return { suc: Number(sucId), cant: Number(cant) };
+        return null;
       }
     });
 
-    if (formValues) {
+    if (sucursalId) {
       const dto: OrdenCompraRecepcionDTO = {
-        idOrdenCompra: compra.idOrdenCompra,
-        idSucursalDestino: formValues.suc,
-        detallesRecibidos: [
-          {
-            idDetalle: compra.idDetalle,
-            cantidadRecibida: formValues.cant
-          }
-        ]
+        idOrdenCompra: orden.idOrdenCompra,
+        idSucursalDestino: Number(sucursalId),
+        detallesRecibidos: detallesParaRecibir.map(d => ({
+          idDetalle: d.idDetalle,
+          cantidadRecibida: d.cantidadRecibiendo || 0
+        }))
       };
 
-      Swal.fire({ title: 'Procesando...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+      Swal.fire({
+        title: 'Procesando...',
+        allowOutsideClick: false,
+        didOpen: () => { Swal.showLoading(); }
+      });
 
       this.compraService.recibirCompra(dto).subscribe({
         next: (res) => {
           if (!res.error) {
-            Swal.fire('¡Recibido!', 'Se ha actualizado la cantidad y cargado el inventario.', 'success');
+            Swal.fire('¡Éxito!', 'La recepción ha sido registrada correctamente.', 'success');
             this.cargarHistorial(this.paginaActual);
           } else {
-            Swal.fire('Error', res.respuesta || 'Hubo un error al procesar.', 'error');
+            Swal.fire('Error', res.respuesta || 'Error al procesar la recepción.', 'error');
           }
         },
-        error: (err) => Swal.fire('Error', err.error?.respuesta || 'Hubo un error al procesar.', 'error')
+        error: (err) => {
+          Swal.fire('Error', err.error?.respuesta || 'Error inesperado al procesar la recepción.', 'error');
+        }
       });
     }
   }

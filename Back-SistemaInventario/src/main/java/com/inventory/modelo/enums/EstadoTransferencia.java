@@ -1,4 +1,4 @@
-package com.inventory.modelo.entidades.transferencias;
+package com.inventory.modelo.enums;
 
 public enum EstadoTransferencia {
     SOLICITADO,

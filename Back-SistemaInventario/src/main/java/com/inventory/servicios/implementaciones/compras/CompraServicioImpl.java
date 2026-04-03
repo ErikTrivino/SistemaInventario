@@ -1,5 +1,6 @@
 package com.inventory.servicios.implementaciones.compras;
 
+import com.inventory.modelo.enums.EstadoCompra;
 import com.inventory.modelo.enums.EstadoTransferencia;
 import com.inventory.servicios.interfaces.compras.CompraServicio;
 import com.inventory.servicios.interfaces.inventario.InventarioServicio;
@@ -57,7 +58,7 @@ public class CompraServicioImpl implements CompraServicio {
         order.setUsuarioResponsableId(userId);
         order.setFechaCompra(LocalDateTime.now());
         order.setTotal(total);
-        order.setEstado(EstadoTransferencia.RECIBIDA.name());
+        order.setEstado(EstadoCompra.PENDIENTE.name());
         order.setPlazoPagoDias(dto.plazoPagoDias());
         OrdenCompra saved = purchaseOrderRepository.save(order);
 
@@ -82,7 +83,7 @@ public class CompraServicioImpl implements CompraServicio {
         OrdenCompra order = purchaseOrderRepository.findById(dto.idOrdenCompra())
                 .orElseThrow(() -> new RuntimeException("PO not found"));
 
-        if ("Recibido".equals(order.getEstado())) {
+        if (EstadoCompra.RECIBIDO.name().equals(order.getEstado())) {
             throw new RuntimeException("La orden ya se encuentra recibida completamente.");
         }
 
@@ -111,17 +112,18 @@ public class CompraServicioImpl implements CompraServicio {
             }
         }
 
-        order.setEstado(EstadoTransferencia.RECIBIDA.name());
+        order.setEstado(EstadoCompra.RECIBIDO.name());
         purchaseOrderRepository.save(order);
         auditService.registrarAccion("1", "RECEIVE", "OrdenCompra", order.getId(), "Received PO details and updated stock atomically.");
     }
 
     @Override
-    public Page<CompraHistoricoRespuestaDTO> obtenerHistoricoCompras(Long idProveedor, Long idProducto,Long idSucursal, LocalDateTime fechaDesde, LocalDateTime fechaHasta, Integer pagina, Integer porPagina) {
+    @Transactional(readOnly = true)
+    public Page<CompraHistoricoRespuestaDTO> obtenerHistoricoCompras(Long idProveedor, Long idProducto, String estado, Long idSucursal, LocalDateTime fechaDesde, LocalDateTime fechaHasta, Integer pagina, Integer porPagina) {
         int pageNumber = (pagina != null) ? pagina : 0;
         int pageSize = (porPagina != null && porPagina > 0) ? porPagina : 10;
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        return purchaseDetailRepository.obtenerHistoricoCompras(idProveedor, idProducto,idSucursal, fechaDesde, fechaHasta, pageable);
+        return purchaseDetailRepository.obtenerHistoricoCompras(idProveedor, idProducto, estado, idSucursal, fechaDesde, fechaHasta, pageable);
     }
 
     private CompraInformacionDTO toInfo(OrdenCompra purchaseOrder) {

@@ -9,6 +9,7 @@ export interface CompraHistoricoRespuestaDTO {
   cantidadRecibida: number;
   precioUnitario: number;
   fechaCompra: Date;
+  estado: string;
 }
 
 
