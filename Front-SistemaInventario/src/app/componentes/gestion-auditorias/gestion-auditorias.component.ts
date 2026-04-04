@@ -22,7 +22,7 @@ export class GestionAuditoriasComponent implements OnInit {
   paginaActual = 0;
   totalPaginas = 0;
   totalElementos = 0;
-  tamanoPagina = 10;
+  porPagina = 10;
 
   // Filtros
   filtroUsuarioId = '';
@@ -50,15 +50,16 @@ export class GestionAuditoriasComponent implements OnInit {
     });
   }
 
-  cargarLogs(): void {
+  cargarLogs(pagina: number = 0): void {
+    this.paginaActual = pagina;
     if (this.filtroUsuarioId || this.filtroUsuarioSeleccionado) {
       const idABuscar = this.filtroUsuarioId || this.filtroUsuarioSeleccionado;
-      this.auditoriaSvc.getAuditLogsByUser(idABuscar, this.paginaActual + 1, this.tamanoPagina).subscribe({
+      this.auditoriaSvc.getAuditLogsByUser(idABuscar, this.paginaActual + 1, this.porPagina).subscribe({
         next: (data: MensajeDTO) => this.procesarRespuesta(data),
         error: (e) => console.error(e)
       });
     } else {
-      this.auditoriaSvc.getAuditLogs(this.paginaActual + 1, this.tamanoPagina).subscribe({
+      this.auditoriaSvc.getAuditLogs(this.paginaActual + 1, this.porPagina).subscribe({
         next: (data: MensajeDTO) => this.procesarRespuesta(data),
         error: (e) => console.error(e)
       });
@@ -71,7 +72,6 @@ export class GestionAuditoriasComponent implements OnInit {
         this.logs = data.respuesta.content;
         this.totalPaginas = data.respuesta.totalPages;
         this.totalElementos = data.respuesta.totalElements;
-        this.paginaActual = data.respuesta.number;
       } else {
         this.logs = data.respuesta;
         this.totalPaginas = 1;
@@ -81,27 +81,23 @@ export class GestionAuditoriasComponent implements OnInit {
     }
   }
 
-  onCambioPagina(p: number): void {
-    this.paginaActual = p;
-    this.cargarLogs();
+  cambiarPagina(nuevaPagina: number): void {
+    this.cargarLogs(nuevaPagina);
   }
 
   onCambioTamano(t: number): void {
-    this.tamanoPagina = t;
-    this.paginaActual = 0;
-    this.cargarLogs();
+    this.porPagina = t;
+    this.cargarLogs(0);
   }
 
   aplicarFiltros(): void {
-    this.paginaActual = 0;
-    this.cargarLogs();
+    this.cargarLogs(0);
   }
 
   limpiarFiltros(): void {
     this.filtroUsuarioId = '';
     this.filtroUsuarioSeleccionado = '';
-    this.paginaActual = 0;
-    this.cargarLogs();
+    this.cargarLogs(0);
   }
 
   getIconForActivity(accion: string): string {

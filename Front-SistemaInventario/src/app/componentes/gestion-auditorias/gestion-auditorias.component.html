@@ -111,14 +111,11 @@
       </table>
     </div>
 
-    <!-- Paginador integrado -->
-    <app-paginador *ngIf="totalElementos > 0"
-      [totalElementos]="totalElementos"
-      [totalPaginas]="totalPaginas"
-      [paginaActual]="paginaActual"
-      [tamanoPagina]="tamanoPagina"
-      (cambioPagina)="onCambioPagina($event)"
-      (cambioTamano)="onCambioTamano($event)">
-    </app-paginador>
+    <!-- Paginación Común -->
+    <div class="px-6 py-4 border-t border-gray-200">
+      <app-paginador [paginaActual]="paginaActual" [totalPaginas]="totalPaginas" [totalElementos]="totalElementos"
+        [tamanoPagina]="porPagina" (cambioPagina)="cambiarPagina($event)">
+      </app-paginador>
+    </div>
   </div>
 </div>
