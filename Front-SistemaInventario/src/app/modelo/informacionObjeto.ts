@@ -229,8 +229,11 @@ export interface InformacionMovimientoDTO {
   cantidad: number;
   fechaMovimiento: string; // ISO date (ej: "2026-04-04T17:30:00")
   usuarioId?: number;
+  nombreUsuario: string;
   sucursalId: number;
+  nombreSucursal: string;
   productoId: number;
+  nombreProducto: string;
   referenciaId?: number;
   motivo?: string;
 }

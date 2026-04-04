@@ -1,5 +1,6 @@
 <div class="container mt-5">
   <div class="card bg-white rounded-xl shadow-md overflow-hidden">
+    <!-- Header -->
     <div class="card-header bg-gradient-to-tr from-blue-600 to-blue-400 p-6">
       <h5 class="text-white text-xl font-semibold flex items-center gap-3">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6"><path fill-rule="evenodd" d="M15.91 3.912a.75.75 0 01.907.365l2.25 4.5a.75.75 0 01-.136.872l-4.5 4.5a.75.75 0 11-1.06-1.06l3.22-3.22H8.25a.75.75 0 010-1.5h8.384l-3.22-3.22a.75.75 0 01-.136-.872l2.25-4.5a.75.75 0 01.382-.365z" clip-rule="evenodd" /></svg>
@@ -8,22 +9,38 @@
     </div>
 
     <div class="card-body p-6">
-      <div class="flex justify-between items-center mb-6">
-        <div class="flex gap-2">
-          <button class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path fill-rule="evenodd" d="M12 3.75a.75.75 0 01.75.75v6.75h6.75a.75.75 0 010 1.5h-6.75v6.75a.75.75 0 01-1.5 0v-6.75H4.5a.75.75 0 010-1.5h6.75V4.5a.75.75 0 01.75-.75z" clip-rule="evenodd" /></svg>
-            Registrar Entrada
-          </button>
-          <button class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path fill-rule="evenodd" d="M3.75 12a.75.75 0 01.75-.75h15a.75.75 0 010 1.5h-15a.75.75 0 01-.75-.75z" clip-rule="evenodd" /></svg>
-            Registrar Salida
-          </button>
+      <!-- Filtros -->
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6 items-end">
+        <div>
+          <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Producto</label>
+          <select [(ngModel)]="productoId" (change)="buscar()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option [ngValue]="undefined">Todos los productos</option>
+            <option *ngFor="let p of productos" [ngValue]="p.id">{{ p.nombre }} ({{ p.sku }})</option>
+          </select>
         </div>
-        <div class="relative">
-          <input type="text" placeholder="Buscar movimientos..." class="border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-64">
+        <div>
+          <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Sucursal</label>
+          <select [(ngModel)]="sucursalId" (change)="buscar()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option [ngValue]="undefined">Todas las sucursales</option>
+            <option *ngFor="let s of sucursales" [ngValue]="s.id">{{ s.nombre }}</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Fecha Inicio</label>
+          <input type="date" [(ngModel)]="fechaInicio" class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Fecha Fin</label>
+          <input type="date" [(ngModel)]="fechaFin" class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        <div class="flex gap-2">
+          <button (click)="buscar()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex-1">
+            Buscar
+          </button>
         </div>
       </div>
 
+      <!-- Tabla -->
       <div class="overflow-x-auto rounded-lg border border-gray-200">
         <table class="min-w-full divide-y divide-gray-200">
           <thead class="bg-gray-50">
@@ -31,25 +48,67 @@
               <th class="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Fecha</th>
               <th class="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Producto</th>
               <th class="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Tipo</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Cantidad</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Cant.</th>
               <th class="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Responsable</th>
               <th class="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Sucursal</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Motivo</th>
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
-            <tr class="hover:bg-gray-50 transition-colors">
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-black">2024-04-01 10:30</td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-black">Martillo Pro S</td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Entrada</span>
+            <tr *ngFor="let m of movimientos" class="hover:bg-gray-50 transition-colors">
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-black">
+                {{ m.fechaMovimiento | date:'yyyy-MM-dd HH:mm' }}
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-black">50 unidades</td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-black">Juan Pérez</td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-black">Central Norte</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-black">
+                {{ m.nombreProducto }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span [className]="'px-2 inline-flex text-xs leading-5 font-semibold rounded-full ' + getTipoBadgeClass(m.tipo)">
+                  {{ formatTipo(m.tipo) }}
+                </span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-black font-semibold">
+                {{ m.cantidad }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-black">
+                {{ m.nombreUsuario }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-black">
+                {{ m.nombreSucursal }}
+              </td>
+              <td class="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
+                {{ m.motivo || '-' }}
+              </td>
             </tr>
-            <!-- More rows placeholder -->
+            <tr *ngIf="movimientos.length === 0">
+              <td colspan="7" class="px-6 py-10 text-center text-gray-500">
+                No se encontraron movimientos con los filtros seleccionados.
+              </td>
+            </tr>
           </tbody>
         </table>
+      </div>
+
+      <!-- Paginación -->
+      <div *ngIf="totalPaginas > 0" class="mt-6 flex items-center justify-between">
+        <p class="text-sm text-gray-700">
+          Mostrando <span class="font-medium">{{ movimientos.length }}</span> de <span class="font-medium">{{ totalElementos }}</span> movimientos
+        </p>
+        <div class="inline-flex gap-2">
+          <button (click)="cambiarPagina(paginaActual - 1)" 
+                  [disabled]="paginaActual === 0"
+                  class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 transition-colors">
+            Anterior
+          </button>
+          <div class="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded-lg">
+            Página {{ paginaActual + 1 }} de {{ totalPaginas }}
+          </div>
+          <button (click)="cambiarPagina(paginaActual + 1)" 
+                  [disabled]="paginaActual >= totalPaginas - 1"
+                  class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 transition-colors">
+            Siguiente
+          </button>
+        </div>
       </div>
     </div>
   </div>

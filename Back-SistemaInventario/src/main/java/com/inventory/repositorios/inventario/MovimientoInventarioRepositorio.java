@@ -15,13 +15,20 @@ import java.time.LocalDateTime;
 public interface MovimientoInventarioRepositorio extends JpaRepository<MovimientoInventario, Long> {
     @Query("""
         SELECT new com.inventory.modelo.dto.inventario.InformacionMovimientoDTO(
-            m.id, m.tipo, m.cantidad, m.fechaMovimiento, m.usuarioId, 
-            m.sucursalId, m.productoId, m.referenciaId, m.motivo
+            m.id, m.tipo, m.cantidad, m.fechaMovimiento, 
+            m.usuarioId, COALESCE(u.nombre, 'Sistema'),
+            m.sucursalId, s.nombre,
+            m.productoId, p.nombre,
+            m.referenciaId, m.motivo
         )
         FROM MovimientoInventario m
+        LEFT JOIN Producto p ON m.productoId = p.id
+        LEFT JOIN Sucursal s ON m.sucursalId = s.id
+        LEFT JOIN Usuario u ON m.usuarioId = u.id
         WHERE (:productoId IS NULL OR m.productoId = :productoId)
         AND (:sucursalId IS NULL OR m.sucursalId = :sucursalId)
-        AND m.fechaMovimiento BETWEEN :fechaInicio AND :fechaFin
+        AND (cast(:fechaInicio as timestamp) IS NULL OR m.fechaMovimiento >= :fechaInicio)
+        AND (cast(:fechaFin as timestamp) IS NULL OR m.fechaMovimiento <= :fechaFin)
         """)
     Page<InformacionMovimientoDTO> buscarMovimientos(
             @Param("productoId") Long productoId,

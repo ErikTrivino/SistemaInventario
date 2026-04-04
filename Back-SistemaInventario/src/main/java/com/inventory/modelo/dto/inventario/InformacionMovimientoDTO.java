@@ -12,8 +12,11 @@ public record InformacionMovimientoDTO(
         BigDecimal cantidad,
         LocalDateTime fechaMovimiento,
         Long usuarioId,
+        String nombreUsuario,
         Long sucursalId,
+        String nombreSucursal,
         Long productoId,
+        String nombreProducto,
         Long referenciaId,
         String motivo
 

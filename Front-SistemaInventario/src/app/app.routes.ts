@@ -37,7 +37,6 @@ export const routes: Routes = [
       { path: 'gestion-producto', component: GestionProductoComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "MANAGER", "OPERATOR"] } },
       { path: 'editar-producto/:idSucursal/:id', component: EditarProductoComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "MANAGER", "OPERATOR"] } },
       { path: 'crear-producto', component: CrearProductoComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "MANAGER", "OPERATOR"] } },
-      { path: 'gestion-movimientos', component: GestionMovimientosComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "MANAGER", "OPERATOR"] } },
       { path: 'gestion-transferencias', component: GestionTransferenciasComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "MANAGER", "OPERATOR"] } },
       { path: 'gestion-transferencias-solicitadas', component: GestionTransferenciasSolicitadasComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "MANAGER", "OPERATOR"] } },
 
@@ -48,6 +47,7 @@ export const routes: Routes = [
       { path: 'gestion-ordenes-compra', component: GestionOrdenesCompraComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "MANAGER", "OPERATOR"] } },
 
       // Logística
+      { path: 'gestion-movimientos', component: GestionMovimientosComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "MANAGER", "OPERATOR"] } },
       { path: 'gestion-rutas', component: GestionRutasComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "MANAGER", "OPERATOR"] } },
       { path: 'seguimiento-envios', component: SeguimientoEnviosComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "MANAGER", "OPERATOR"] } },
 
