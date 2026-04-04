@@ -499,35 +499,47 @@ public class DataInitializer implements CommandLineRunner {
     private List<Transferencia> seedTransferencias(List<Sucursal> sucs, List<Usuario> usus) {
         if (transferenciaRepository.count() == 0 && sucs.size() >= 2) {
             List<Transferencia> list = new ArrayList<>();
-            EstadoTransferencia[] estados = EstadoTransferencia.values();
-            int count = 0;
+            Random random = new Random();
             
-            for (EstadoTransferencia estado : estados) {
-                // 2 transferencias para cada etapa
+            for (EstadoTransferencia estado : EstadoTransferencia.values()) {
+                // Creamos 2 transferencias por cada estado para tener cobertura completa
                 for (int i = 0; i < 2; i++) {
-                    Sucursal origen = sucs.get(count % sucs.size());
-                    Sucursal destino = sucs.get((count + 1) % sucs.size());
+                    int idxOrigen = random.nextInt(sucs.size());
+                    int idxDestino = (idxOrigen + 1 + random.nextInt(sucs.size() - 1)) % sucs.size();
                     
-                    final Long destId = destino.getId();
+                    Sucursal sucursalOrigen = sucs.get(idxOrigen);
+                    Sucursal sucursalDestino = sucs.get(idxDestino);
+                    
+                    // El solicitante debe pertenecer a la sucursal de destino (la que pide la mercancia)
+                    final Long destId = sucursalDestino.getId();
                     Usuario solicitante = usus.stream()
                             .filter(u -> destId.equals(u.getSucursalAsignadaId()))
                             .findFirst()
                             .orElse(usus.get(0));
 
+                    // Coherencia de fechas: estados finales son más antiguos, los nuevos son "recientes"
+                    int diasAtras;
+                    switch (estado) {
+                        case RECIBIDO, FALTANTES, CANCELADO -> diasAtras = 10 + random.nextInt(10); // 10-20 días
+                        case EN_TRANSITO, APROBADO -> diasAtras = 3 + random.nextInt(5);      // 3-8 días
+                        default -> diasAtras = random.nextInt(3);                           // 0-2 días (SOLICITADO)
+                    }
+
                     list.add(Transferencia.builder()
-                            .sucursalOrigenId(origen.getId())
-                            .sucursalDestinoId(destino.getId())
+                            .sucursalOrigenId(sucursalOrigen.getId())
+                            .sucursalDestinoId(sucursalDestino.getId())
                             .usuarioSolicitaId(solicitante.getId())
-                            .fechaSolicitud(LocalDateTime.now().minusDays(15 - count))
+                            .fechaSolicitud(LocalDateTime.now().minusDays(diasAtras).minusHours(random.nextInt(24)))
                             .estado(estado.name())
                             .build());
-                    count++;
                 }
             }
+            log.info("  - Sembrando {} transferencias con estados coherentes.", list.size());
             return transferenciaRepository.saveAll(list);
         }
         return transferenciaRepository.findAll();
     }
+
 
     private void seedDetalleTransferencias(List<Transferencia> transfs, List<Producto> prods) {
         if (detalleTransferenciaRepository.count() == 0 && !transfs.isEmpty() && !prods.isEmpty()) {

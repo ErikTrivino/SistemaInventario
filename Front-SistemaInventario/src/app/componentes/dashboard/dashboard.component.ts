@@ -4,6 +4,7 @@ import { TableroService } from '../../servicios/tablero.service';
 import { AuditoriaService } from '../../servicios/auditoria.service';
 import { ReporteService } from '../../servicios/reporte.service';
 import { MensajeDTO } from '../../modelo/mensaje-dto';
+import { AlertaStockDTO } from '../../modelo/informacionObjeto';
 import {
   ChartComponent,
   ApexAxisChartSeries,
@@ -46,7 +47,7 @@ export type ChartOptions = {
 })
 export class DashboardComponent implements OnInit {
   @ViewChild('chart') chart!: ChartComponent;
-  
+
   resumen: any = {
     totalProductos: 0,
     bajoStock: 0,
@@ -55,7 +56,7 @@ export class DashboardComponent implements OnInit {
   };
 
   actividades: any[] = [];
-  alertasStock: any[] = [];
+  alertasStock: AlertaStockDTO[] = [];
 
   // Configuración de gráficos
   chartVentas: Partial<ChartOptions> = {};
@@ -105,7 +106,13 @@ export class DashboardComponent implements OnInit {
     this.tableroService.getAlertasStock(0, 5).subscribe({
       next: (data: MensajeDTO) => {
         if (!data.error && data.respuesta) {
-          this.alertasStock = data.respuesta.content || data.respuesta;
+          // Si la respuesta es una página (con content) o un array directamente
+          const content = (data.respuesta.content || data.respuesta) as AlertaStockDTO[];
+          this.alertasStock = content;
+
+          // Actualizamos el resumen con el conteo total de alertas
+          this.resumen.bajoStock = data.respuesta.totalElements || content.length || 0;
+
         }
       }
     });

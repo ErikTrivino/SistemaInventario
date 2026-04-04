@@ -4,7 +4,9 @@ import { TokenService } from '../../servicios/token.service';
 import { UsuarioService } from '../../servicios/usuario.service';
 import { TransferenciaService } from '../../servicios/transferencia.service';
 import { CompraService } from '../../servicios/compra.service';
+import { TableroService } from '../../servicios/tablero.service';
 import { MensajeDTO } from '../../modelo/mensaje-dto';
+import { AlertaStockDTO } from '../../modelo/informacionObjeto';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -19,13 +21,16 @@ export class HeaderComponent implements OnInit {
   notificacionesCount = 0;
   transferenciasCount = 0;
   comprasCount = 0;
+  stockAlertasCount = 0;
+  productosBajoStock: AlertaStockDTO[] = [];
   sucursalId = 0;
 
   constructor(
     private tokenSvc: TokenService,
     private usuarioSvc: UsuarioService,
     private transferenciaSvc: TransferenciaService,
-    private compraSvc: CompraService
+    private compraSvc: CompraService,
+    private tableroSvc: TableroService
   ) { }
 
   ngOnInit(): void {
@@ -47,6 +52,7 @@ export class HeaderComponent implements OnInit {
   verificarPendientes(): void {
     this.transferenciasCount = 0;
     this.comprasCount = 0;
+    this.stockAlertasCount = 0;
 
     // 1. Transferencias EN_TRANSITO (entrantes)
     this.transferenciaSvc.getEntrantes(this.sucursalId, 'EN_TRANSITO').subscribe({
@@ -74,10 +80,20 @@ export class HeaderComponent implements OnInit {
         this.actualizarTotal();
       }
     });
+
+    // 4. Bajo Stock Alerts
+    this.tableroSvc.getAlertasStock(0, 5).subscribe({
+      next: (res: MensajeDTO) => {
+        const data = res.respuesta;
+        this.stockAlertasCount = (data?.totalElements || data?.length || 0);
+        this.productosBajoStock = data?.content || data || [];
+        this.actualizarTotal();
+      }
+    });
   }
 
   actualizarTotal(): void {
-    this.notificacionesCount = this.transferenciasCount + this.comprasCount;
+    this.notificacionesCount = this.transferenciasCount + this.comprasCount + this.stockAlertasCount;
   }
 
   revisar(): void {
@@ -89,6 +105,13 @@ export class HeaderComponent implements OnInit {
       if (this.comprasCount > 0) {
         mensaje += `<b>Compras:</b> ${this.comprasCount}<br>`;
       }
+      if (this.stockAlertasCount > 0) {
+        mensaje += `<b>Bajo Stock:</b> ${this.stockAlertasCount}<br>`;
+        const lista = this.productosBajoStock.slice(0, 5).map(p => 
+          `- <b>${p.nombreProducto}</b> (Stock: ${p.stockActual} / Min: ${p.stockMinimo}) - Faltan: ${p.diferencia}`
+        ).join('<br>');
+        mensaje += `<small class="text-gray-500">${lista}${this.stockAlertasCount > 5 ? '<br>...y otros' : ''}</small><br>`;
+      }
 
       Swal.fire({
         title: 'Tareas Pendientes',
@@ -99,6 +122,8 @@ export class HeaderComponent implements OnInit {
         this.notificacionesCount = 0;
         this.transferenciasCount = 0;
         this.comprasCount = 0;
+        this.stockAlertasCount = 0;
+        this.productosBajoStock = [];
       });
     } else {
       Swal.fire({

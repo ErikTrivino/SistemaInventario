@@ -5,16 +5,15 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public record ProductoCrearDTO(
                 @NotBlank @Size(max = 150) String nombre,
                 String descripcion,
                 @Size(max = 50) String sku,
                 @NotBlank @Size(max = 20) String unidadMedidaBase,
-                @DecimalMin("0.00") BigDecimal precioCostoPromedio,
-                @DecimalMin("0.00") BigDecimal cantidadInicial,
-                @DecimalMin("0.00") BigDecimal cantidadMinima,
+
                 boolean activo,
                 Long idProveedor,
-                Long idSucursal) {
+                List<DetalleProdcutoCrearDTO> detalleProdcutoCrearDTO) {
 }

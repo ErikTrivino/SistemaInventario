@@ -416,11 +416,13 @@ export class GestionTransferenciasComponent implements OnInit {
       }
     });
 
+
     if (cantidad) {
       const dto: TransferenciaRecepcionDTO = {
         idTransferencia: t.idTransferencia,
         cantidadRecibida: Number(cantidad)
       };
+
 
       this.svc.recibir(dto).subscribe({
         next: () => {

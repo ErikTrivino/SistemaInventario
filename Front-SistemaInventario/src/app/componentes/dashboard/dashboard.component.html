@@ -9,7 +9,8 @@
       <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold">
         Sincronizado: {{ resumen.ultimaSincronizacion | date:'shortTime' }}
       </span>
-      <button (click)="cargarDatos()" class="p-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-50 transition-colors">
+      <button (click)="cargarDatos()"
+        class="p-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-50 transition-colors">
         <i class="fas fa-sync-alt text-gray-600"></i>
       </button>
     </div>
@@ -18,13 +19,15 @@
   <!-- Fila 1: KPIs Principales -->
   <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-4 mb-8">
     <!-- Ventas del Día -->
-    <div class="relative flex flex-col bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-md transition-shadow">
+    <div
+      class="relative flex flex-col bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-md transition-shadow">
       <div class="p-6 flex items-center justify-between">
         <div>
           <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Ventas Hoy</p>
           <h4 class="text-2xl font-bold text-gray-800">${{ resumen.ventasHoy | number:'1.2-2' }}</h4>
         </div>
-        <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+        <div
+          class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
           <i class="fas fa-shopping-cart text-orange-600 text-xl"></i>
         </div>
       </div>
@@ -34,17 +37,21 @@
           <span>12% respecto ayer</span>
         </div>
       </div>
-      <div class="absolute bottom-0 left-0 h-1 bg-orange-500 w-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+      <div
+        class="absolute bottom-0 left-0 h-1 bg-orange-500 w-full opacity-0 group-hover:opacity-100 transition-opacity">
+      </div>
     </div>
 
     <!-- Productos en Inventario -->
-    <div class="relative flex flex-col bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-md transition-shadow">
+    <div
+      class="relative flex flex-col bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-md transition-shadow">
       <div class="p-6 flex items-center justify-between">
         <div>
           <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Total Productos</p>
           <h4 class="text-2xl font-bold text-gray-800">{{ resumen.totalProductos }}</h4>
         </div>
-        <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+        <div
+          class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
           <i class="fas fa-box text-blue-600 text-xl"></i>
         </div>
       </div>
@@ -53,17 +60,20 @@
           <span>{{ resumen.totalProductosActivos || '0' }} activos</span>
         </div>
       </div>
-      <div class="absolute bottom-0 left-0 h-1 bg-blue-500 w-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+      <div class="absolute bottom-0 left-0 h-1 bg-blue-500 w-full opacity-0 group-hover:opacity-100 transition-opacity">
+      </div>
     </div>
 
     <!-- Bajo Stock -->
-    <div class="relative flex flex-col bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-md transition-shadow">
+    <div
+      class="relative flex flex-col bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-md transition-shadow">
       <div class="p-6 flex items-center justify-between">
         <div>
           <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Bajo Stock</p>
-          <h4 class="text-2xl font-bold text-gray-800">{{ resumen.bajoStock }}</h4>
+          <h4 class="text-2xl font-bold text-gray-800">{{ alertasStock.length }}</h4>
         </div>
-        <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+        <div
+          class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
           <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
         </div>
       </div>
@@ -72,17 +82,20 @@
           <span>Atención inmediata</span>
         </div>
       </div>
-      <div class="absolute bottom-0 left-0 h-1 bg-red-500 w-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+      <div class="absolute bottom-0 left-0 h-1 bg-red-500 w-full opacity-0 group-hover:opacity-100 transition-opacity">
+      </div>
     </div>
 
     <!-- Transferencias Pendientes -->
-    <div class="relative flex flex-col bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-md transition-shadow">
+    <div
+      class="relative flex flex-col bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-md transition-shadow">
       <div class="p-6 flex items-center justify-between">
         <div>
           <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Transf. Pendientes</p>
           <h4 class="text-2xl font-bold text-gray-800">{{ resumen.transferenciasPendientes }}</h4>
         </div>
-        <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+        <div
+          class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
           <i class="fas fa-exchange-alt text-green-600 text-xl"></i>
         </div>
       </div>
@@ -91,7 +104,9 @@
           <span>Entre sucursales</span>
         </div>
       </div>
-      <div class="absolute bottom-0 left-0 h-1 bg-green-500 w-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+      <div
+        class="absolute bottom-0 left-0 h-1 bg-green-500 w-full opacity-0 group-hover:opacity-100 transition-opacity">
+      </div>
     </div>
   </div>
 
@@ -104,17 +119,9 @@
         <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">Actualizado</span>
       </div>
       <div class="w-full">
-        <apx-chart
-          [series]="chartVentas.series!"
-          [chart]="chartVentas.chart!"
-          [xaxis]="chartVentas.xaxis!"
-          [stroke]="chartVentas.stroke!"
-          [dataLabels]="chartVentas.dataLabels!"
-          [colors]="chartVentas.colors!"
-          [fill]="chartVentas.fill!"
-          [tooltip]="chartVentas.tooltip!"
-          [yaxis]="chartVentas.yaxis!"
-        ></apx-chart>
+        <apx-chart [series]="chartVentas.series!" [chart]="chartVentas.chart!" [xaxis]="chartVentas.xaxis!"
+          [stroke]="chartVentas.stroke!" [dataLabels]="chartVentas.dataLabels!" [colors]="chartVentas.colors!"
+          [fill]="chartVentas.fill!" [tooltip]="chartVentas.tooltip!" [yaxis]="chartVentas.yaxis!"></apx-chart>
       </div>
     </div>
 
@@ -125,52 +132,77 @@
         <i class="fas fa-trophy text-yellow-500"></i>
       </div>
       <div class="w-full">
-        <apx-chart
-          [series]="chartProductos.series!"
-          [chart]="chartProductos.chart!"
-          [plotOptions]="chartProductos.plotOptions!"
-          [xaxis]="chartProductos.xaxis!"
-          [dataLabels]="chartProductos.dataLabels!"
-          [colors]="chartProductos.colors!"
-        ></apx-chart>
+        <apx-chart [series]="chartProductos.series!" [chart]="chartProductos.chart!"
+          [plotOptions]="chartProductos.plotOptions!" [xaxis]="chartProductos.xaxis!"
+          [dataLabels]="chartProductos.dataLabels!" [colors]="chartProductos.colors!"></apx-chart>
       </div>
     </div>
   </div>
 
   <!-- Fila 3: Movimientos y Actividad -->
-  <div class="grid gap-6 grid-cols-1 xl:grid-cols-3">
+  <div class="grid gap-6 grid-cols-1 xl:grid-cols-3 mb-8">
     <!-- Estado de Movimientos (Donut) -->
     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
       <h3 class="text-lg font-bold text-gray-800 mb-6">Estado de Transferencias</h3>
       <div class="flex justify-center">
-        <apx-chart
-          [series]="chartMovimientos.series!"
-          [chart]="chartMovimientos.chart!"
-          [labels]="chartMovimientos.labels!"
-          [colors]="chartMovimientos.colors!"
-          [legend]="chartMovimientos.legend!"
-        ></apx-chart>
+        <apx-chart [series]="chartMovimientos.series!" [chart]="chartMovimientos.chart!"
+          [labels]="chartMovimientos.labels!" [colors]="chartMovimientos.colors!"
+          [legend]="chartMovimientos.legend!"></apx-chart>
+      </div>
+    </div>
+
+    <!-- Alertas de Stock Crítico -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-lg font-bold text-gray-800">Alertas de Stock</h3>
+        <span *ngIf="alertasStock.length > 0"
+          class="bg-red-100 text-red-600 text-[10px] px-2 py-0.5 rounded-full font-bold">
+          {{ alertasStock.length }} productos
+        </span>
+      </div>
+
+      <div class="space-y-4">
+        <div *ngFor="let alerta of alertasStock"
+          class="flex items-center justify-between p-3 bg-red-50 rounded-xl border border-red-100">
+          <div class="flex flex-col">
+            <span class="text-sm font-bold text-gray-800">{{ alerta.nombreProducto }}</span>
+            <span class="text-[10px] text-gray-500 uppercase tracking-wider">Sucursal #{{ alerta.idSucursal }}</span>
+          </div>
+          <div class="text-right">
+            <span class="block text-xs font-bold text-red-600">{{ alerta.stockActual }} / {{ alerta.stockMinimo
+              }}</span>
+            <span class="text-[10px] text-red-400">Stock Actual</span>
+          </div>
+        </div>
+
+        <div *ngIf="alertasStock.length === 0" class="flex flex-col items-center justify-center py-10 opacity-40">
+          <i class="fas fa-check-circle text-4xl mb-2 text-green-500"></i>
+          <p class="text-sm text-center">Todo el inventario está en niveles óptimos</p>
+        </div>
       </div>
     </div>
 
     <!-- Actividad Reciente (Feed) -->
-    <div class="xl:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
       <div class="flex items-center justify-between mb-6">
         <h3 class="text-lg font-bold text-gray-800">Actividad Reciente</h3>
-        <a href="/auditoria" class="text-xs font-semibold text-blue-600 hover:underline">Ver todo el log</a>
+        <a href="/auditoria" class="text-xs font-semibold text-blue-600 hover:underline">Ver todo</a>
       </div>
-      
+
       <div class="overflow-y-auto max-h-[350px] pr-2 custom-scrollbar">
-        <div *ngFor="let act of actividades" class="flex items-start gap-4 mb-5 pb-5 border-b border-gray-50 last:border-0 last:mb-0 last:pb-0">
+        <div *ngFor="let act of actividades"
+          class="flex items-start gap-4 mb-5 pb-5 border-b border-gray-50 last:border-0 last:mb-0 last:pb-0">
           <div class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center shrink-0">
             <i class="fas" [ngClass]="getIconForActivity(act.tipo)"></i>
           </div>
           <div class="flex-1">
             <div class="flex items-center justify-between">
               <p class="text-sm font-semibold text-gray-800">{{ act.descripcion }}</p>
-              <span class="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">{{ act.fecha | date:'shortTime' }}</span>
+              <span class="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">{{ act.fecha |
+                date:'shortTime' }}</span>
             </div>
-            <p class="text-xs text-gray-500 mt-0.5">Realizado por: <span class="text-gray-700 italic">{{ act.usuarioNombre }}</span></p>
+            <p class="text-xs text-gray-500 mt-0.5">Por: <span class="text-gray-700 italic text-[10px]">{{
+                act.usuarioNombre }}</span></p>
           </div>
         </div>
 

@@ -213,3 +213,12 @@ export interface ItemRotacionDTO {
   porcentajeParticipacion: number;
   clasificacion: 'A' | 'B' | 'C';
 }
+
+export interface AlertaStockDTO {
+  idProducto: number;
+  nombreProducto: string;
+  idSucursal: number;
+  stockActual: number | null;
+  stockMinimo: number | null;
+  diferencia: number | null;
+}
