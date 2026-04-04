@@ -423,6 +423,12 @@ export class GestionTransferenciasSolicitadasComponent implements OnInit {
              ${stockActual < cantidadAEnviarOriginal ? `<div style="color: #dc2626; font-size: 12px; margin-top: 8px; font-weight: 600;">⚠️ Tienes menos stock del que vas a enviar.</div>` : ''}
              </div>
           </div>
+
+          <div style="margin-top: 15px; display: flex; flex-direction: column; gap: 6px;">
+            <label style="font-weight: 600; font-size: 13px;">Tiempo Estimado Entrega (días)</label>
+            <input id="swal-tiempo-estimado" class="swal2-input" type="number" placeholder="Ej: 3" style="margin: 0; width: 100%; height: 38px;">
+          </div>
+
           <p style="margin-top: 15px; font-size: 13px; color: #6b7280; text-align: center;">Esta acción descontará el stock de tu inventario inmediatamente.</p>
         </div>
       `,
@@ -454,12 +460,21 @@ export class GestionTransferenciasSolicitadasComponent implements OnInit {
       },
       preConfirm: () => {
         const cant = (document.getElementById('swal-cant-enviar') as HTMLInputElement).value;
+        const tiempo = (document.getElementById('swal-tiempo-estimado') as HTMLInputElement).value;
+
         if (!cant || Number(cant) <= 0) {
           Swal.showValidationMessage('Ingresa una cantidad válida');
           return false;
         }
+
+        if (!tiempo || Number(tiempo) <= 0) {
+          Swal.showValidationMessage('Ingresa un tiempo estimado válido');
+          return false;
+        }
+
         return {
-          cantidadAEnviarFinal: Number(cant)
+          cantidadAEnviarFinal: Number(cant),
+          tiempoEstimadoEntrega: Number(tiempo)
         };
       }
     });
@@ -484,7 +499,8 @@ export class GestionTransferenciasSolicitadasComponent implements OnInit {
       } else {
         // Enviar normal sin cambios
         const dto: TransferenciaConfirmarEnvioDTO = {
-          idTransferencia: t.idTransferencia
+          idTransferencia: t.idTransferencia,
+          tiempoEstimadoEntrega: formValues.tiempoEstimadoEntrega
         };
         this.svc.enviar(dto).subscribe({
           next: () => {

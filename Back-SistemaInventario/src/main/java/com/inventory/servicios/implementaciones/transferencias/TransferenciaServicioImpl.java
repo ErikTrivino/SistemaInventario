@@ -77,6 +77,7 @@ public class TransferenciaServicioImpl implements TransferenciaServicio {
             detalle.setCantidadConfirmada(detalle.getCantidadSolicitada());
         });
 
+
         transfer.setEstado(EstadoTransferencia.APROBADO.name());
         auditService.registrarAccion("1", "PREPARE_TRANSFER", "Transferencia", transfer.getId(),
                 "Productos preparados para despacho");
@@ -106,6 +107,7 @@ public class TransferenciaServicioImpl implements TransferenciaServicio {
                 .transferencia(transfer)
                 .fechaDespacho(LocalDateTime.now())
                 .estado(com.inventory.modelo.enums.EstadoLogistico.EN_TRANSITO)
+                .tiempoEstimadoEntrega(dto.tiempoEstimadoEntrega())
                 .build();
 
         transfer.setEnvio(envio);

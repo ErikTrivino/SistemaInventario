@@ -372,31 +372,48 @@ export class GestionTransferenciasComponent implements OnInit {
     }
   }
 
-  enviarTransferencia(t: InformacionTransferencia) {
-    Swal.fire({
+  async enviarTransferencia(t: InformacionTransferencia) {
+    const { value: tiempo } = await Swal.fire({
       title: '¿Confirmar Envío?',
-      text: "Esto descontará el stock de la sucursal origen.",
+      html: `
+        <div style="text-align: left; display: flex; flex-direction: column; gap: 8px;">
+          <p>Esto descontará el stock de la sucursal origen.</p>
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <label style="font-weight: 600; font-size: 13px;">Tiempo Estimado Entrega (días)</label>
+            <input id="swal-tiempo-estimado" class="swal2-input" type="number" placeholder="Ej: 3" style="margin: 0; width: 100%;">
+          </div>
+        </div>
+      `,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Sí, enviar',
-      cancelButtonText: 'Cancelar'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        const dto: TransferenciaConfirmarEnvioDTO = {
-          idTransferencia: t.idTransferencia
-        };
-        this.svc.enviar(dto).subscribe({
-          next: () => {
-            Swal.fire('Enviado', 'La transferencia está en camino', 'success');
-            this.cargar();
-          },
-          error: (err) => {
-            console.error(err);
-            Swal.fire('Error', 'No se pudo enviar', 'error');
-          }
-        });
+      cancelButtonText: 'Cancelar',
+      preConfirm: () => {
+        const tVal = (document.getElementById('swal-tiempo-estimado') as HTMLInputElement).value;
+        if (!tVal || Number(tVal) <= 0) {
+          Swal.showValidationMessage('Ingresa un tiempo estimado válido');
+          return false;
+        }
+        return Number(tVal);
       }
     });
+
+    if (tiempo) {
+      const dto: TransferenciaConfirmarEnvioDTO = {
+        idTransferencia: t.idTransferencia,
+        tiempoEstimadoEntrega: tiempo
+      };
+      this.svc.enviar(dto).subscribe({
+        next: () => {
+          Swal.fire('Enviado', 'La transferencia está en camino', 'success');
+          this.cargar();
+        },
+        error: (err) => {
+          console.error(err);
+          Swal.fire('Error', 'No se pudo enviar', 'error');
+        }
+      });
+    }
   }
 
   async recibirTransferencia(t: InformacionTransferencia) {

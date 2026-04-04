@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { MensajeDTO } from '../modelo/mensaje-dto';
 import { environment } from '../../environments/environment';
+import { EnvioSeguimientoDTO } from '../modelo/logistica/envio-seguimiento-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +29,7 @@ export class LogisticaService {
     return this.http.put<MensajeDTO>(`${this.apiUrl}/${id}/estado`, null, { params });
   }
 
-  getMetrics(): Observable<MensajeDTO> {
-    return this.http.get<MensajeDTO>(`${this.apiUrl}/metricas`);
+  getMetrics(): Observable<MensajeDTO<EnvioSeguimientoDTO[]>> {
+    return this.http.get<MensajeDTO<EnvioSeguimientoDTO[]>>(`${this.apiUrl}/metrics`);
   }
 }

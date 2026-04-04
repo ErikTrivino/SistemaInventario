@@ -7,6 +7,7 @@
     @Repository
     public interface EnvioRepositorio extends JpaRepository<Envio, Long> {
         List<Envio> findByTransferenciaId(Long transferenciaId);
+        List<Envio> findByFechaRecepcionRealIsNotNull();
     }
 
 

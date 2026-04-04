@@ -84,6 +84,7 @@ export interface TransferenciaPrepararDTO {
 
 export interface TransferenciaConfirmarEnvioDTO {
   idTransferencia: number;
+  tiempoEstimadoEntrega: number;
 }
 
 export interface TransferenciaConfirmarEnvioConCambiosDTO {
