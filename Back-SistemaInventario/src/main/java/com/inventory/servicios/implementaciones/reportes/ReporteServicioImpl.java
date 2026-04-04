@@ -1,7 +1,9 @@
 package com.inventory.servicios.implementaciones.reportes;
 
 import com.inventory.servicios.interfaces.reportes.ReporteServicio;
+import com.inventory.servicios.interfaces.logistica.LogisticaServicio;
 import com.inventory.modelo.dto.reportes.*;
+import com.inventory.modelo.dto.logistica.EnvioSeguimientoDTO;
 import com.inventory.repositorios.ventas.VentaRepositorio;
 import com.inventory.repositorios.ventas.DetalleVentaRepositorio;
 import com.inventory.repositorios.inventario.InventarioRepositorio;
@@ -41,6 +43,7 @@ public class ReporteServicioImpl implements ReporteServicio {
     private final DetalleVentaRepositorio detalleVentaRepositorio;
     private final InventarioRepositorio inventarioRepositorio;
     private final TransferenciaRepositorio transferenciaRepositorio;
+    private final LogisticaServicio logisticaServicio;
 
     /** RF-29/RF-30: Reporte de ventas por período con desglose por sucursal. */
     @Override
@@ -325,6 +328,35 @@ public class ReporteServicioImpl implements ReporteServicio {
                 table.addCell(new Phrase(String.valueOf(item.totalSalidas()), normalFont));
                 table.addCell(new Phrase("$" + item.valorTotalSalidas().toString(), normalFont));
                 table.addCell(new Phrase(item.clasificacion(), normalFont));
+            }
+            document.add(table);
+        });
+    }
+
+    @Override
+    public String obtenerBase64ReporteLogistica() {
+        List<EnvioSeguimientoDTO> metrics = logisticaServicio.compareDeliveryTimes();
+        return generarPdfBase64("REPORTE DE DESEMPEÑO LOGISTICO", document -> {
+            Font normalFont = FontFactory.getFont(FontFactory.HELVETICA, 10);
+            Font headerFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10);
+            Font redFont = FontFactory.getFont(FontFactory.HELVETICA, 10, Font.NORMAL, Color.RED);
+ 
+            document.add(new Paragraph("Fecha de generación: " + new Date(), normalFont));
+            document.add(new Paragraph("Total de envíos analizados: " + metrics.size(), normalFont));
+            document.add(new Paragraph("\n"));
+ 
+            PdfPTable table = new PdfPTable(5);
+            table.setWidthPercentage(100);
+            addTableHeader(table, headerFont, "ID Envío", "ID Transf.", "Estimado (Días)", "Real (Días)", "Desviación");
+ 
+            for (EnvioSeguimientoDTO m : metrics) {
+                table.addCell(new Phrase(String.valueOf(m.idEnvio()), normalFont));
+                table.addCell(new Phrase(String.valueOf(m.idTransferencia()), normalFont));
+                table.addCell(new Phrase(String.valueOf(m.tiempoEstimado()), normalFont));
+                table.addCell(new Phrase(String.valueOf(m.tiempoRealDias()), normalFont));
+                
+                Phrase desvPhrase = new Phrase(String.valueOf(m.desviacionDias()), m.desviacionDias() > 0 ? redFont : normalFont);
+                table.addCell(desvPhrase);
             }
             document.add(table);
         });

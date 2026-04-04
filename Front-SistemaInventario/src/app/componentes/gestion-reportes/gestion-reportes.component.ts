@@ -11,6 +11,8 @@ import {
   ReporteComparativoDTO, 
   ReporteRotacionDTO
 } from '../../modelo/informacionObjeto';
+import { LogisticaService } from '../../servicios/logistica.service';
+import { EnvioSeguimientoDTO } from '../../modelo/logistica/envio-seguimiento-dto';
 import Swal from 'sweetalert2';
 import { PaginadorComponent } from '../comun/paginador/paginador.component';
 
@@ -23,7 +25,7 @@ import { PaginadorComponent } from '../comun/paginador/paginador.component';
 })
 export class GestionReportesComponent implements OnInit {
   // Navigation State
-  tipoReporte: 'VENTAS' | 'INVENTARIO' | 'TRANSFERENCIAS' | 'COMPARATIVO' | 'ROTACION' | null = null;
+  tipoReporte: 'VENTAS' | 'INVENTARIO' | 'TRANSFERENCIAS' | 'COMPARATIVO' | 'ROTACION' | 'LOGISTICA' | null = null;
   cargando = false;
 
   // Filters
@@ -40,6 +42,7 @@ export class GestionReportesComponent implements OnInit {
   reporteTransferencias: ReporteTransferenciasDTO | null = null;
   reporteComparativo: ReporteComparativoDTO | null = null;
   reporteRotacion: ReporteRotacionDTO | null = null;
+  reporteLogistica: EnvioSeguimientoDTO[] | null = null;
 
   // Pagination
   paginaActual = 0;
@@ -57,7 +60,8 @@ export class GestionReportesComponent implements OnInit {
 
   constructor(
     private reporteSvc: ReporteService,
-    private sucursalSvc: SucursalService
+    private sucursalSvc: SucursalService,
+    private logisticaSvc: LogisticaService
   ) {}
 
   ngOnInit() {
@@ -77,7 +81,7 @@ export class GestionReportesComponent implements OnInit {
     });
   }
 
-  seleccionarReporte(tipo: 'VENTAS' | 'INVENTARIO' | 'TRANSFERENCIAS' | 'COMPARATIVO' | 'ROTACION') {
+  seleccionarReporte(tipo: 'VENTAS' | 'INVENTARIO' | 'TRANSFERENCIAS' | 'COMPARATIVO' | 'ROTACION' | 'LOGISTICA') {
     this.tipoReporte = tipo;
     this.limpiarDatos();
   }
@@ -88,6 +92,7 @@ export class GestionReportesComponent implements OnInit {
     this.reporteTransferencias = null;
     this.reporteComparativo = null;
     this.reporteRotacion = null;
+    this.reporteLogistica = null;
     this.paginaActual = 0;
     this.totalElementos = 0;
     this.totalPaginas = 0;
@@ -153,6 +158,17 @@ export class GestionReportesComponent implements OnInit {
           error: (err) => this.manejarError(err)
         });
         break;
+      case 'LOGISTICA':
+        this.logisticaSvc.getMetrics().subscribe({
+          next: (res) => {
+            this.reporteLogistica = res.respuesta;
+            this.totalElementos = this.reporteLogistica?.length || 0;
+            this.totalPaginas = 0;
+            this.cargando = false;
+          },
+          error: (err) => this.manejarError(err)
+        });
+        break;
     }
   }
 
@@ -168,6 +184,15 @@ export class GestionReportesComponent implements OnInit {
 
   getNombreSucursal(id: number) {
     return this.sucursales.find(s => s.id === id)?.nombre || `Sucursal ${id}`;
+  }
+
+  getMetricasLogistica() {
+    if (!this.reporteLogistica) return { aTiempo: 0, retraso: 1, anticipado: 0 };
+    return {
+      aTiempo: this.reporteLogistica.filter(m => m.desviacionDias === 0).length,
+      retraso: this.reporteLogistica.filter(m => m.desviacionDias > 0).length,
+      anticipado: this.reporteLogistica.filter(m => m.desviacionDias < 0).length
+    };
   }
 
   exportarPDF() {
@@ -191,6 +216,9 @@ export class GestionReportesComponent implements OnInit {
         break;
       case 'ROTACION':
         observable = this.reporteSvc.obtenerBase64AnalisisRotacion(this.mes, this.anio);
+        break;
+      case 'LOGISTICA':
+        observable = this.reporteSvc.obtenerBase64ReporteLogistica();
         break;
     }
 

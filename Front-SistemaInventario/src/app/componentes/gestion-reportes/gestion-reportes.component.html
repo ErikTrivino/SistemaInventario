@@ -45,6 +45,11 @@
       <h3>Análisis de Rotación</h3>
       <p>Clasificación ABC de productos movidos.</p>
     </div>
+    <div class="report-card" [class.active]="tipoReporte === 'LOGISTICA'" (click)="seleccionarReporte('LOGISTICA')">
+      <div class="card-icon"><i class="fas fa-shipping-fast"></i></div>
+      <h3>Desempeño Logístico</h3>
+      <p>Análisis de tiempos de entrega y desviaciones.</p>
+    </div>
   </div>
 
   <!-- Filters Section -->
@@ -336,6 +341,75 @@
         <app-paginador [paginaActual]="paginaActual" [totalPaginas]="totalPaginas"
           (cambioPagina)="onCambioPagina($event)">
         </app-paginador>
+      </div>
+    </div>
+
+    <!-- LOGISTICA CONTENT -->
+    <div *ngIf="reporteLogistica" class="report-section fade-in">
+      <div class="report-header-actions mb-4">
+        <h3>Desempeño Logístico</h3>
+        <button class="btn btn-danger btn-sm" (click)="exportarPDF()">
+          <i class="fas fa-file-pdf mr-2"></i> Exportar PDF
+        </button>
+      </div>
+
+      <div class="summary-grid">
+        <div class="summary-card">
+          <label>Total Envíos</label>
+          <span class="value">{{ reporteLogistica.length }}</span>
+        </div>
+        <div class="summary-card success">
+          <label>A Tiempo</label>
+          <span class="value text-success">{{ getMetricasLogistica().aTiempo }}</span>
+        </div>
+        <div class="summary-card warning">
+          <label>Anticipados</label>
+          <span class="value text-warning">{{ getMetricasLogistica().anticipado }}</span>
+        </div>
+        <div class="summary-card danger">
+          <label>Retrasados</label>
+          <span class="value text-danger">{{ getMetricasLogistica().retraso }}</span>
+        </div>
+      </div>
+
+      <div class="table-container glass mt-4">
+        <h3>Análisis de Tiempos y Desviaciones</h3>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>ID Envío</th>
+              <th>ID Transferencia</th>
+              <th>Tiempo Estimado</th>
+              <th>Tiempo Real</th>
+              <th>Desviación</th>
+              <th>Interpretación</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let m of reporteLogistica">
+              <td class="bold">#{{ m.idEnvio }}</td>
+              <td>#{{ m.idTransferencia }}</td>
+              <td>{{ m.tiempoEstimado }} días</td>
+              <td>{{ m.tiempoRealDias }} días</td>
+              <td [ngClass]="{
+                'text-success': m.desviacionDias < 0,
+                'text-gray-600': m.desviacionDias === 0,
+                'text-danger': m.desviacionDias > 0
+              }" class="bold">
+                {{ m.desviacionDias > 0 ? '+' : '' }}{{ m.desviacionDias }} días
+              </td>
+              <td>
+                <span class="badge" [ngClass]="{
+                  'badge-success': m.desviacionDias === 0,
+                  'badge-warning': m.desviacionDias < 0,
+                  'badge-danger': m.desviacionDias > 0
+                }">
+                  {{ m.desviacionDias === 0 ? 'A TIEMPO' : m.desviacionDias < 0 ? 'ANTICIPADO' : 'RETRASADO' }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
 

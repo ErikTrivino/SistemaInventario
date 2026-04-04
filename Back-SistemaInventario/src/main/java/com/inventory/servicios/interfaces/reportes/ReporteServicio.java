@@ -25,6 +25,7 @@ public interface ReporteServicio {
     String obtenerBase64ReporteTransferencias(Date inicio, Date fin);
     String obtenerBase64ComparativoAnual(int anio);
     String obtenerBase64AnalisisRotacion(int mes, int anio);
+    String obtenerBase64ReporteLogistica();
 }
 
 

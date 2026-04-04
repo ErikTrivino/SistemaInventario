@@ -74,4 +74,8 @@ export class ReporteService {
     const params = new HttpParams().set('mes', mes.toString()).set('anio', anio.toString());
     return this.http.get<MensajeDTO<string>>(`${this.apiUrl}/rotacion/pdf`, { params });
   }
+
+  obtenerBase64ReporteLogistica(): Observable<MensajeDTO<string>> {
+    return this.http.get<MensajeDTO<string>>(`${this.apiUrl}/logistica/pdf`);
+  }
 }

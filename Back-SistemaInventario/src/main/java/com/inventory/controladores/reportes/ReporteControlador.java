@@ -109,4 +109,10 @@ public class ReporteControlador {
             @RequestParam int anio) {
         return ResponseEntity.ok(new MensajeDTO<>(false, reporteServicio.obtenerBase64AnalisisRotacion(mes, anio)));
     }
+
+    /** Exportación a PDF (Base64) del desempeño logístico. */
+    @GetMapping("/logistica/pdf")
+    public ResponseEntity<MensajeDTO<String>> reporteLogisticaPdf() {
+        return ResponseEntity.ok(new MensajeDTO<>(false, reporteServicio.obtenerBase64ReporteLogistica()));
+    }
 }

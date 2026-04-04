@@ -108,7 +108,7 @@ export class GestionTransferenciasSolicitadasComponent implements OnInit {
     this.transportistaSvc.listarTransportistas().subscribe({
       next: (data) => {
         this.transportistas = data.respuesta ?? [];
-        console.log(this.transportistas);
+
       },
       error: (err) => {
         console.error('Error cargando transportistas', err);
