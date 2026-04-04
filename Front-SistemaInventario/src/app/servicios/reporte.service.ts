@@ -49,4 +49,29 @@ export class ReporteService {
     if (pagina !== undefined) params = params.set('pagina', pagina.toString());
     return this.http.get<MensajeDTO>(`${this.apiUrl}/rotacion`, { params });
   }
+
+  obtenerBase64ReporteInventario(idSucursal?: number): Observable<MensajeDTO<string>> {
+    let params = new HttpParams();
+    if (idSucursal) params = params.set('idSucursal', idSucursal.toString());
+    return this.http.get<MensajeDTO<string>>(`${this.apiUrl}/inventario/pdf`, { params });
+  }
+
+  obtenerBase64ReporteVentas(inicio: string, fin: string): Observable<MensajeDTO<string>> {
+    const params = new HttpParams().set('inicio', inicio).set('fin', fin);
+    return this.http.get<MensajeDTO<string>>(`${this.apiUrl}/ventas/pdf`, { params });
+  }
+
+  obtenerBase64ReporteTransferencias(inicio: string, fin: string): Observable<MensajeDTO<string>> {
+    const params = new HttpParams().set('inicio', inicio).set('fin', fin);
+    return this.http.get<MensajeDTO<string>>(`${this.apiUrl}/transferencias/pdf`, { params });
+  }
+
+  obtenerBase64ComparativoAnual(anio: number): Observable<MensajeDTO<string>> {
+    return this.http.get<MensajeDTO<string>>(`${this.apiUrl}/comparativo/${anio}/pdf`);
+  }
+
+  obtenerBase64AnalisisRotacion(mes: number, anio: number): Observable<MensajeDTO<string>> {
+    const params = new HttpParams().set('mes', mes.toString()).set('anio', anio.toString());
+    return this.http.get<MensajeDTO<string>>(`${this.apiUrl}/rotacion/pdf`, { params });
+  }
 }

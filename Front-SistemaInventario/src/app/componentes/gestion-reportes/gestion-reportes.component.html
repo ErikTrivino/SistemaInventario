@@ -105,6 +105,12 @@
 
     <!-- VENTAS CONTENT -->
     <div *ngIf="reporteVentas" class="report-section fade-in">
+      <div class="report-header-actions mb-4">
+        <h3>Resumen de Ventas</h3>
+        <button class="btn btn-danger btn-sm" (click)="exportarPDF()">
+          <i class="fas fa-file-pdf mr-2"></i> Exportar PDF
+        </button>
+      </div>
       <div class="summary-grid">
         <div class="summary-card">
           <label>Total Ventas</label>
@@ -148,6 +154,12 @@
 
     <!-- INVENTARIO CONTENT -->
     <div *ngIf="reporteInventario" class="report-section fade-in">
+      <div class="report-header-actions mb-4">
+        <h3>Estado de Inventario</h3>
+        <button class="btn btn-danger btn-sm" (click)="exportarPDF()">
+          <i class="fas fa-file-pdf mr-2"></i> Exportar PDF
+        </button>
+      </div>
       <div class="summary-grid">
         <div class="summary-card">
           <label>Total Productos</label>
@@ -203,6 +215,12 @@
 
     <!-- TRANSFERENCIAS CONTENT -->
     <div *ngIf="reporteTransferencias" class="report-section fade-in">
+      <div class="report-header-actions mb-4">
+        <h3>Resumen de Transferencias</h3>
+        <button class="btn btn-danger btn-sm" (click)="exportarPDF()">
+          <i class="fas fa-file-pdf mr-2"></i> Exportar PDF
+        </button>
+      </div>
       <div class="summary-grid">
         <div class="summary-card">
           <label>Total Movimientos</label>
@@ -252,8 +270,13 @@
 
     <!-- COMPARATIVO CONTENT -->
     <div *ngIf="reporteComparativo" class="report-section fade-in">
-      <div class="table-container glass">
+      <div class="report-header-actions mb-4">
         <h3>Comparativa Mensual de Ingresos - {{ reporteComparativo.anio }}</h3>
+        <button class="btn btn-danger btn-sm" (click)="exportarPDF()">
+          <i class="fas fa-file-pdf mr-2"></i> Exportar PDF
+        </button>
+      </div>
+      <div class="table-container glass">
         <table class="table">
           <thead>
             <tr>
@@ -281,8 +304,13 @@
 
     <!-- ROTACION CONTENT -->
     <div *ngIf="reporteRotacion" class="report-section fade-in">
+      <div class="report-header-actions mb-4">
+        <h3>Clasificación ABC ({{ reporteRotacion.mes }}/{{ reporteRotacion.anio }})</h3>
+        <button class="btn btn-danger btn-sm" (click)="exportarPDF()">
+          <i class="fas fa-file-pdf mr-2"></i> Exportar PDF
+        </button>
+      </div>
       <div class="table-container glass">
-        <h3>Clasificación ABC de Productos ({{ reporteRotacion.mes }}/{{ reporteRotacion.anio }})</h3>
         <table class="table">
           <thead>
             <tr>

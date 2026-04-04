@@ -3,7 +3,7 @@
   <div class="mb-8 flex items-center justify-between">
     <div>
       <h2 class="text-3xl font-bold text-gray-800">Registro de Auditoría</h2>
-      <p class="text-gray-500 mt-1">Monitoreo de todas las acciones realizadas en el sistema</p>
+      <p class="text-gray-500 mt-1">Monitoreo de todas las acciones realizadas en el sistema ({{ totalElementos }} registros)</p>
     </div>
     <div class="flex items-center gap-3">
       <button (click)="cargarLogs()"
@@ -70,23 +70,26 @@
           <tr *ngFor="let log of logs" class="hover:bg-blue-50/30 transition-colors">
             <td class="px-6 py-4 whitespace-nowrap text-center">
               <div class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center mx-auto">
-                <i class="fas" [ngClass]="getIconForActivity(log.tipo)"></i>
+                <i class="fas" [ngClass]="getIconForActivity(log.accion)"></i>
               </div>
             </td>
             <td class="px-6 py-4">
-              <p class="text-sm font-semibold text-gray-800">{{ log.descripcion }}</p>
-              <span class="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full uppercase">{{ log.tipo }}</span>
+              <p class="text-sm font-semibold text-gray-800">{{ log.detalles }}</p>
+              <div class="flex gap-2 mt-1">
+                <span class="text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full uppercase font-bold">{{ log.entidad }}</span>
+                <span class="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full uppercase">{{ log.accion }}</span>
+              </div>
             </td>
             <td class="px-6 py-4">
               <div class="flex flex-col">
-                <span class="text-sm font-medium text-gray-800">{{ log.usuarioNombre }}</span>
-                <span class="text-[10px] text-gray-500">ID: {{ log.usuarioId || 'Sistema' }}</span>
+                <span class="text-sm font-medium text-gray-800">Usuario ID: {{ log.usuario }}</span>
+                <span class="text-[10px] text-gray-500">{{ log.usuario === '1' ? 'Administrador' : 'Operador' }}</span>
               </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="flex flex-col">
-                <span class="text-sm text-gray-800">{{ log.fecha | date:'medium' }}</span>
-                <span class="text-[10px] text-gray-400">{{ log.fecha | date:'EEEE' }}</span>
+                <span class="text-sm text-gray-800">{{ log.fechaHora | date:'medium' }}</span>
+                <span class="text-[10px] text-gray-400">{{ log.fechaHora | date:'EEEE' }}</span>
               </div>
             </td>
             <td class="px-6 py-4">
@@ -108,16 +111,14 @@
       </table>
     </div>
 
-    <!-- Paginador -->
-    <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/30">
-      <app-paginador 
-        [totalElementos]="totalElementos"
-        [totalPaginas]="totalPaginas"
-        [paginaActual]="paginaActual"
-        [tamanoPagina]="tamanoPagina"
-        (cambioPagina)="onCambioPagina($event)"
-        (cambioTamano)="onCambioTamano($event)">
-      </app-paginador>
-    </div>
+    <!-- Paginador integrado -->
+    <app-paginador *ngIf="totalElementos > 0"
+      [totalElementos]="totalElementos"
+      [totalPaginas]="totalPaginas"
+      [paginaActual]="paginaActual"
+      [tamanoPagina]="tamanoPagina"
+      (cambioPagina)="onCambioPagina($event)"
+      (cambioTamano)="onCambioTamano($event)">
+    </app-paginador>
   </div>
 </div>

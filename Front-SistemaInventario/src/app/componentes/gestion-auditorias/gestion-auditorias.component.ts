@@ -31,7 +31,7 @@ export class GestionAuditoriasComponent implements OnInit {
   constructor(
     private auditoriaSvc: AuditoriaService,
     private usuarioSvc: UsuarioService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.cargarLogs();
@@ -104,8 +104,12 @@ export class GestionAuditoriasComponent implements OnInit {
     this.cargarLogs();
   }
 
-  getIconForActivity(tipo: string): string {
-    switch (tipo?.toLowerCase()) {
+  getIconForActivity(accion: string): string {
+    switch (accion?.toLowerCase()) {
+      case 'receive': return 'fa-download text-indigo-500';
+      case 'create': return 'fa-plus-circle text-green-500';
+      case 'update': return 'fa-edit text-blue-500';
+      case 'delete': return 'fa-trash-alt text-red-500';
       case 'venta': return 'fa-shopping-cart text-green-500';
       case 'transferencia': return 'fa-exchange-alt text-blue-500';
       case 'ajuste': return 'fa-tools text-orange-500';

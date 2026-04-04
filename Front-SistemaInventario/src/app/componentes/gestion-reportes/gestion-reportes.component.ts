@@ -169,4 +169,52 @@ export class GestionReportesComponent implements OnInit {
   getNombreSucursal(id: number) {
     return this.sucursales.find(s => s.id === id)?.nombre || `Sucursal ${id}`;
   }
+
+  exportarPDF() {
+    if (!this.tipoReporte) return;
+    this.cargando = true;
+
+    let observable;
+
+    switch (this.tipoReporte) {
+      case 'VENTAS':
+        observable = this.reporteSvc.obtenerBase64ReporteVentas(this.fechaInicio, this.fechaFin);
+        break;
+      case 'INVENTARIO':
+        observable = this.reporteSvc.obtenerBase64ReporteInventario(this.idSucursal || undefined);
+        break;
+      case 'TRANSFERENCIAS':
+        observable = this.reporteSvc.obtenerBase64ReporteTransferencias(this.fechaInicio, this.fechaFin);
+        break;
+      case 'COMPARATIVO':
+        observable = this.reporteSvc.obtenerBase64ComparativoAnual(this.anio);
+        break;
+      case 'ROTACION':
+        observable = this.reporteSvc.obtenerBase64AnalisisRotacion(this.mes, this.anio);
+        break;
+    }
+
+    if (observable) {
+      observable.subscribe({
+        next: (res) => {
+          this.descargarArchivoBase64(res.respuesta, `reporte-${this.tipoReporte?.toLowerCase()}.pdf`);
+          this.cargando = false;
+        },
+        error: (err) => this.manejarError(err)
+      });
+    }
+  }
+
+  private descargarArchivoBase64(base64: string, nombreArchivo: string) {
+    try {
+      const linkSource = `data:application/pdf;base64,${base64}`;
+      const downloadLink = document.createElement('a');
+      downloadLink.href = linkSource;
+      downloadLink.download = nombreArchivo;
+      downloadLink.click();
+    } catch (err) {
+      console.error('Error al descargar el PDF', err);
+      Swal.fire('Error', 'No se pudo descargar el archivo PDF', 'error');
+    }
+  }
 }

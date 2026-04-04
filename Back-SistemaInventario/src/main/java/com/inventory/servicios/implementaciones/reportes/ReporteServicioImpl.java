@@ -20,6 +20,19 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import java.util.*;
 import java.util.stream.Collectors;
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
+import com.lowagie.text.Font;
+import com.lowagie.text.FontFactory;
+import com.lowagie.text.PageSize;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfWriter;
+import java.awt.Color;
+import java.io.ByteArrayOutputStream;
 
 @Service
 @RequiredArgsConstructor
@@ -177,7 +190,7 @@ public class ReporteServicioImpl implements ReporteServicio {
         return new ReporteRotacionDTO(anio, mes, itemsPage);
     }
 
-    private <T> Page<T> paginateList(List<T> list, Integer pagina, Integer porPagina) {
+    private <T> Page<T> paginateList(java.util.List<T> list, Integer pagina, Integer porPagina) {
         int numPagina = (pagina != null && pagina > 0) ? pagina - 1 : 0;
         int tamanoPagina = (porPagina != null && porPagina > 0) ? porPagina : 10;
         Pageable pageable = PageRequest.of(numPagina, tamanoPagina);
@@ -185,7 +198,170 @@ public class ReporteServicioImpl implements ReporteServicio {
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), list.size());
         
-        List<T> sublist = (start <= end && start <= list.size()) ? list.subList(start, end) : new ArrayList<>();
+        java.util.List<T> sublist = (start <= end && start <= list.size()) ? list.subList(start, end) : new ArrayList<>();
         return new PageImpl<>(sublist, pageable, list.size());
+    }
+
+    // --- Implementación de Exportación a PDF Base64 ---
+
+    @Override
+    public String obtenerBase64ReporteVentas(Date inicio, Date fin) {
+        ReporteVentasDTO dto = generarReporteVentas(inicio, fin, 1, Integer.MAX_VALUE);
+        return generarPdfBase64("REPORTE DE VENTAS POR PERIODO", document -> {
+            Font normalFont = FontFactory.getFont(FontFactory.HELVETICA, 10);
+            Font headerFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10);
+
+            document.add(new Paragraph("Periodo: " + inicio + " al " + fin, normalFont));
+            document.add(new Paragraph("Total Ventas: " + dto.totalVentas(), normalFont));
+            document.add(new Paragraph("Ingreso Total: $" + dto.ingresoTotal(), normalFont));
+            document.add(new Paragraph("Promedio Venta: $" + dto.promedioVenta(), normalFont));
+            document.add(new Paragraph("\n"));
+
+            PdfPTable table = new PdfPTable(3);
+            table.setWidthPercentage(100);
+            addTableHeader(table, headerFont, "ID Sucursal", "Cantidad Ventas", "Total Ingresos");
+
+            for (ResumenVentaSucursalDTO s : dto.porSucursal().getContent()) {
+                table.addCell(new Phrase(s.idSucursal().toString(), normalFont));
+                table.addCell(new Phrase(String.valueOf(s.cantidadVentas()), normalFont));
+                table.addCell(new Phrase("$" + s.ingresoTotal().toString(), normalFont));
+            }
+            document.add(table);
+        });
+    }
+
+    @Override
+    public String obtenerBase64ReporteInventario(Long idSucursal) {
+        ReporteInventarioDTO dto = generarReporteInventario(idSucursal, 1, Integer.MAX_VALUE);
+        String titulo = idSucursal == null ? "REPORTE DE INVENTARIO GLOBAL" : "REPORTE DE INVENTARIO - SUCURSAL " + idSucursal;
+        
+        return generarPdfBase64(titulo, document -> {
+            Font normalFont = FontFactory.getFont(FontFactory.HELVETICA, 10);
+            Font headerFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10);
+
+            document.add(new Paragraph("Fecha Generación: " + dto.fechaGeneracion(), normalFont));
+            document.add(new Paragraph("Total Productos: " + dto.totalProductos(), normalFont));
+            document.add(new Paragraph("En stock mínimo: " + dto.productosEnStockMinimo(), normalFont));
+            document.add(new Paragraph("Productos agotados: " + dto.productosAgotados(), normalFont));
+            document.add(new Paragraph("\n"));
+
+            PdfPTable table = new PdfPTable(5);
+            table.setWidthPercentage(100);
+            addTableHeader(table, headerFont, "Producto", "SKU", "Stock", "Mínimo", "Estado");
+
+            for (ItemInventarioDTO item : dto.detalle().getContent()) {
+                table.addCell(new Phrase(item.nombreProducto(), normalFont));
+                table.addCell(new Phrase(item.sku(), normalFont));
+                table.addCell(new Phrase(item.stockActual().toString(), normalFont));
+                table.addCell(new Phrase(item.stockMinimo().toString(), normalFont));
+                table.addCell(new Phrase(item.estadoStock(), normalFont));
+            }
+            document.add(table);
+        });
+    }
+
+    @Override
+    public String obtenerBase64ReporteTransferencias(Date inicio, Date fin) {
+        ReporteTransferenciasDTO dto = generarReporteTransferencias(inicio, fin, 1, Integer.MAX_VALUE);
+        return generarPdfBase64("REPORTE DE TRANSFERENCIAS POR PERIODO", document -> {
+            Font normalFont = FontFactory.getFont(FontFactory.HELVETICA, 10);
+            Font headerFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10);
+
+            document.add(new Paragraph("Periodo: " + inicio + " al " + fin, normalFont));
+            document.add(new Paragraph("Total Transferencias: " + dto.totalTransferencias(), normalFont));
+            document.add(new Paragraph("Completadas: " + dto.completadas(), normalFont));
+            document.add(new Paragraph("Pendientes: " + dto.pendientes(), normalFont));
+            document.add(new Paragraph("\n"));
+
+            PdfPTable table = new PdfPTable(5);
+            table.setWidthPercentage(100);
+            addTableHeader(table, headerFont, "ID", "Origen", "Destino", "Cant. Sol.", "Estado");
+
+            for (ItemTransferenciaDTO t : dto.detalle().getContent()) {
+                table.addCell(new Phrase(t.idTransferencia().toString(), normalFont));
+                table.addCell(new Phrase(t.idSucursalOrigen().toString(), normalFont));
+                table.addCell(new Phrase(t.idSucursalDestino().toString(), normalFont));
+                table.addCell(new Phrase(t.cantidadSolicitada().toString(), normalFont));
+                table.addCell(new Phrase(t.estado(), normalFont));
+            }
+            document.add(table);
+        });
+    }
+
+    @Override
+    public String obtenerBase64ComparativoAnual(int anio) {
+        ReporteComparativoDTO dto = generarComparativoAnual(anio);
+        return generarPdfBase64("REPORTE COMPARATIVO DE VENTAS - AÑO " + anio, document -> {
+            Font normalFont = FontFactory.getFont(FontFactory.HELVETICA, 10);
+            Font headerFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10);
+
+            PdfPTable table = new PdfPTable(4);
+            table.setWidthPercentage(100);
+            addTableHeader(table, headerFont, "Mes", "Ventas", "Ingresos", "Variación");
+
+            for (ResumenMensualDTO m : dto.meses()) {
+                table.addCell(new Phrase(m.nombreMes(), normalFont));
+                table.addCell(new Phrase(String.valueOf(m.cantidadVentas()), normalFont));
+                table.addCell(new Phrase("$" + m.ingresoTotal().toString(), normalFont));
+                table.addCell(new Phrase(m.variacionPorcentual().toString() + "%", normalFont));
+            }
+            document.add(table);
+        });
+    }
+
+    @Override
+    public String obtenerBase64AnalisisRotacion(int mes, int anio) {
+        ReporteRotacionDTO dto = generarAnalisisRotacion(mes, anio, 1, Integer.MAX_VALUE);
+        return generarPdfBase64("ANALISIS DE ROTACION ABC - MES " + mes + "/" + anio, document -> {
+            Font normalFont = FontFactory.getFont(FontFactory.HELVETICA, 10);
+            Font headerFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10);
+
+            PdfPTable table = new PdfPTable(4);
+            table.setWidthPercentage(100);
+            addTableHeader(table, headerFont, "Producto", "Salidas", "Valor Total", "ABC");
+
+            for (ItemRotacionDTO item : dto.productos().getContent()) {
+                table.addCell(new Phrase(item.nombreProducto(), normalFont));
+                table.addCell(new Phrase(String.valueOf(item.totalSalidas()), normalFont));
+                table.addCell(new Phrase("$" + item.valorTotalSalidas().toString(), normalFont));
+                table.addCell(new Phrase(item.clasificacion(), normalFont));
+            }
+            document.add(table);
+        });
+    }
+
+    private String generarPdfBase64(String subTitulo, PdfContentGenerator generator) {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            Document document = new Document(PageSize.A4);
+            PdfWriter.getInstance(document, baos);
+            document.open();
+
+            Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16);
+            Paragraph title = new Paragraph("SISTEMA DE INVENTARIO - " + subTitulo, titleFont);
+            title.setAlignment(Element.ALIGN_CENTER);
+            title.setSpacingAfter(20);
+            document.add(title);
+
+            generator.generate(document);
+
+            document.close();
+            return Base64.getEncoder().encodeToString(baos.toByteArray());
+        } catch (Exception e) {
+            throw new RuntimeException("Error generando PDF Base64: " + e.getMessage(), e);
+        }
+    }
+
+    private void addTableHeader(PdfPTable table, Font font, String... headers) {
+        for (String header : headers) {
+            PdfPCell cell = new PdfPCell(new Phrase(header, font));
+            cell.setBackgroundColor(Color.LIGHT_GRAY);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            table.addCell(cell);
+        }
+    }
+
+    @FunctionalInterface
+    private interface PdfContentGenerator {
+        void generate(Document document) throws DocumentException;
     }
 }
