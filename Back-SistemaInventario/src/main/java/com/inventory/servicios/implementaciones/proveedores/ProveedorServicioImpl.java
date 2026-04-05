@@ -8,6 +8,7 @@ import com.inventory.repositorios.proveedores.ProveedorRepositorio;
 import com.inventory.repositorios.proveedores.ProductoProveedorRepositorio;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.inventory.servicios.interfaces.auditoria.AuditoriaServicio;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 public class ProveedorServicioImpl implements ProveedorServicio {
     private final ProveedorRepositorio supplierRepository;
     private final ProductoProveedorRepositorio supplierProductRepository;
+    private final AuditoriaServicio auditService;
 
     /** RF-38: Crear proveedor con NIT único y estado activo por defecto. */
     @Override
@@ -31,7 +33,9 @@ public class ProveedorServicioImpl implements ProveedorServicio {
                 .email(dto.email())
                 .activo(true)
                 .build();
-        return toInfo(supplierRepository.save(supplier));
+        ProveedorInformacionDTO response = toInfo(supplierRepository.save(supplier));
+        auditService.registrarAccion("1", "CREATE_SUPPLIER", "Proveedor", response.id(), "Proveedor creado: " + response.nitRut());
+        return response;
     }
 
     /** RF-38: Actualizar datos del proveedor (incluyendo activar/desactivar). */
@@ -44,7 +48,9 @@ public class ProveedorServicioImpl implements ProveedorServicio {
         supplier.setContacto(dto.contacto());
         supplier.setActivo(dto.activo());
         supplier.setEmail(dto.email());
-        return toInfo(supplierRepository.save(supplier));
+        Proveedor saved = supplierRepository.save(supplier);
+        auditService.registrarAccion("1", "UPDATE_SUPPLIER", "Proveedor", saved.getId(), "Proveedor actualizado: " + saved.getRazonSocial());
+        return toInfo(saved);
     }
 
     /** RF-38: Activar o desactivar lógicamente un proveedor. */
@@ -54,7 +60,9 @@ public class ProveedorServicioImpl implements ProveedorServicio {
         Proveedor supplier = supplierRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Proveedor no encontrado: " + id));
         supplier.setActivo(!supplier.isActivo());
-        return toInfo(supplierRepository.save(supplier));
+        Proveedor saved = supplierRepository.save(supplier);
+        auditService.registrarAccion("1", "TOGGLE_SUPPLIER_STATUS", "Proveedor", saved.getId(), "Estado de proveedor cambiado a: " + (saved.isActivo() ? "Activo" : "Inactivo"));
+        return toInfo(saved);
     }
 
     @Override
@@ -104,7 +112,9 @@ public class ProveedorServicioImpl implements ProveedorServicio {
                 .fechaVigenciaDesde(dto.fechaVigenciaDesde() != null ? dto.fechaVigenciaDesde() : java.time.LocalDate.now())
                 .build();
 
-        return toPPInfo(supplierProductRepository.save(pp));
+        ProductoProveedor saved = supplierProductRepository.save(pp);
+        auditService.registrarAccion("1", "REGISTER_PRICE_LIST", "ProductoProveedor", saved.getId(), "Lista de precios registrada para Producto ID: " + saved.getProductoId());
+        return toPPInfo(saved);
     }
 
     /** RF-39 / RF-43: Historial de precios pactados con un proveedor (fluctuación de precios). */
