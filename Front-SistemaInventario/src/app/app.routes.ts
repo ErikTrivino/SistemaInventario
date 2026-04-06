@@ -34,33 +34,33 @@ export const routes: Routes = [
       { path: 'dashboard', component: DashboardComponent },
 
       // Inventario
-      { path: 'gestion-producto', component: GestionProductoComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "MANAGER", "OPERATOR"] } },
-      { path: 'editar-producto/:idSucursal/:id', component: EditarProductoComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "MANAGER", "OPERATOR"] } },
-      { path: 'crear-producto', component: CrearProductoComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "MANAGER", "OPERATOR"] } },
-      { path: 'gestion-transferencias', component: GestionTransferenciasComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "MANAGER", "OPERATOR"] } },
-      { path: 'gestion-transferencias-solicitadas', component: GestionTransferenciasSolicitadasComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "MANAGER", "OPERATOR"] } },
+      { path: 'gestion-producto', component: GestionProductoComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "GERENTE", "OPERADOR"] } },
+      { path: 'editar-producto/:idSucursal/:id', component: EditarProductoComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "GERENTE", "OPERADOR"] } },
+      { path: 'crear-producto', component: CrearProductoComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "GERENTE", "OPERADOR"] } },
+      { path: 'gestion-transferencias', component: GestionTransferenciasComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "GERENTE", "OPERADOR"] } },
+      { path: 'gestion-transferencias-solicitadas', component: GestionTransferenciasSolicitadasComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "GERENTE", "OPERADOR"] } },
 
       // Abastecimiento
-      { path: 'gestion-proveedor', component: GestionProveedorComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "MANAGER", "OPERATOR"] } },
-      { path: 'editar-proveedor/:id', component: EditarProveedorComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "MANAGER", "OPERATOR"] } },
-      { path: 'crear-proveedor', component: CrearProveedorComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "MANAGER", "OPERATOR"] } },
-      { path: 'gestion-ordenes-compra', component: GestionOrdenesCompraComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "MANAGER", "OPERATOR"] } },
+      { path: 'gestion-proveedor', component: GestionProveedorComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "GERENTE", "OPERADOR"] } },
+      { path: 'editar-proveedor/:id', component: EditarProveedorComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "GERENTE", "OPERADOR"] } },
+      { path: 'crear-proveedor', component: CrearProveedorComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "GERENTE", "OPERADOR"] } },
+      { path: 'gestion-ordenes-compra', component: GestionOrdenesCompraComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "GERENTE", "OPERADOR"] } },
 
       // Logística
-      { path: 'gestion-movimientos', component: GestionMovimientosComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "MANAGER", "OPERATOR"] } },
-      { path: 'gestion-rutas', component: GestionRutasComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "MANAGER", "OPERATOR"] } },
-      { path: 'seguimiento-envios', component: SeguimientoEnviosComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "MANAGER", "OPERATOR"] } },
+      { path: 'gestion-movimientos', component: GestionMovimientosComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "GERENTE", "OPERADOR"] } },
+      { path: 'gestion-rutas', component: GestionRutasComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "GERENTE", "OPERADOR"] } },
+      { path: 'seguimiento-envios', component: SeguimientoEnviosComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "GERENTE", "OPERADOR"] } },
 
       // Comercialización
-      { path: 'gestion-ventas', component: GestionVentasComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "MANAGER", "OPERATOR"] } },
+      { path: 'gestion-ventas', component: GestionVentasComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "GERENTE", "OPERADOR"] } },
 
       // Configuración
       { path: 'gestion-usuario', component: GestionUsuarioComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN"] } },
       { path: 'editar-usuario/:id', component: EditarUsuarioComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN"] } },
       { path: 'crear-usuario', component: CrearUsuarioComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN"] } },
       { path: 'gestion-sucursales', component: GestionSucursalesComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN"] } },
-      { path: 'gestion-reportes', component: GestionReportesComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "MANAGER"] } },
-      { path: 'gestion-auditorias', component: GestionAuditoriasComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN"] } },
+      { path: 'gestion-reportes', component: GestionReportesComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "GERENTE"] } },
+      { path: 'gestion-auditorias', component: GestionAuditoriasComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN", "GERENTE"] } },
 
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]

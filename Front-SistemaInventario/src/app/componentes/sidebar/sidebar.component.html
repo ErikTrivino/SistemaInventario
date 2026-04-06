@@ -44,8 +44,6 @@
           </p>
         </button>
 
-
-
         <button routerLink="/gestion-transferencias-solicitadas"
           routerLinkActive="bg-gradient-to-tr from-blue-600 to-blue-400 shadow-md"
           class="middle none font-sans font-bold transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-sm py-3.5 min-h-[48px] rounded-lg text-white hover:bg-white/10 active:bg-white/30 flex w-full items-center gap-6 pl-2 pr-5 capitalize"
@@ -59,7 +57,7 @@
       </li>
 
       <!-- Abastecimiento Section -->
-      <li>
+      <li *ngIf="isAdmin() || isGerente()">
         <p
           class="block antialiased font-sans text-sm leading-normal text-white font-black uppercase opacity-75 ml-2 mt-4 mb-2 tracking-widest">
           Abastecimiento</p>
@@ -89,7 +87,6 @@
       </li>
 
       <!-- Logística Section -->
-
       <li>
         <p
           class="block antialiased font-sans text-sm leading-normal text-white font-black uppercase opacity-75 ml-2 mt-4 mb-2 tracking-widest">
@@ -108,7 +105,8 @@
             Movimientos</p>
         </button>
 
-        <button routerLink="/gestion-reportes" routerLinkActive="bg-gradient-to-tr from-blue-600 to-blue-400 shadow-md"
+        <button *ngIf="isAdmin() || isGerente()" routerLink="/gestion-reportes"
+          routerLinkActive="bg-gradient-to-tr from-blue-600 to-blue-400 shadow-md"
           class="middle none font-sans font-bold transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-sm py-3.5 min-h-[48px] rounded-lg text-white hover:bg-white/10 active:bg-white/30 flex w-full items-center gap-6 pl-2 pr-5 capitalize"
           type="button">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 flex-shrink-0">
@@ -118,7 +116,7 @@
           <p class="block antialiased font-sans text-base leading-tight text-inherit font-medium capitalize">
             Reportes</p>
         </button>
-        <button routerLink="/gestion-transferencias"
+        <button *ngIf="isAdmin() || isGerente()" routerLink="/gestion-transferencias"
           routerLinkActive="bg-gradient-to-tr from-blue-600 to-blue-400 shadow-md"
           class="middle none font-sans font-bold transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-sm py-3.5 min-h-[48px] rounded-lg text-white hover:bg-white/10 active:bg-white/30 flex w-full items-center gap-6 pl-2 pr-5 capitalize"
           type="button">
@@ -128,7 +126,7 @@
           <p class="block antialiased font-sans text-base leading-tight text-inherit font-medium capitalize">
             Historial de Transferencias</p>
         </button>
-        <button routerLink="/gestion-auditorias"
+        <button *ngIf="isAdmin() || isGerente()" routerLink="/gestion-auditorias"
           routerLinkActive="bg-gradient-to-tr from-blue-600 to-blue-400 shadow-md"
           class="middle none font-sans font-bold transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-sm py-3.5 min-h-[48px] rounded-lg text-white hover:bg-white/10 active:bg-white/30 flex w-full items-center gap-6 pl-2 pr-5 capitalize"
           type="button">

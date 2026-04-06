@@ -40,14 +40,15 @@ public class CompraServicioImpl implements CompraServicio {
             if (item.precioUnitario().compareTo(BigDecimal.ZERO) <= 0) {
                 throw new RuntimeException("El precio unitario debe ser mayor a cero.");
             }
-            if (item.descuentoPorcentaje() != null && (item.descuentoPorcentaje().compareTo(BigDecimal.ZERO) < 0 || item.descuentoPorcentaje().compareTo(new BigDecimal("100")) > 0)) {
+            if (item.descuentoPorcentaje() != null && (item.descuentoPorcentaje().compareTo(BigDecimal.ZERO) < 0
+                    || item.descuentoPorcentaje().compareTo(new BigDecimal("100")) > 0)) {
                 throw new RuntimeException("El descuento debe estar entre 0% y 100%.");
             }
 
             BigDecimal discountAmt = item.precioUnitario().multiply(item.cantidad())
-                .multiply(item.descuentoPorcentaje() != null ? item.descuentoPorcentaje() : BigDecimal.ZERO)
-                .divide(new BigDecimal("100"));
-            
+                    .multiply(item.descuentoPorcentaje() != null ? item.descuentoPorcentaje() : BigDecimal.ZERO)
+                    .divide(new BigDecimal("100"));
+
             BigDecimal subtotal = item.precioUnitario().multiply(item.cantidad()).subtract(discountAmt);
             total = total.add(subtotal);
         }
@@ -91,39 +92,48 @@ public class CompraServicioImpl implements CompraServicio {
 
         for (DetalleRecepcionDTO recDto : dto.detallesRecibidos()) {
             DetalleCompra detalle = currentDetails.stream()
-                .filter(d -> d.getId().equals(recDto.idDetalle()))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Detalle no corresponde a la orden"));
+                    .filter(d -> d.getId().equals(recDto.idDetalle()))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Detalle no corresponde a la orden"));
 
             detalle.setCantidadRecibida(detalle.getCantidadRecibida().add(recDto.cantidadRecibida()));
             purchaseDetailRepository.save(detalle);
 
             if (recDto.cantidadRecibida().compareTo(BigDecimal.ZERO) > 0) {
-                inventoryService.updateStock(
-                    detalle.getProductoId(),
-                    dto.idSucursalDestino(),
-                    recDto.cantidadRecibida().doubleValue(),
-                    "IN",
-                    "Recepción de Orden Compra #" + order.getId(),
-                    order.getUsuarioResponsableId() != null
-                        ? order.getUsuarioResponsableId().toString()
-                        : "sistema"
-                );
+                // Cálculo del precio neto (costo real) aplicando el descuento
+                BigDecimal descuento = detalle.getDescuentoAplicado() != null ? detalle.getDescuentoAplicado()
+                        : BigDecimal.ZERO;
+                BigDecimal factorDescuento = BigDecimal.ONE
+                        .subtract(descuento.divide(new BigDecimal("100"), 4, java.math.RoundingMode.HALF_UP));
+                BigDecimal precioNeto = detalle.getPrecioUnitario().multiply(factorDescuento);
+
+                inventoryService.procesarEntradaCompra(
+                        detalle.getProductoId(),
+                        dto.idSucursalDestino(),
+                        recDto.cantidadRecibida(),
+                        precioNeto,
+                        "Recepción de Orden Compra #" + order.getId(),
+                        order.getUsuarioResponsableId() != null
+                                ? order.getUsuarioResponsableId().toString()
+                                : "sistema");
             }
         }
 
         order.setEstado(EstadoCompra.RECIBIDO.name());
         purchaseOrderRepository.save(order);
-        eventPublisher.publicarAuditoria("1", "RECEIVE", "OrdenCompra", order.getId(), "Received PO details and updated stock atomically.");
+        eventPublisher.publicarAuditoria("1", "RECEIVE", "OrdenCompra", order.getId(),
+                "Received PO details and updated stock atomically.");
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<CompraHistoricoRespuestaDTO> obtenerHistoricoCompras(Long idProveedor, Long idProducto, String estado, Long idSucursal, LocalDateTime fechaDesde, LocalDateTime fechaHasta, Integer pagina, Integer porPagina) {
+    public Page<CompraHistoricoRespuestaDTO> obtenerHistoricoCompras(Long idProveedor, Long idProducto, String estado,
+            Long idSucursal, LocalDateTime fechaDesde, LocalDateTime fechaHasta, Integer pagina, Integer porPagina) {
         int pageNumber = (pagina != null) ? pagina : 0;
         int pageSize = (porPagina != null && porPagina > 0) ? porPagina : 10;
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        return purchaseDetailRepository.obtenerHistoricoCompras(idProveedor, idProducto, estado, idSucursal, fechaDesde, fechaHasta, pageable);
+        return purchaseDetailRepository.obtenerHistoricoCompras(idProveedor, idProducto, estado, idSucursal, fechaDesde,
+                fechaHasta, pageable);
     }
 
     private CompraInformacionDTO toInfo(OrdenCompra purchaseOrder) {
@@ -134,10 +144,6 @@ public class CompraServicioImpl implements CompraServicio {
                 purchaseOrder.getUsuarioResponsableId(),
                 purchaseOrder.getFechaCompra(),
                 purchaseOrder.getEstado(),
-                purchaseOrder.getTotal()
-        );
+                purchaseOrder.getTotal());
     }
 }
-
-
-

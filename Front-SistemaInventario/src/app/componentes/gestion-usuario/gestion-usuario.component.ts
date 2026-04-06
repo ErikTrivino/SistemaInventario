@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UsuarioService } from '../../servicios/usuario.service';
+import { UsuarioConsultaService } from '../../servicios/usuario-consulta.service';
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -33,7 +34,11 @@ export class GestionUsuarioComponent implements OnInit {
 
   sucursales: any[] = [];
 
-  constructor(private svc: UsuarioService, private sucursalSvc: SucursalService) {}
+  constructor(
+    private svc: UsuarioService,
+    private usuarioConsultaSvc: UsuarioConsultaService,
+    private sucursalSvc: SucursalService
+  ) {}
 
   ngOnInit() {
     this.cargar();
@@ -55,7 +60,7 @@ export class GestionUsuarioComponent implements OnInit {
       return;
     }
 
-    this.svc.getUsuarios(this.paginaActual + 1, this.tamanoPagina).subscribe({
+    this.usuarioConsultaSvc.getUsuarios(this.paginaActual + 1, this.tamanoPagina).subscribe({
       next: (data: MensajeDTO) => {
         if (data.respuesta.content) {
           this.usuarios = data.respuesta.content;
@@ -75,21 +80,21 @@ export class GestionUsuarioComponent implements OnInit {
   aplicarFiltros() {
     // Si hay búsqueda por nombre
     if (this.filtroNombre) {
-      this.svc.buscarPorNombre(this.filtroNombre, true).subscribe({
+      this.usuarioConsultaSvc.buscarPorNombre(this.filtroNombre, true).subscribe({
         next: (data: MensajeDTO) => {
           this.usuarios = data.respuesta;
           this.actualizarMetadatosLocales();
         }
       });
     } else if (this.filtroRol) {
-      this.svc.filtrarPorRol(this.filtroRol).subscribe({
+      this.usuarioConsultaSvc.filtrarPorRol(this.filtroRol).subscribe({
         next: (data: MensajeDTO) => {
           this.usuarios = data.respuesta;
           this.actualizarMetadatosLocales();
         }
       });
     } else if (this.filtroSucursal) {
-      this.svc.filtrarPorSucursal(this.filtroSucursal).subscribe({
+      this.usuarioConsultaSvc.filtrarPorSucursal(this.filtroSucursal).subscribe({
         next: (data: MensajeDTO) => {
           this.usuarios = data.respuesta;
           this.actualizarMetadatosLocales();

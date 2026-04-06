@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuditoriaService } from '../../servicios/auditoria.service';
 import { UsuarioService } from '../../servicios/usuario.service';
+import { UsuarioConsultaService } from '../../servicios/usuario-consulta.service';
 import { MensajeDTO } from '../../modelo/mensaje-dto';
 import { InformacionUsuario } from '../../modelo/informacionObjeto';
 import { PaginadorComponent } from '../comun/paginador/paginador.component';
@@ -30,7 +31,8 @@ export class GestionAuditoriasComponent implements OnInit {
 
   constructor(
     private auditoriaSvc: AuditoriaService,
-    private usuarioSvc: UsuarioService
+    private usuarioSvc: UsuarioService,
+    private usuarioConsultaSvc: UsuarioConsultaService
   ) { }
 
   ngOnInit(): void {
@@ -41,7 +43,7 @@ export class GestionAuditoriasComponent implements OnInit {
   cargarUsuarios(): void {
     // Cargamos todos los usuarios para el dropdown (podría paginarse si son muchos,
     // pero para filtros usualmente se cargan los principales o se usa autocomplete)
-    this.usuarioSvc.getUsuarios(1, 100).subscribe({
+    this.usuarioConsultaSvc.getUsuarios(1, 100).subscribe({
       next: (data: MensajeDTO) => {
         if (!data.error) {
           this.usuarios = data.respuesta.content || data.respuesta;

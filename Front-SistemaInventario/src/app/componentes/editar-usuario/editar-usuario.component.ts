@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { UsuarioService } from '../../servicios/usuario.service';
+import { UsuarioConsultaService } from '../../servicios/usuario-consulta.service';
 import Swal from 'sweetalert2';
 import { EditarUsuario } from '../../modelo/editarObjeto';
 import { MensajeDTO } from '../../modelo/mensaje-dto';
@@ -23,6 +24,7 @@ export class EditarUsuarioComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private svc: UsuarioService,
+    private usuarioConsultaSvc: UsuarioConsultaService,
     private sucursalSvc: SucursalService,
     private route: ActivatedRoute
   ) {
@@ -45,7 +47,7 @@ export class EditarUsuarioComponent implements OnInit {
       const val = params.get('id');
       if (val) {
         this.id = +val;
-        this.svc.consultarPorId(this.id).subscribe({
+        this.usuarioConsultaSvc.consultarPorId(this.id).subscribe({
           next: (data: MensajeDTO) => {
             this.form.patchValue(data.respuesta);
             this.form.patchValue({ password: '' });

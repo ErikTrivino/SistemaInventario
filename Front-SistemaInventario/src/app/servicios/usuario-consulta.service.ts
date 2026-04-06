@@ -7,14 +7,10 @@ import { environment } from '../../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
-export class UsuarioService {
-  private apiUrl = `${environment.apiUrl}/api/admin/usuarios`;
+export class UsuarioConsultaService {
+  private apiUrl = `${environment.apiUrl}/api/usuarios`;
 
-  constructor(private http: HttpClient) { }
-
-  crearUsuario(dto: any): Observable<MensajeDTO> {
-    return this.http.post<MensajeDTO>(this.apiUrl, dto);
-  }
+  constructor(private http: HttpClient) {}
 
   consultarPorId(id: number): Observable<MensajeDTO> {
     return this.http.get<MensajeDTO>(`${this.apiUrl}/${id}`);
@@ -22,15 +18,6 @@ export class UsuarioService {
 
   consultarPorEmail(email: string): Observable<MensajeDTO> {
     return this.http.get<MensajeDTO>(`${this.apiUrl}/email/${email}`);
-  }
-
-  actualizarUsuario(id: number, dto: any): Observable<MensajeDTO> {
-    return this.http.put<MensajeDTO>(`${this.apiUrl}/${id}`, dto);
-  }
-
-  inactivarUsuario(id: number, motivo: string): Observable<MensajeDTO> {
-    const params = new HttpParams().set('motivo', motivo);
-    return this.http.patch<MensajeDTO>(`${this.apiUrl}/${id}/inactivar`, null, { params });
   }
 
   filtrarPorSucursal(sucursalId: number): Observable<MensajeDTO> {
@@ -46,10 +33,6 @@ export class UsuarioService {
     if (query) params = params.set('query', query);
     if (activo !== undefined) params = params.set('activo', activo.toString());
     return this.http.get<MensajeDTO>(`${this.apiUrl}/busqueda`, { params });
-  }
-
-  cambiarRol(id: number, nuevoRol: string): Observable<MensajeDTO> {
-    return this.http.patch<MensajeDTO>(`${this.apiUrl}/${id}/rol`, { nuevoRol });
   }
 
   getUsuarios(pagina?: number, porPagina: number = 10): Observable<MensajeDTO> {

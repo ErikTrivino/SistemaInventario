@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { TokenService } from '../../servicios/token.service';
 import { UsuarioService } from '../../servicios/usuario.service';
+import { UsuarioConsultaService } from '../../servicios/usuario-consulta.service';
 import { TransferenciaService } from '../../servicios/transferencia.service';
 import { CompraService } from '../../servicios/compra.service';
 import { TableroService } from '../../servicios/tablero.service';
@@ -29,6 +30,7 @@ export class HeaderComponent implements OnInit {
   constructor(
     private tokenSvc: TokenService,
     private usuarioSvc: UsuarioService,
+    private usuarioConsultaSvc: UsuarioConsultaService,
     private transferenciaSvc: TransferenciaService,
     private compraSvc: CompraService,
     private tableroSvc: TableroService
@@ -38,7 +40,7 @@ export class HeaderComponent implements OnInit {
     if (this.tokenSvc.isLogged()) {
       const userId = Number(this.tokenSvc.getIDCuenta());
       if (userId) {
-        this.usuarioSvc.consultarPorId(userId).subscribe({
+        this.usuarioConsultaSvc.consultarPorId(userId).subscribe({
           next: (res: MensajeDTO) => {
             this.sucursalId = res.respuesta?.sucursalAsignadaId;
             if (this.sucursalId) {

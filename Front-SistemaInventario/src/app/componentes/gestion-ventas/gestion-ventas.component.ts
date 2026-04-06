@@ -6,6 +6,7 @@ import { InventarioService } from '../../servicios/inventario.service';
 import { TokenService } from '../../servicios/token.service';
 import { SucursalService } from '../../servicios/sucursal.service';
 import { UsuarioService } from '../../servicios/usuario.service';
+import { UsuarioConsultaService } from '../../servicios/usuario-consulta.service';
 import { VentaCrearDTO } from '../../modelo/crearObjetos';
 import { VentaInformacionDTO } from '../../modelo/informacionObjeto';
 import { MensajeDTO } from '../../modelo/mensaje-dto';
@@ -52,7 +53,8 @@ export class GestionVentasComponent implements OnInit {
     private inventarioService: InventarioService,
     private tokenService: TokenService,
     private sucursalService: SucursalService,
-    private usuarioService: UsuarioService
+    private usuarioService: UsuarioService,
+    private usuarioConsultaService: UsuarioConsultaService
   ) { }
 
   ngOnInit(): void {
@@ -66,7 +68,7 @@ export class GestionVentasComponent implements OnInit {
 
   loadUserData() {
     if (this.userId) {
-      this.usuarioService.consultarPorId(this.userId).subscribe({
+      this.usuarioConsultaService.consultarPorId(this.userId).subscribe({
         next: (res) => {
           this.userSucursalId = res.respuesta.sucursalAsignadaId;
           if (this.activeTab === 'new-sale') {

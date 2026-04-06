@@ -302,6 +302,68 @@ public class InventarioServicioImpl implements InventarioServicio {
     }
 
     @Override
+    @Transactional
+    public void procesarEntradaCompra(Long productId, Long branchId, BigDecimal quantity, BigDecimal unitCost,
+            String reason, String usuarioResponsable) {
+        log.info("Procesando entrada por compra: Producto={}, Sucursal={}, Cantidad={}, Costo={}",
+                productId, branchId, quantity, unitCost);
+
+        Inventario inv = inventoryRepository.findByProducto_IdAndSucursal_Id(productId, branchId)
+                .orElseGet(() -> {
+                    Producto p = productRepository.findById(productId)
+                            .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+                    Sucursal s = sucursalRepository.findById(branchId)
+                            .orElseThrow(() -> new RuntimeException("Sucursal no encontrada"));
+                    return Inventario.builder()
+                            .producto(p)
+                            .sucursal(s)
+                            .stock(BigDecimal.ZERO)
+                            .precioCostoPromedio(BigDecimal.ZERO)
+                            .activo(true)
+                            .build();
+                });
+
+        BigDecimal stockActual = inv.getStock();
+        BigDecimal cppActual = inv.getPrecioCostoPromedio();
+
+        // Fórmula: CPP_nuevo = (Stock_actual * CPP_actual + Cantidad_recibida * Precio_compra) / (Stock_actual + Cantidad_recibida)
+        BigDecimal valorActualTotal = stockActual.multiply(cppActual);
+        BigDecimal valorNuevaCompra = quantity.multiply(unitCost);
+        BigDecimal nuevoStock = stockActual.add(quantity);
+
+        BigDecimal nuevoCPP;
+        if (nuevoStock.compareTo(BigDecimal.ZERO) > 0) {
+            nuevoCPP = valorActualTotal.add(valorNuevaCompra)
+                    .divide(nuevoStock, 4, java.math.RoundingMode.HALF_UP);
+        } else {
+            nuevoCPP = unitCost;
+        }
+
+        inv.setStock(nuevoStock);
+        inv.setPrecioCostoPromedio(nuevoCPP);
+        inventoryRepository.save(inv);
+
+        // Actualizar el costo en la entidad Producto (último costo de compra)
+        Producto product = inv.getProducto();
+        product.setPrecioCostoPromedio(unitCost);
+        productRepository.save(product);
+
+        // Registrar movimiento
+        MovimientoInventario movement = MovimientoInventario.builder()
+                .tipo(TipoMovimiento.ENTRADA_COMPRA)
+                .cantidad(quantity)
+                .fechaMovimiento(LocalDateTime.now())
+                .sucursalId(branchId)
+                .productoId(productId)
+                .motivo(reason != null ? reason : "Entrada por compra")
+                .build();
+        movementRepository.save(movement);
+
+        eventPublisher.publicarAuditoria(usuarioResponsable, "ENTRADA_COMPRA", "Inventario", productId,
+                "Entrada por compra registrada. Nuevo stock: " + nuevoStock + ", Nuevo CPP: " + nuevoCPP);
+    }
+
+    @Override
     public Page<InventarioInformacionDTO> getLowStockProducts(Integer pagina, Integer porPagina) {
         int numPagina = (pagina != null && pagina > 0) ? pagina - 1 : 0;
         int tamanoPagina = (porPagina != null && porPagina > 0) ? porPagina : 10;

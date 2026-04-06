@@ -103,6 +103,8 @@ CREATE TABLE IF NOT EXISTS `inventario_sucursal` (
   `id_sucursal` BIGINT UNSIGNED NOT NULL,
   `stock_actual` DECIMAL(12,2) NOT NULL DEFAULT 0.00,
   `stock_minimo` DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+  `precio_costo_promedio` DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+  `activo` TINYINT(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id_producto`, `id_sucursal`),
   CONSTRAINT `fk_inventario_producto`
     FOREIGN KEY (`id_producto`)
@@ -265,6 +267,7 @@ CREATE TABLE IF NOT EXISTS `transferencias` (
   `id_sucursal_destino` BIGINT UNSIGNED NOT NULL,
   `id_usuario_solicita` BIGINT UNSIGNED NULL,
   `id_gerente_aprueba` BIGINT UNSIGNED NULL,
+  `id_ruta` BIGINT UNSIGNED NULL,
   `estado` VARCHAR(30) NOT NULL,
   `fecha_solicitud` DATETIME NOT NULL,
   PRIMARY KEY (`id_transferencia`),
@@ -286,6 +289,11 @@ CREATE TABLE IF NOT EXISTS `transferencias` (
   CONSTRAINT `fk_transf_usuario_apr`
     FOREIGN KEY (`id_gerente_aprueba`)
     REFERENCES `usuarios` (`id_usuario`)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_transf_ruta`
+    FOREIGN KEY (`id_ruta`)
+    REFERENCES `rutas` (`id_ruta`)
     ON DELETE SET NULL
     ON UPDATE CASCADE
 ) ENGINE = InnoDB;
@@ -408,7 +416,7 @@ CREATE TABLE IF NOT EXISTS `historial_movimientos` (
 ) ENGINE = InnoDB;
 
 -- -----------------------------------------------------
--- Table `registros_auditoria`
+-- Table `notificaciones_eventos`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `notificaciones_eventos` (
   `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -440,7 +448,7 @@ CREATE TABLE IF NOT EXISTS `registros_auditoria` (
 -- -----------------------------------------------------
 -- DATA INICIAL
 -- -----------------------------------------------------
-INSERT INTO `roles` (`nombre_rol`) VALUES ('ADMIN'), ('MANAGER'), ('OPERATOR');
+INSERT INTO `roles` (`id_rol`, `nombre_rol`) VALUES (1, 'ADMIN'), (2, 'GERENTE'), (3, 'OPERADOR');
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;

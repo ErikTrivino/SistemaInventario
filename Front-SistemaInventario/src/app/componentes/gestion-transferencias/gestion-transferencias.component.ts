@@ -7,6 +7,7 @@ import { TransferenciaService } from '../../servicios/transferencia.service';
 import { SucursalService } from '../../servicios/sucursal.service';
 import { InventarioService } from '../../servicios/inventario.service';
 import { UsuarioService } from '../../servicios/usuario.service';
+import { UsuarioConsultaService } from '../../servicios/usuario-consulta.service';
 import { TokenService } from '../../servicios/token.service';
 import { TransportistaService } from '../../servicios/transportista.service';
 import { InformacionTransferencia, InformacionProducto, InformacionTransportistaDTO } from '../../modelo/informacionObjeto';
@@ -57,6 +58,7 @@ export class GestionTransferenciasComponent implements OnInit {
     private inventarioSvc: InventarioService,
     private sucursalSvc: SucursalService,
     private usuarioSvc: UsuarioService,
+    private usuarioConsultaSvc: UsuarioConsultaService,
     private tokenSvc: TokenService,
     private transportistaSvc: TransportistaService
   ) { }
@@ -66,7 +68,7 @@ export class GestionTransferenciasComponent implements OnInit {
     const idUsuario = Number(this.tokenSvc.getIDCuenta());
 
     if (idUsuario) {
-      this.usuarioSvc.consultarPorId(idUsuario).subscribe({
+      this.usuarioConsultaSvc.consultarPorId(idUsuario).subscribe({
         next: (data: MensajeDTO) => {
           const usuario = data.respuesta;
           this.sucursalUsuario = usuario?.sucursalAsignadaId ?? 0;

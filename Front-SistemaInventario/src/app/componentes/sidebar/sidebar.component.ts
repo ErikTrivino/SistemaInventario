@@ -11,17 +11,25 @@ import { CommonModule } from '@angular/common';
   styleUrl: './sidebar.component.css'
 })
 export class SidebarComponent {
-  constructor(private tokenService: TokenService) {}
+  constructor(private tokenService: TokenService) { }
 
   public logout(): void {
     this.tokenService.logout();
+  }
+
+  public isLogged(): boolean {
+    return this.tokenService.isLogged();
   }
 
   public isAdmin(): boolean {
     return this.tokenService.getRol() === 'ADMIN';
   }
 
-  public isLogged(): boolean {
-    return this.tokenService.isLogged();
+  public isGerente(): boolean {
+    return this.tokenService.getRol() === 'GERENTE';
+  }
+
+  public isOperador(): boolean {
+    return this.tokenService.getRol() === 'OPERADOR';
   }
 }
