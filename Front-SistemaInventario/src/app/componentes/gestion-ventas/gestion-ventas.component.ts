@@ -196,6 +196,8 @@ export class GestionVentasComponent implements OnInit {
   }
 
   updateQuantity(index: number, newQty: number) {
+    if (newQty == null) return; // Wait for the user to type something
+    
     if (newQty <= 0) {
       this.removeItem(index);
       return;

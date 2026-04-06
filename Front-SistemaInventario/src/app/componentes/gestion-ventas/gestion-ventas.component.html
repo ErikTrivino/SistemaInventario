@@ -140,7 +140,12 @@
                       <div class="flex flex-col gap-2">
                         <div class="flex items-center gap-2">
                           <button (click)="updateQuantity(i, item.cantidad - 1)" class="w-6 h-6 rounded bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200">-</button>
-                          <span class="text-sm font-medium w-6 text-center">{{item.cantidad}}</span>
+                          <input 
+                            type="number" 
+                            [ngModel]="item.cantidad" 
+                            (ngModelChange)="updateQuantity(i, $event)"
+                            class="w-10 h-6 text-sm font-medium text-center border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            min="1">
                           <button (click)="updateQuantity(i, item.cantidad + 1)" class="w-6 h-6 rounded bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200">+</button>
                         </div>
                         <div class="flex items-center gap-2">
